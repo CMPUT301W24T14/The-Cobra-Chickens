@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Event Planner</string>
     <string name="upcoming_events">Upcoming Events</string>
+    <string name="all_events">All Events</string>
 </resources>

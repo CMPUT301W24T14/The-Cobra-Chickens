@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -41,6 +42,7 @@ public class ProfileFragment extends Fragment {
     private static final String TAG = "ProfileFragment";
     ImageView profilePic;
     Button editPic;
+    Button delPic;
     TextView userName, userContact, userHomepage;
     Button editDetails;
     Button location;
@@ -65,6 +67,7 @@ public class ProfileFragment extends Fragment {
         //getting all the layout objects
         profilePic = view.findViewById(R.id.profilePic);
         editPic = view.findViewById(R.id.editProfilePic);
+        delPic = view.findViewById(R.id.deleteProfilePic);
         userName = view.findViewById(R.id.profileName);
         userContact = view.findViewById(R.id.profileContact);
         userHomepage = view.findViewById(R.id.profileHomepage);
@@ -144,9 +147,48 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        delPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteProfilePic();
+            }
+        });
+
+
+
 
 
         return view;
+
+    }
+
+    private void deleteProfilePic() {
+
+        userId = "HLMPC63kqPuNJ4hcMFZZ";
+        usersRef.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        if(document.contains("ProfilePic")){
+                            usersRef.document(userId).update("ProfilePic", FieldValue.delete());
+                            Glide.with(requireContext()).load("https://www.gravatar.com/avatar/"+userId+"?d=identicon").into(profilePic);
+
+                        } else {
+                            Toast toast = Toast.makeText(getContext(), "You can't delete default Profile Picture", Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+
+                    } else {
+                        Log.d(TAG,"No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
 
     }
 
