@@ -12,7 +12,7 @@ public class Event {
 
 
     public Event(String eventName, Date eventDate) {
-=======
+
     ArrayList<String> announcements;
 
     public Event(String eventName, Date eventDate, String poster, String organizer, ArrayList<String> announcements) {
