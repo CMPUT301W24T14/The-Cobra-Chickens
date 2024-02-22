@@ -1,12 +1,15 @@
 package com.example.eventplanner;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
@@ -36,6 +39,25 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
         String formattedDate = sdf.format(eventsList.get(position).eventDate);
         holder.eventDate.setText(formattedDate);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Pass the selected event to the fragment
+                EventDetailsFragment fragment = new EventDetailsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("event", eventsList.get(position));
+                fragment.setArguments(bundle);
+
+                // Replace current fragment with event detail fragment
+                FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+
+
     }
 
     @Override
