@@ -1,11 +1,11 @@
 package com.example.eventplanner;
 
 public class User {
-    int img;
+    String img;
     String username, usercontact, userhomepage;
     Boolean location;
 
-    public User(int img, String username, String usercontact, String userhomepage, Boolean location) {
+    public User(String img, String username, String usercontact, String userhomepage, Boolean location) {
         this.img = img;
         this.username = username;
         this.usercontact = usercontact;
@@ -20,11 +20,11 @@ public class User {
         this.location = location;
     }
 
-    public int getImg() {
+    public String getImg() {
         return img;
     }
 
-    public void setImg(int img) {
+    public void setImg(String img) {
         this.img = img;
     }
 
