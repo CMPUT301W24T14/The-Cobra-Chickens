@@ -224,8 +224,6 @@ public class ProfileFragment extends Fragment {
                             user = new User(profilePicURI, name, contact, homePage, usrlocation);
                             Glide.with(requireContext()).load(profilePicURI).into(profilePic);
                         } else {
-                            Toast toast = Toast.makeText(getContext(), "no propic", Toast.LENGTH_SHORT);
-                            toast.show();
                             user = new User(name, contact, homePage, usrlocation);
                             Glide.with(requireContext()).load("https://www.gravatar.com/avatar/"+userId+"?d=identicon").into(profilePic);
                         }
