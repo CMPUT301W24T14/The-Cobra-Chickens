@@ -86,7 +86,23 @@ public class HomeFragment extends Fragment {
                         // Convert each document to Event object and add to allEventsList
                         String eventName = document.getString("Name");
                         Date eventDate = document.getDate("Date");
-                        allEventsList.add(new Event(eventName, eventDate));
+                        ArrayList<String> announcements = (ArrayList<String>) document.get("Announcements");
+                        if (document.contains("Poster")){
+                            String poster = document.getString("Poster");
+                            if (document.contains("Announcements")) {
+                                allEventsList.add(new Event(poster, eventName, eventDate, announcements));
+                            }
+                            else{
+                                allEventsList.add(new Event(poster, eventName, eventDate));
+                            }
+                        }else {
+                            if (document.contains("Announcements")) {
+                                allEventsList.add(new Event(eventName, eventDate, announcements));
+                            }
+                            else{
+                                allEventsList.add(new Event(eventName, eventDate));
+                            }
+                        }
                     }
                     // Notify adapter that data set has changed
                     allEventsRecyclerAdapter.notifyDataSetChanged();
