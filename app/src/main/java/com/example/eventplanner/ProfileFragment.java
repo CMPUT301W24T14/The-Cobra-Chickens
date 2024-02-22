@@ -2,6 +2,7 @@ package com.example.eventplanner;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +16,30 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 /**
  * Represents the fragment for displaying and editing a user's profile.
  */
 public class ProfileFragment extends Fragment {
+
+    private static final String TAG = "ProfileFragment";
     ImageView profilePic;
     Button editPic;
     TextView userName, userContact, userHomepage;
     Button editDetails;
     Button location;
+
+    User user;
+
+    String userId;
+
+    FirebaseFirestore db;
+    CollectionReference usersRef;
 
 
     @Nullable
@@ -33,8 +49,7 @@ public class ProfileFragment extends Fragment {
         // inflate the layout for the profile fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        //initializing a user to show user's details on the profile screen
-        User user = new User(R.drawable.p, "A", "a@email.com","www.a.com", true);
+        getUser();
 
         //getting all the layout objects
         profilePic = view.findViewById(R.id.profilePic);
@@ -45,15 +60,7 @@ public class ProfileFragment extends Fragment {
         location = view.findViewById(R.id.location);
         editDetails = view.findViewById(R.id.editProfile);
 
-        //setting layout objects to the User object's values
-        userName.setText(userName.getText()+user.username);
-        userContact.setText(userContact.getText()+user.usercontact);
-        userHomepage.setText(userHomepage.getText()+user.userhomepage);
-        if(user.location){
-            location.setText("ON");
-        } else {
-            location.setText("OFF");
-        }
+
 
         //listening for edit button
         editDetails.setOnClickListener(new View.OnClickListener() {
@@ -83,10 +90,12 @@ public class ProfileFragment extends Fragment {
                         homePage = editHomepage.getText().toString().trim();
 
                         //updating the user object and the textviews
-                        userName.setText(name);
-                        userContact.setText(contact);
-                        userHomepage.setText(homePage);
+                        userName.setText("Name:" + name);
+                        userContact.setText("Contact:" +contact);
+                        userHomepage.setText("Homepage:"+homePage);
 
+                        usersRef = db.collection("users");
+                        usersRef.document(userId).update("Name", name, "Contact", contact, "Homepage",homePage);
                         user.setUsername(name);
                         user.setUsercontact(contact);
                         user.setUserhomepage(homePage);
@@ -101,21 +110,67 @@ public class ProfileFragment extends Fragment {
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                usersRef = db.collection("users");
+
                 if(user.location){
                     location.setText("OFF");
+                    usersRef.document(userId).update("Location", false);
                     user.setLocation(false);
                 } else {
                     location.setText("ON");
+                    usersRef.document(userId).update("Location", true);
                     user.setLocation(true);
                 }
             }
         });
 
-        //profile pic edit listener
+
 
 
 
         return view;
+
+    }
+
+    private void getUser(){
+        db = FirebaseFirestore.getInstance();
+        usersRef = db.collection("users");
+
+        userId = "et9ykXKsNzo3ETU3Vwwg";
+
+        usersRef.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        String name = document.getString("Name");
+                        String contact = document.getString("Contact");
+                        String homePage = document.getString("Homepage");
+                        boolean usrlocation = document.getBoolean("Location");
+
+                        user = new User(name, contact, homePage, usrlocation);
+
+                        //setting layout objects to the User object's values
+                        userName.setText("Name: " + user.username);
+                        userContact.setText("Contact: " + user.usercontact);
+                        userHomepage.setText("Homepage: " + user.userhomepage);
+                        if (user.location) {
+                            location.setText("ON");
+                        } else {
+                            location.setText("OFF");
+                        }
+
+
+                    } else {
+                        Log.d(TAG,"No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
 
     }
 }

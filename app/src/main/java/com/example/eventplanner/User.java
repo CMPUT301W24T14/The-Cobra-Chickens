@@ -13,6 +13,13 @@ public class User {
         this.location = location;
     }
 
+    public User(String username, String usercontact, String userhomepage, Boolean location) {
+        this.username = username;
+        this.usercontact = usercontact;
+        this.userhomepage = userhomepage;
+        this.location = location;
+    }
+
     public int getImg() {
         return img;
     }
