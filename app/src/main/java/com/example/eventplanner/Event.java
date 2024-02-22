@@ -15,7 +15,7 @@ public class Event implements Parcelable {
 
 
 
-    public Event(String eventName, Date eventDate) {
+
 
     ArrayList<String> announcements;
 
@@ -44,7 +44,7 @@ public class Event implements Parcelable {
 
     //if poster and announcements both unavailable
     public Event(String eventName, Date eventDate){
-        Developer
+
         this.eventName = eventName;
         this.eventDate = eventDate;
     }
