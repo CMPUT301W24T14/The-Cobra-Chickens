@@ -6,6 +6,8 @@ public class Event {
     String eventName;
     Date eventDate;
 
+    //Another comment to commit (ignore)
+
     public Event(String eventName, Date eventDate) {
         this.eventName = eventName;
         this.eventDate = eventDate;
