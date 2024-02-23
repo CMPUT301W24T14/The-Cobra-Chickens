@@ -2,4 +2,17 @@
     <string name="app_name">Event Planner</string>
     <string name="upcoming_events">Upcoming Events</string>
     <string name="all_events">All Events</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
+    <string name="click_to_login">Click to Login</string>
+    <string name="click_to_register">Click to Register</string>
+    <string name="logout">Logout</string>
+    <string name="welcome_msg">Welcome to Cobra Event Management!</string>
+    <string name="sign_in_decision">I want to:</string>
+    <string name="attend">Attend</string>
+    <string name="organize">Organize</string>
+    <string name="administrator_login">Administrator Login</string>
+    <string name="return_to_welcome">Return to Welcome</string>
 </resources>
