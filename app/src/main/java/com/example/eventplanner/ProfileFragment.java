@@ -25,6 +25,8 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -154,17 +156,16 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-
-
-
-
         return view;
 
     }
 
     private void deleteProfilePic() {
 
-        userId = "HLMPC63kqPuNJ4hcMFZZ";
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        assert currentUser != null;
+        userId = currentUser.getUid();
         usersRef.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -248,7 +249,10 @@ public class ProfileFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         usersRef = db.collection("users");
 
-        userId = "HLMPC63kqPuNJ4hcMFZZ";
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        assert currentUser != null;
+        userId = currentUser.getUid();
 
         usersRef.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
