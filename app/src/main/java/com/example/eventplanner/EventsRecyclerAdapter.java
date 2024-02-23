@@ -1,6 +1,7 @@
 package com.example.eventplanner;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,16 +45,9 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             @Override
             public void onClick(View view) {
                 // Pass the selected event to the fragment
-                EventDetailsFragment fragment = new EventDetailsFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("event", eventsList.get(position));
-                fragment.setArguments(bundle);
-
-                // Replace current fragment with event detail fragment
-                FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                Intent intent = new Intent(context, EventDetailsActivity.class);
+                intent.putExtra("event", eventsList.get(position));
+                context.startActivity(intent);
             }
         });
 
