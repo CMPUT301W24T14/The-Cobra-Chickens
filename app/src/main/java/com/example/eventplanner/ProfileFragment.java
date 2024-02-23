@@ -164,7 +164,7 @@ public class ProfileFragment extends Fragment {
 
     private void deleteProfilePic() {
 
-        userId = "HLMPC63kqPuNJ4hcMFZZ";
+        userId = "et9ykXKsNzo3ETU3Vwwg";
         usersRef.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -248,7 +248,7 @@ public class ProfileFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         usersRef = db.collection("users");
 
-        userId = "HLMPC63kqPuNJ4hcMFZZ";
+        userId = "et9ykXKsNzo3ETU3Vwwg";
 
         usersRef.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
