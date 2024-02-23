@@ -15,4 +15,6 @@
     <string name="organize">Organize</string>
     <string name="administrator_login">Administrator Login</string>
     <string name="return_to_welcome">Return to Welcome</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
