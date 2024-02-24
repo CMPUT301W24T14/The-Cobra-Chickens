@@ -1,6 +1,7 @@
 package com.example.eventplanner;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,7 +21,9 @@ import com.journeyapps.barcodescanner.ScanOptions;
 /**
  * Represents the fragment that scans and generates(?) event QR codes.
  */
-//Followed this tutorial to figure out QRCode Scanning: https://youtu.be/jtT60yFPelI?si=1gDHYYOa1lBAuNSh
+/*
+Followed this tutorial to figure out QRCode Scanning: https://youtu.be/jtT60yFPelI?si=1gDHYYOa1lBAuNSh
+*/
 public class ScanFragment extends Fragment {
 
     Button scan_btn;
@@ -49,8 +52,27 @@ public class ScanFragment extends Fragment {
     }
 
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
-        if (result.getContents() != null) {
+        if (result.getContents() != null) { //This can be changed later to validate whether QRCode is valid later
             Log.d("Scan Fragment", result.getContents());
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Success!");
+            builder.setMessage("Event: " + result.getContents());
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            }).show();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Failure!");
+            builder.setMessage("You have scanned an invalid QRCode");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            }).show();
         }
     });
 }

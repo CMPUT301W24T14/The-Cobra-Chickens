@@ -13,10 +13,6 @@ public class Event implements Parcelable {
     Date eventDate;
     String poster;
 
-
-
-
-
     ArrayList<String> announcements;
 
     //if both poster and announcements are available
