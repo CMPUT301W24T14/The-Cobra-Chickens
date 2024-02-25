@@ -3,76 +3,73 @@ package com.example.eventplanner;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.journeyapps.barcodescanner.BarcodeCallback;
+import com.journeyapps.barcodescanner.BarcodeResult;
+import com.journeyapps.barcodescanner.CompoundBarcodeView;
 
-import com.journeyapps.barcodescanner.CaptureActivity;
-import com.journeyapps.barcodescanner.ScanContract;
-import com.journeyapps.barcodescanner.ScanOptions;
-
-/**
- * Represents the fragment that scans and generates(?) event QR codes.
- */
-/*
-Followed this tutorial to figure out QRCode Scanning: https://youtu.be/jtT60yFPelI?si=1gDHYYOa1lBAuNSh
-*/
 public class ScanFragment extends Fragment {
+    CompoundBarcodeView barcodeView;
 
-    Button scan_btn;
-
+    //This code was written with Bing AI, Microsoft, 2024, Modified by Josiah Korzan
+    //Prompt: (pasted code) I want to have the qr code scanner imbedded in the fragment
+    //instead of taking up the whole screen, how can I do this?
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         // inflate the layout for the scan fragment
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
-        scan_btn = view.findViewById(R.id.scan_btn);
-        scan_btn.setOnClickListener(v -> {
-            scanCode();
+        barcodeView = view.findViewById(R.id.barcode_scanner);
+        barcodeView.decodeContinuous(new BarcodeCallback() {
+            @Override
+            public void barcodeResult(BarcodeResult result) {
+                // handle the scanned result here
+                barcodeView.pause();
+                if (result.getResult() != null) { //This can be changed later to validate whether QRCode is valid later
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Success!");
+                    builder.setMessage("Event: " + result.getResult());
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            barcodeView.resume();
+                        }
+                    }).show();
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Failure!");
+                    builder.setMessage("You have scanned an invalid QRCode");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            barcodeView.resume();
+                        }
+                    }).show();
+                }
+            }
         });
         return view;
-
     }
 
-    private void scanCode() {
-        ScanOptions options = new ScanOptions();
-        options.setPrompt("Volume up to turn on flash");
-        options.setBeepEnabled(true);
-        options.setOrientationLocked(true);
-        options.setCaptureActivity(CaptureAct.class);
-        barLauncher.launch(options);
+    @Override
+    public void onResume() {
+        super.onResume();
+        barcodeView.resume();
     }
 
-    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
-        if (result.getContents() != null) { //This can be changed later to validate whether QRCode is valid later
-            Log.d("Scan Fragment", result.getContents());
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Success!");
-            builder.setMessage("Event: " + result.getContents());
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            }).show();
-        } else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Failure!");
-            builder.setMessage("You have scanned an invalid QRCode");
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            }).show();
-        }
-    });
+    @Override
+    public void onPause() {
+        super.onPause();
+        barcodeView.pause();
+    }
+    //End of generated code
 }
