@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".CaptureAct"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"/>
     </application>
