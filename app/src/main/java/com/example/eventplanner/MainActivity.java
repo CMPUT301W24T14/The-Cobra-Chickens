@@ -6,10 +6,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationBar = findViewById(R.id.bottom_nav_bar);
 
         // begin on the home screen
-        selectFragment(new HomeFragment());
+        selectFragment(new HomeFragmentUpdated());
 
         // set listener for the bottom navigation bar for each menu item/button
         bottomNavigationBar.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -39,15 +43,12 @@ public class MainActivity extends AppCompatActivity {
                 int itemId = item.getItemId();
 
                 if (itemId == R.id.home) {
-                    selectFragment(new HomeFragment());
-                }
-                else if (itemId == R.id.scan) {
+                    selectFragment(new HomeFragmentUpdated());
+                } else if (itemId == R.id.scan) {
                     selectFragment(new ScanFragment());
-                }
-                else if (itemId == R.id.notifications) {
+                } else if (itemId == R.id.notifications) {
                     selectFragment(new NotificationsFragment());
-                }
-                else if (itemId == R.id.profile) {
+                } else if (itemId == R.id.profile) {
                     selectFragment(new ProfileFragment());
                 }
 
@@ -57,8 +58,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * When a navigation bar item is clicked, display the appropriate fragment
-     *
+     * When a navigation bar item is clicked, display the appropriate fragment.
      * @param fragment the fragment to be displayed
      */
     private void selectFragment(Fragment fragment) {
