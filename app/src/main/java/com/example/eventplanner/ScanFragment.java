@@ -1,7 +1,8 @@
 package com.example.eventplanner;
 
+import android.Manifest;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,16 +10,17 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import com.journeyapps.barcodescanner.BarcodeCallback;
-import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.CompoundBarcodeView;
 
 public class ScanFragment extends Fragment {
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     CompoundBarcodeView barcodeView;
 
     //This code was written with Bing AI, Microsoft, 2024, Modified by Josiah Korzan
-    //Prompt: (pasted code) I want to have the qr code scanner imbedded in the fragment
+    //Prompt: (pasted code) I want to have the qr code scanner embedded in the fragment
     //instead of taking up the whole screen, how can I do this?
     @Nullable
     @Override
@@ -27,6 +29,16 @@ public class ScanFragment extends Fragment {
         // inflate the layout for the scan fragment
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
         barcodeView = view.findViewById(R.id.barcode_scanner);
+
+        // Check for camera permission
+        if (ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            ActivityCompat.requestPermissions(requireActivity(),
+                    new String[]{Manifest.permission.CAMERA},
+                    MY_PERMISSIONS_REQUEST_CAMERA);
+        }
+
         barcodeView.decodeContinuous(result -> {
             // handle the scanned result here
             barcodeView.pause();
@@ -48,6 +60,7 @@ public class ScanFragment extends Fragment {
                 }).show();
             }
         });
+
         return view;
     }
 
