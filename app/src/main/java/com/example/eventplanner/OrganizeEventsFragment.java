@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +31,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
     private RecyclerView organizeEventsRecyclerView; // RecyclerView list of the events user is organizing
     private ArrayList<Event> organizeEventsList; // ArrayList that holds all events that the user is organizing
     String userId;
+    private Button createEventButton; // Button that takes you to CreateEventActivity
 
     /**
      * Creates the view for OrganizeEventsFragment, which is contained within HomeFragmentUpdated
@@ -66,6 +68,17 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
         EventRecyclerAdapterUpdated organizeEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), organizeEventsList, this);
         organizeEventsRecyclerView.setAdapter(organizeEventsRecyclerAdapter);
 
+        // initialize createEventButton
+        createEventButton = view.findViewById(R.id.button_add_new_event);
+
+        // handle clicks on createEventButton
+        createEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openCreateEventActivity();
+            }
+        });
+
         // need to fix --> currently testing with a hardcoded user
         // Set up Firebase Authentication and use what's below to get a userId dynamically
         // FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -92,6 +105,18 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                 });
 
         return view;
+    }
+
+    /**
+     * Opens up a CreateEventActivity
+     */
+    public void openCreateEventActivity() {
+
+        // set up a new intent to jump from the current activity to CreateEventActivity
+        Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+
+        // start a CreateEventActivity
+        startActivity(intent);
     }
 
     /**

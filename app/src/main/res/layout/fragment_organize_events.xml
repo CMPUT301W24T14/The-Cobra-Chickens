@@ -53,12 +53,28 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button_add_new_event"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_bar_background"
         android:background="@android:color/transparent"
         android:scrollbars="vertical"/>
+
+    <Button
+        android:id="@+id/button_add_new_event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/white"
+        android:elevation="4dp"
+        android:stateListAnimator="@null"
+        android:text="Create Event"
+        android:textColor="#2B2B2B"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
