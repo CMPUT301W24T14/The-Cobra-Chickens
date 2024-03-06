@@ -8,12 +8,13 @@ public class Notification {
     Date date; // The date when the notification was created or should be shown
     boolean isRead; // Flag to check if the notification has been read
 
-    // Constructor
-    public Notification(String title, String message, Date date, boolean isRead) {
-        this.title = title;
+    // Constructor for a notification with only a message
+    public Notification(String message) {
         this.message = message;
-        this.date = date;
-        this.isRead = isRead;
+        // Set default values for title, date, and read status
+        this.title = ""; // Default title (can be removed if not needed)
+        this.date = new Date(); // Set the current date as default (can be removed if not needed)
+        this.isRead = false; // Default read status
     }
 
     // Getters and Setters
@@ -21,31 +22,16 @@ public class Notification {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getMessage() {
         return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public Date getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
     public boolean isRead() {
         return isRead;
     }
 
-    public void setRead(boolean read) {
-        isRead = read;
-    }
 }
