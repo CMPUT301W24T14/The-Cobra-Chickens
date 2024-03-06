@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -58,16 +59,16 @@ public class EventDetailsActivity extends AppCompatActivity {
                 eventDateTextView.setText("Date:" + formatDate(event.getEventDate()));
                 eventTimeTextView.setText("Time:" + formatTime(event.getEventDate()));
 
-                if (event.getPoster() != null && !event.getPoster().isEmpty()) {
+                if (event.getEventPoster() != null && !event.getEventPoster().isEmpty()) {
                     Glide.with(this)
-                            .load(event.getPoster())
+                            .load(event.getEventPoster())
                             .into(poster);
                 } else {
                     poster.setVisibility(View.GONE);
                 }
 
-                if (event.getAnnouncements() != null && !event.getAnnouncements().isEmpty()) {
-                    announcements = event.getAnnouncements();
+                if (event.getEventAnnouncements() != null && !event.getEventAnnouncements().isEmpty()) {
+                    announcements = event.getEventAnnouncements();
                 }
 
                 AnnouncementsRecyclerAdapter adapter = new AnnouncementsRecyclerAdapter(this, announcements);

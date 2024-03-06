@@ -59,7 +59,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         return eventsList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView eventName, eventDate;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -9,30 +9,33 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Event implements Parcelable {
+
+    String eventId;
     String eventName;
     Date eventDate;
-    String poster;
-
-    ArrayList<String> announcements;
+  
+    String eventLocation;
+    String eventPoster;
+    ArrayList<String> eventAnnouncements;
 
     //if both poster and announcements are available
-    public Event(String poster, String eventName, Date eventDate, ArrayList<String> announcements) {
+    public Event(String eventPoster, String eventName, Date eventDate, ArrayList<String> announcements) {
         this.eventName = eventName;
         this.eventDate = eventDate;
-        this.poster = poster;
-        this.announcements = announcements;
+        this.eventPoster = eventPoster;
+        this.eventAnnouncements = announcements;
     }
 
     //if announcements is available, but poster are not available
     public Event(String eventName, Date eventDate, ArrayList<String> announcements){
         this.eventName = eventName;
         this.eventDate = eventDate;
-        this.announcements = announcements;
+        this.eventAnnouncements = announcements;
     }
 
     //if poster available but announcements are not available
-    public Event(String poster, String eventName, Date eventDate){
-        this.poster = poster;
+    public Event(String eventPoster, String eventName, Date eventDate){
+        this.eventPoster = eventPoster;
         this.eventName = eventName;
         this.eventDate = eventDate;
     }
@@ -45,30 +48,53 @@ public class Event implements Parcelable {
         this.eventDate = eventDate;
     }
 
+
+    // camille-testing event w/ a location
+    public Event(String eventId, String eventName, Date eventDate, String eventLocation) {
+
+        this.eventId = eventId;
+        this.eventName = eventName;
+        this.eventDate = eventDate;
+        this.eventLocation = eventLocation;
+
+    }
+
+    // camille - testing event w/ all info
+    public Event(String eventId, String eventName, Date eventDate, String eventLocation, String eventPoster, ArrayList<String> eventAnnouncements) {
+
+        this.eventId = eventId;
+        this.eventName = eventName;
+        this.eventDate = eventDate;
+        this.eventLocation = eventLocation;
+        this.eventPoster = eventPoster;
+        this.eventAnnouncements = eventAnnouncements;
+
+    }
+
     protected Event(Parcel in) {
         eventName = in.readString();
         eventDate = new Date(in.readLong());
-        poster = in.readString();
-        announcements = in.createStringArrayList();
+        eventLocation = in.readString();
+        eventPoster = in.readString();
+        eventAnnouncements = in.createStringArrayList();
+    }
+
+    public String getEventPoster() {
+        return eventPoster;
+    }
+
+    public void setEventPoster(String eventPoster) {
+        this.eventPoster = eventPoster;
     }
 
 
-    public String getPoster() {
-        return poster;
+
+    public ArrayList<String> getEventAnnouncements() {
+        return eventAnnouncements;
     }
 
-    public void setPoster(String poster) {
-        this.poster = poster;
-    }
-
-
-
-    public ArrayList<String> getAnnouncements() {
-        return announcements;
-    }
-
-    public void setAnnouncements(ArrayList<String> announcements) {
-        this.announcements = announcements;
+    public void setEventAnnouncements(ArrayList<String> eventAnnouncements) {
+        this.eventAnnouncements = eventAnnouncements;
     }
 
     public String getEventName() {
@@ -85,6 +111,14 @@ public class Event implements Parcelable {
 
     public void setEventDate(Date eventDate) {
         this.eventDate = eventDate;
+    }
+
+    public String getEventLocation() {
+        return eventLocation;
+    }
+
+    public void setEventLocation(String eventLocation) {
+        this.eventLocation = eventLocation;
     }
 
     public static final Creator<Event> CREATOR = new Creator<Event>() {
@@ -108,8 +142,9 @@ public class Event implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(eventName);
         dest.writeLong(eventDate.getTime());
-        dest.writeString(poster);
-        dest.writeStringList(announcements);
+        dest.writeString(eventLocation);
+        dest.writeString(eventPoster);
+        dest.writeStringList(eventAnnouncements);
     }
 }
 

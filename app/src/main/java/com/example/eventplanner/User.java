@@ -1,9 +1,15 @@
 package com.example.eventplanner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     String img;
     String username, usercontact, userhomepage;
     Boolean location;
+    private ArrayList<Event> signedUpForEventList;
+    private ArrayList<Event> organizingEventsList;
+
 
     public User(String img, String username, String usercontact, String userhomepage, Boolean location) {
         this.img = img;
@@ -18,6 +24,22 @@ public class User {
         this.usercontact = usercontact;
         this.userhomepage = userhomepage;
         this.location = location;
+    }
+
+    public ArrayList<Event> getSignedUpForEventList() {
+        return signedUpForEventList;
+    }
+
+    public void setSignedUpForEventList(ArrayList<Event> signedUpForEventList) {
+        this.signedUpForEventList = signedUpForEventList;
+    }
+
+    public ArrayList<Event> getOrganizingEventsList() {
+        return organizingEventsList;
+    }
+
+    public void setOrganizingEventsList(ArrayList<Event> organizingEventsList) {
+        this.organizingEventsList = organizingEventsList;
     }
 
     public String getImg() {
