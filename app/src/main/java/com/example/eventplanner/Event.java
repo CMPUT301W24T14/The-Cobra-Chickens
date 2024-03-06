@@ -13,6 +13,7 @@ public class Event implements Parcelable {
     String eventId;
     String eventName;
     Date eventDate;
+  
     String eventLocation;
     String eventPoster;
     ArrayList<String> eventAnnouncements;
