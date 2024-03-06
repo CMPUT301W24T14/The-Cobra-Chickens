@@ -113,7 +113,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
     public void openCreateEventActivity() {
 
         // set up a new intent to jump from the current activity to CreateEventActivity
-        Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+        Intent intent = new Intent(getActivity(), EventCreateActivity.class);
 
         // start a CreateEventActivity
         startActivity(intent);
