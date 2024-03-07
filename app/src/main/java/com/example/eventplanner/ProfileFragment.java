@@ -32,6 +32,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -49,6 +51,11 @@ public class ProfileFragment extends Fragment {
     TextView userName, userContact, userHomepage;
     Button editDetails;
     Button location;
+
+    FirebaseAuth auth;
+    FirebaseUser currentUser;
+
+
 
     User user;
 
