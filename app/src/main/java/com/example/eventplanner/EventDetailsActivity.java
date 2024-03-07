@@ -1,8 +1,10 @@
 package com.example.eventplanner;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,10 +16,16 @@ import java.util.Date;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class EventDetailsActivity extends AppCompatActivity {
@@ -27,6 +35,9 @@ public class EventDetailsActivity extends AppCompatActivity {
     private ArrayList<String> announcements = new ArrayList<>();;
 
     private ImageView poster;
+
+    private Button signUpButton;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +88,38 @@ public class EventDetailsActivity extends AppCompatActivity {
 
             }
         }
+
+        signUpButton = findViewById(R.id.signupBtn);
+
+        signUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSignUpConfirmation();
+            }
+        });
+
+    }
+
+    private void showSignUpConfirmation() {
+
+        AlertDialog.Builder confirmDialog = new AlertDialog.Builder(this);
+        confirmDialog.setTitle("Sign up for this event?")
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
+
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(EventDetailsActivity.this, "cancelled", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        confirmDialog.create().show();
+
     }
 
     private String formatDate(Date eventDate) {

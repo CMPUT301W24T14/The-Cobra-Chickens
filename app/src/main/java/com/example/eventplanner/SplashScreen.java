@@ -78,12 +78,9 @@ public class SplashScreen extends AppCompatActivity {
                                     FirebaseUser user = mAuth.getCurrentUser();
 
                                     // initialize user object
-                                    User userObject = initializeUser(user, db);
+                                    initializeUser();
 
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-
-                                    // send user object to MainActivity
-                                    intent.putExtra("User", userObject);
 
                                     startActivity(intent);
                                     finish();
@@ -101,14 +98,9 @@ public class SplashScreen extends AppCompatActivity {
 
     /**
      * Initializes a user in the database and passes a User object to MainActivity
-     * @param user The current FirebaseUser that was retrieved from mAuth
-     * @param db The instance of the database
      * @return The initialized User object to be passed to MainActivity
      */
-    private User initializeUser(FirebaseUser user, FirebaseFirestore db) {
-
-        User userObject = new User("", "", "", "",  false,
-                new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    private void initializeUser() {
 
         db.collection("users")
                 .get()
@@ -130,7 +122,7 @@ public class SplashScreen extends AppCompatActivity {
                             userMap.put("checkedInto", new ArrayList<>());
 
                             db.collection("users")
-                                    .document(user.getUid())
+                                    .document(mAuth.getCurrentUser().getUid())
                                     .set(userMap)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
@@ -151,6 +143,5 @@ public class SplashScreen extends AppCompatActivity {
                     }
                 });
 
-    return userObject;
     }
 }
