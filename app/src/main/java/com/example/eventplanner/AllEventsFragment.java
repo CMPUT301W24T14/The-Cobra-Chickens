@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -38,6 +39,7 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
     private CollectionReference eventsCollectionReference; // reference to events collection in db
     private RecyclerView allEventsRecyclerView; // RecyclerView list of all events
     private ArrayList<Event> allEventsList; // ArrayList that holds all events
+    private EventRecyclerAdapterUpdated allEventsRecyclerAdapter; // EventRecyclerAdapter for allEventsRecyclerView
 
     /**
      * Creates the view for AllEventsFragment, which is contained within HomeFragmentUpdated.
@@ -74,41 +76,52 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
         allEventsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // initialize allEventsRecyclerAdapter and set it as the adapter for allEventsRecyclerView
-        EventRecyclerAdapterUpdated allEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), allEventsList, this);
+        allEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), allEventsList, this);
         allEventsRecyclerView.setAdapter(allEventsRecyclerAdapter);
 
-        // listener to receive real-time updates from the "events" collection in Firestore
-        // need to fix --> getting weird behaviour when I manually change stuff in the db
-        // it adds all events to the existing list again --> make sure to refresh somehow (clear before every update ?)
-        eventsCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.e("Firestore", error.toString());
-                    return;
-                }
-                if (querySnapshot != null) {
-                    for (QueryDocumentSnapshot doc: querySnapshot) {
-
-                        // retrieve all event information associated with the event
-                        String eventId = doc.getId();
-                        String eventName = doc.getString("Name");
-                        Date eventDate = doc.getDate("Date");
-                        String eventLocation = doc.getString("Location");
-                        String eventPoster = doc.getString("Poster");
-                        ArrayList<String> eventAnnouncements = (ArrayList<String>) doc.get("Announcements");
-
-                        // create the Event object with retrieved event information and add it to allEventsList
-                        allEventsList.add(new Event(eventId, eventName, eventDate, eventLocation, eventPoster, eventAnnouncements));
-                    }
-
-                    // tell allEventsRecyclerView that the dataset that allEventsRecyclerAdapter is responsible for has changed
-                    allEventsRecyclerAdapter.notifyDataSetChanged();
-                }
-            }
-        });
+        displayAllEvents();
 
         return view;
+    }
+
+    /**
+     * Retrieves all events from the events collection in the database and populates allEventsList
+     * with them.
+     */
+    private void displayAllEvents() {
+
+        // retrieve documents from events collection in the database
+        eventsCollectionReference
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        // if the documents from the events collection were not successfully retrieved
+                        if (!task.isSuccessful()) {
+                            Log.e("Firestore", task.getException().toString());
+
+                        }
+                        else {
+                            for (DocumentSnapshot doc : task.getResult()) {
+
+                                // retrieve all event information associated with the event
+                                String eventId = doc.getId();
+                                String eventName = doc.getString("Name");
+                                Date eventDate = doc.getDate("Date");
+                                String eventLocation = doc.getString("Location");
+                                String eventPoster = doc.getString("Poster");
+                                ArrayList<String> eventAnnouncements = (ArrayList<String>) doc.get("Announcements");
+
+                                // create the Event object with retrieved event information and add it to allEventsList
+                                allEventsList.add(new Event(eventId, eventName, eventDate, eventLocation, eventPoster, eventAnnouncements));
+                            }
+
+                            // tell allEventsRecyclerView that the dataset that allEventsRecyclerAdapter is responsible for has changed
+                            allEventsRecyclerAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
     }
 
     /**
