@@ -1,8 +1,13 @@
 package com.example.eventplanner;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 
-public class User {
+public class User implements Parcelable {
     private String name;
     private String homepage;
     private String contactInformation;
@@ -88,5 +93,15 @@ public class User {
 
     public void setCheckedInEventsList(ArrayList<Event> checkedInEventsList) {
         this.checkedInEventsList = checkedInEventsList;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+
     }
 }
