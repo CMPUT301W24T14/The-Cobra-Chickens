@@ -1,29 +1,69 @@
 package com.example.eventplanner;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class User {
-    String img;
-    String username, usercontact, userhomepage;
-    Boolean location;
+    private String name;
+    private String homepage;
+    private String contactInformation;
+    private String profilePicture;
+    private Boolean geolocationTrackingEnabled;
     private ArrayList<Event> signedUpForEventList;
     private ArrayList<Event> organizingEventsList;
+    private ArrayList <Event> checkedInEventsList;
 
 
-    public User(String img, String username, String usercontact, String userhomepage, Boolean location) {
-        this.img = img;
-        this.username = username;
-        this.usercontact = usercontact;
-        this.userhomepage = userhomepage;
-        this.location = location;
+    public User(String name, String homepage, String contactInformation, String profilePicture, Boolean geolocationTrackingEnabled,
+                ArrayList<Event> signedUpForEventList, ArrayList<Event> organizingEventsList, ArrayList<Event> checkedInEventsList) {
+
+        this.name = name;
+        this.homepage = homepage;
+        this.contactInformation = contactInformation;
+        this.profilePicture = profilePicture;
+        this.geolocationTrackingEnabled = geolocationTrackingEnabled;
+        this.signedUpForEventList = signedUpForEventList;
+        this.organizingEventsList = organizingEventsList;
+        this.checkedInEventsList = checkedInEventsList;
     }
 
-    public User(String username, String usercontact, String userhomepage, Boolean location) {
-        this.username = username;
-        this.usercontact = usercontact;
-        this.userhomepage = userhomepage;
-        this.location = location;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getHomepage() {
+        return homepage;
+    }
+
+    public void setHomepage(String homepage) {
+        this.homepage = homepage;
+    }
+
+    public String getContactInformation() {
+        return contactInformation;
+    }
+
+    public void setContactInformation(String contactInformation) {
+        this.contactInformation = contactInformation;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
+    public Boolean getGeolocationTrackingEnabled() {
+        return geolocationTrackingEnabled;
+    }
+
+    public void setGeolocationTrackingEnabled(Boolean geolocationTrackingEnabled) {
+        this.geolocationTrackingEnabled = geolocationTrackingEnabled;
     }
 
     public ArrayList<Event> getSignedUpForEventList() {
@@ -42,43 +82,11 @@ public class User {
         this.organizingEventsList = organizingEventsList;
     }
 
-    public String getImg() {
-        return img;
+    public ArrayList<Event> getCheckedInEventsList() {
+        return checkedInEventsList;
     }
 
-    public void setImg(String img) {
-        this.img = img;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getUsercontact() {
-        return usercontact;
-    }
-
-    public void setUsercontact(String usercontact) {
-        this.usercontact = usercontact;
-    }
-
-    public String getUserhomepage() {
-        return userhomepage;
-    }
-
-    public void setUserhomepage(String userhomepage) {
-        this.userhomepage = userhomepage;
-    }
-
-    public Boolean getLocation() {
-        return location;
-    }
-
-    public void setLocation(Boolean location) {
-        this.location = location;
+    public void setCheckedInEventsList(ArrayList<Event> checkedInEventsList) {
+        this.checkedInEventsList = checkedInEventsList;
     }
 }
