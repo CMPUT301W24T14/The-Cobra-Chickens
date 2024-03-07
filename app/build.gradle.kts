@@ -65,5 +65,7 @@ dependencies {
 
     implementation("com.journeyapps:zxing-android-embedded:4.3.0") // This is for QRCodeScanner https://github.com/journeyapps/zxing-android-embedded
     implementation("com.google.zxing:core:3.4.1")
+    implementation("androidx.cardview:cardview:1.0.0")
+
 
 }
