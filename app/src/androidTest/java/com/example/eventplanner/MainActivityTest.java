@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class TestUS01 {
+public class MainActivityTest {
     // Temporary test to make this class not give an error when running without other tests
     @Test
     public void useAppContext() {
