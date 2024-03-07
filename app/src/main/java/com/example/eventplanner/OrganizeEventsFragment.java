@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -30,8 +31,8 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
     private FirebaseFirestore db; // the database
     private RecyclerView organizeEventsRecyclerView; // RecyclerView list of the events user is organizing
     private ArrayList<Event> organizeEventsList; // ArrayList that holds all events that the user is organizing
-    String userId;
     private Button createEventButton; // Button that takes you to CreateEventActivity
+    private EventRecyclerAdapterUpdated organizeEventsRecyclerAdapter; // EventRecyclerAdapter for organizeEventsRecyclerView
 
     /**
      * Creates the view for OrganizeEventsFragment, which is contained within HomeFragmentUpdated
@@ -79,15 +80,18 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
             }
         });
 
-        // need to fix --> currently testing with a hardcoded user
-        // Set up Firebase Authentication and use what's below to get a userId dynamically
-        // FirebaseAuth auth = FirebaseAuth.getInstance();
-        // FirebaseUser currentUser = auth.getCurrentUser();
-        userId = "et9ykXKsNzo3ETU3Vwwg";
+        displayOrganizingEvents();
 
-        // read specific document for userId given
+        return view;
+    }
+
+    /**
+     * Retrieves all events from user's organizing list in the database and populates organizeEventsList
+     */
+    private void displayOrganizingEvents() {
+
         db.collection("users")
-                .document(userId)
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -99,12 +103,9 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                         if (eventIds != null) {
                             loadEventDocs(eventIds, organizeEventsRecyclerAdapter);
                         }
-
-                        // handle if the user's organizing Array is null/empty (user is not organizing any events)
                     }
                 });
 
-        return view;
     }
 
     /**

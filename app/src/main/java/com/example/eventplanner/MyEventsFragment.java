@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -39,7 +40,8 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
     private FirebaseFirestore db; // the database
     private RecyclerView myEventsRecyclerView; // RecyclerView list of user's singed-up-for events
     private ArrayList<Event> myEventsList; // ArrayList that holds all events that the user has signed up for
-    String userId;
+    private EventRecyclerAdapterUpdated myEventsRecyclerAdapter; // EventRecyclerAdapter for myEventsRecyclerView
+
 
     /**
      * Creates the view for MyEventsFragment, which is contained within HomeFragmentUpdated
@@ -73,18 +75,21 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
         myEventsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // initialize myEventsRecyclerAdapter and set it as the adapter for myEventsRecyclerView
-        EventRecyclerAdapterUpdated myEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), myEventsList, this);
+        myEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), myEventsList, this);
         myEventsRecyclerView.setAdapter(myEventsRecyclerAdapter);
 
-        // need to fix --> currently testing with a hardcoded user
-        // Set up Firebase Authentication and use what's below to get a userId dynamically
-        // FirebaseAuth auth = FirebaseAuth.getInstance();
-        // FirebaseUser currentUser = auth.getCurrentUser();
-        userId = "et9ykXKsNzo3ETU3Vwwg";
+        displayMyEvents();
 
-        // read specific document for userId given
+        return view;
+    }
+
+    /**
+     * Retrieves all events from user's myEvents list in the database and populates myEventsList
+     */
+    private void displayMyEvents() {
+
         db.collection("users")
-                .document(userId)
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -96,12 +101,8 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
                         if (eventIds != null) {
                             loadEventDocs(eventIds, myEventsRecyclerAdapter);
                         }
-
-                        // handle if the user's myEvents Array is null/empty (user has not signed up for any events)
                     }
                 });
-
-        return view;
     }
 
     /**
