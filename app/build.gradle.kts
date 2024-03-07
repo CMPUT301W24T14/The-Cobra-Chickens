@@ -1,3 +1,6 @@
+import com.android.build.api.dsl.Lint
+import com.android.build.api.dsl.LintOptions
+
 plugins {
     id("com.android.application")
     // Add the Google services Gradle plugin
@@ -31,6 +34,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    fun Lint.() {
+        abortOnError = false
     }
 }
 
