@@ -6,6 +6,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 import android.content.Context;
 
@@ -31,7 +33,7 @@ public class TestUS01 {
     // As an organizer, I want to create a new event and generate a unique QR code for attendee check-ins.
     @Test
     public void test01_01_01() {
-        assert(false);
+        fail();
     }
 
     // Tests for US 01.01.02
