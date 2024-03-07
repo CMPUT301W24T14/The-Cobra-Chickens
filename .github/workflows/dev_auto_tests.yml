@@ -35,6 +35,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
-        run: ./gradlew --debug
+        run: ./gradlew
       - name: Run Unit Tests
-        run: ./gradlew test
+        run: ./gradlew src/androidTest
