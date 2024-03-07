@@ -35,10 +35,12 @@ public class TestUS01 {
 
     // Tests for US 01.01.01
     // As an organizer, I want to create a new event and generate a unique QR code for attendee check-ins.
+    /*
     @Test
     public void test01_01_01() {
         //fail();
     }
+     */
 
     // Tests for US 01.01.02
     // As an organizer, I want the option to reuse an existing QR code for attendee check-ins.
