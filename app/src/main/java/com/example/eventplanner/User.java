@@ -13,13 +13,13 @@ public class User implements Parcelable {
     private String contactInformation;
     private String profilePicture;
     private Boolean geolocationTrackingEnabled;
-    private ArrayList<Event> signedUpForEventList;
-    private ArrayList<Event> organizingEventsList;
-    private ArrayList <Event> checkedInEventsList;
+    private ArrayList<String> signedUpForEventList;
+    private ArrayList<String> organizingEventsList;
+    private ArrayList <String> checkedInEventsList;
 
 
     public User(String name, String homepage, String contactInformation, String profilePicture, Boolean geolocationTrackingEnabled,
-                ArrayList<Event> signedUpForEventList, ArrayList<Event> organizingEventsList, ArrayList<Event> checkedInEventsList) {
+                ArrayList<String> signedUpForEventList, ArrayList<String> organizingEventsList, ArrayList<String> checkedInEventsList) {
 
         this.name = name;
         this.homepage = homepage;
@@ -30,6 +30,30 @@ public class User implements Parcelable {
         this.organizingEventsList = organizingEventsList;
         this.checkedInEventsList = checkedInEventsList;
     }
+
+    protected User(Parcel in) {
+        name = in.readString();
+        homepage = in.readString();
+        contactInformation = in.readString();
+        profilePicture = in.readString();
+        byte tmpGeolocationTrackingEnabled = in.readByte();
+        geolocationTrackingEnabled = tmpGeolocationTrackingEnabled == 0 ? null : tmpGeolocationTrackingEnabled == 1;
+        signedUpForEventList = in.createStringArrayList();
+        organizingEventsList = in.createStringArrayList();
+        checkedInEventsList = in.createStringArrayList();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getName() {
         return name;
@@ -71,27 +95,27 @@ public class User implements Parcelable {
         this.geolocationTrackingEnabled = geolocationTrackingEnabled;
     }
 
-    public ArrayList<Event> getSignedUpForEventList() {
+    public ArrayList<String> getSignedUpForEventList() {
         return signedUpForEventList;
     }
 
-    public void setSignedUpForEventList(ArrayList<Event> signedUpForEventList) {
+    public void setSignedUpForEventList(ArrayList<String> signedUpForEventList) {
         this.signedUpForEventList = signedUpForEventList;
     }
 
-    public ArrayList<Event> getOrganizingEventsList() {
+    public ArrayList<String> getOrganizingEventsList() {
         return organizingEventsList;
     }
 
-    public void setOrganizingEventsList(ArrayList<Event> organizingEventsList) {
+    public void setOrganizingEventsList(ArrayList<String> organizingEventsList) {
         this.organizingEventsList = organizingEventsList;
     }
 
-    public ArrayList<Event> getCheckedInEventsList() {
+    public ArrayList<String> getCheckedInEventsList() {
         return checkedInEventsList;
     }
 
-    public void setCheckedInEventsList(ArrayList<Event> checkedInEventsList) {
+    public void setCheckedInEventsList(ArrayList<String> checkedInEventsList) {
         this.checkedInEventsList = checkedInEventsList;
     }
 
@@ -102,6 +126,13 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
-
+        dest.writeString(name);
+        dest.writeString(homepage);
+        dest.writeString(contactInformation);
+        dest.writeString(profilePicture);
+        dest.writeByte((byte) (geolocationTrackingEnabled == null ? 0 : geolocationTrackingEnabled ? 1 : 2));
+        dest.writeStringList(signedUpForEventList);
+        dest.writeStringList(organizingEventsList);
+        dest.writeStringList(checkedInEventsList);
     }
 }

@@ -197,11 +197,11 @@ public class ProfileFragment extends Fragment {
 
 
     ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
-        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-            Uri imageuri = result.getData().getData();
-            uploadImage(imageuri);
-        }
-    }
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Uri imageuri = result.getData().getData();
+                    uploadImage(imageuri);
+                }
+            }
     );
 
     private void uploadImage(Uri imageUri) {
@@ -264,9 +264,9 @@ public class ProfileFragment extends Fragment {
                         String homePage = document.getString("Homepage");
                         boolean usrlocation = document.getBoolean("Location");
 
-                        ArrayList<Event> checkedInto = (ArrayList<Event>) document.get("checkedInto");
-                        ArrayList<Event> signedUpFor = (ArrayList<Event>) document.get("myEvents");
-                        ArrayList<Event> organizing = (ArrayList<Event>) document.get("checkedInto");
+                        ArrayList<String> checkedInto = (ArrayList<String>) document.get("checkedInto");
+                        ArrayList<String> signedUpFor = (ArrayList<String>) document.get("myEvents");
+                        ArrayList<String> organizing = (ArrayList<String>) document.get("checkedInto");
 
                         if(document.contains("ProfilePic")){
                             String profilePicURI = document.getString("ProfilePic");
