@@ -33,6 +33,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 /**
  * Represents the fragment for displaying and editing a user's profile.
  */
@@ -110,9 +113,9 @@ public class ProfileFragment extends Fragment {
 
                         usersRef = db.collection("users");
                         usersRef.document(userId).update("Name", name, "Contact", contact, "Homepage",homePage);
-                        user.setUsername(name);
-                        user.setUsercontact(contact);
-                        user.setUserhomepage(homePage);
+                        user.setName(name);
+                        user.setContactInformation(contact);
+                        user.setHomepage(homePage);
 
                         dialog.dismiss();
                     }
@@ -126,14 +129,14 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 usersRef = db.collection("users");
 
-                if(user.location){
+                if(user.getGeolocationTrackingEnabled()){
                     location.setText("OFF");
                     usersRef.document(userId).update("Location", false);
-                    user.setLocation(false);
+                    user.setGeolocationTrackingEnabled(false);
                 } else {
                     location.setText("ON");
                     usersRef.document(userId).update("Location", true);
-                    user.setLocation(true);
+                    user.setGeolocationTrackingEnabled(true);
                 }
             }
         });
@@ -215,7 +218,7 @@ public class ProfileFragment extends Fragment {
                     usersRef.document(userId).update("ProfilePic", uri.toString())
                             .addOnSuccessListener(aVoid -> {
                                 // Update the user object with the new profile picture URI
-                                user.setImg(uri.toString());
+                                user.setProfilePicture(uri.toString());
 //                                // Update the ImageView with the new profile picture
                                 Glide.with(requireContext()).load(uri).into(profilePic);
 
@@ -261,19 +264,23 @@ public class ProfileFragment extends Fragment {
                         String homePage = document.getString("Homepage");
                         boolean usrlocation = document.getBoolean("Location");
 
+                        ArrayList<Event> checkedInto = (ArrayList<Event>) document.get("checkedInto");
+                        ArrayList<Event> signedUpFor = (ArrayList<Event>) document.get("myEvents");
+                        ArrayList<Event> organizing = (ArrayList<Event>) document.get("checkedInto");
+
                         if(document.contains("ProfilePic")){
                             String profilePicURI = document.getString("ProfilePic");
-                            user = new User(profilePicURI, name, contact, homePage, usrlocation);
+                            user = new User(name, homePage, contact, profilePicURI, usrlocation, signedUpFor, checkedInto, organizing);
                             Glide.with(requireContext()).load(profilePicURI).into(profilePic);
                         } else {
-                            user = new User(name, contact, homePage, usrlocation);
+                            user = new User(name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
                             Glide.with(requireContext()).load("https://www.gravatar.com/avatar/"+userId+"?d=identicon").into(profilePic);
                         }
                         //setting layout objects to the User object's values
-                        userName.setText("Name: " + user.getUsername());
-                        userContact.setText("Contact: " + user.getUsercontact());
-                        userHomepage.setText("Homepage: " + user.getUserhomepage());
-                        if (user.getLocation()) {
+                        userName.setText("Name: " + user.getName());
+                        userContact.setText("Contact: " + user.getContactInformation());
+                        userHomepage.setText("Homepage: " + user.getHomepage());
+                        if (user.getGeolocationTrackingEnabled()) {
                             location.setText("ON");
                         } else {
                             location.setText("OFF");
