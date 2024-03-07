@@ -60,6 +60,7 @@ public class SplashScreen extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+
         // initialize connection to the database
         db = FirebaseFirestore.getInstance();
 
