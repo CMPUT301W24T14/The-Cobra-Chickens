@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="notificationTitleColor">#EE2314</color>
+    <color name="notificationItemBackground">#A5F80B</color>
 </resources>

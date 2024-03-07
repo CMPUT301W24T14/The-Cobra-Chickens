@@ -3,35 +3,41 @@ package com.example.eventplanner;
 import java.util.Date;
 
 public class Notification {
-    String title; // The title of the notification
-    String message; // The detailed message of the notification
-    Date date; // The date when the notification was created or should be shown
-    boolean isRead; // Flag to check if the notification has been read
+    private String title;
+    private String message;
+    private Date date;
 
-    // Constructor for a notification with only a message
-    public Notification(String message) {
+    // Constructor for all fields
+    public Notification(String title, String message, Date date) {
+        this.title = title;
         this.message = message;
-        // Set default values for title, date, and read status
-        this.title = ""; // Default title (can be removed if not needed)
-        this.date = new Date(); // Set the current date as default (can be removed if not needed)
-        this.isRead = false; // Default read status
+        this.date = date;
     }
+    public Notification(){
 
-    // Getters and Setters
+    }
+    // Getters and setters
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getMessage() {
         return message;
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public Date getDate() {
         return date;
     }
 
-    public boolean isRead() {
-        return isRead;
+    public void setDate(Date date) {
+        this.date = date;
     }
-
 }
