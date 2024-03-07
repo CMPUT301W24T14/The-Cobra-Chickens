@@ -32,10 +32,7 @@ jobs:
           java-version: 17
           distribution: 'adopt'
           cache: 'gradle'
-
-      - name: Grant Permissions
-        with:
-          script: chmod +x gradlew
+          script: chmod +x ./gradlew
           
       - name: Instrumentation Tests
         uses: ReactiveCircus/android-emulator-runner@v2
