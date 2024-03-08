@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1098627511646",
+    "project_id": "cobrachickensapp",
+    "storage_bucket": "cobrachickensapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1098627511646:android:abf7dcf796d33f76270bcf",
+        "android_client_info": {
+          "package_name": "com.example.eventplanner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmmY7BuTjuN_EluMjgtNKNb6pjehgYCr4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
