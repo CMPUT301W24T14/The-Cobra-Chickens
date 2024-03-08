@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
@@ -76,5 +77,15 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
                 }
             });
         }
+    }
+
+    public void updateEventListItems(ArrayList<Event> events2){
+
+        final EventDiffCallback diffCallback = new EventDiffCallback(this.events, events2);
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+
+        this.events.clear();
+        this.events.addAll(events2);
+        diffResult.dispatchUpdatesTo(this);
     }
 }

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +27,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -41,6 +43,7 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
     private RecyclerView myEventsRecyclerView; // RecyclerView list of user's singed-up-for events
     private ArrayList<Event> myEventsList; // ArrayList that holds all events that the user has signed up for
     private EventRecyclerAdapterUpdated myEventsRecyclerAdapter; // EventRecyclerAdapter for myEventsRecyclerView
+    private CollectionReference userRef;
 
     /**
      * Creates the view for MyEventsFragment, which is contained within HomeFragmentUpdated
@@ -128,9 +131,11 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
                             String eventLocation = documentSnapshot.getString("Location");
                             String eventPoster = documentSnapshot.getString("Poster");
                             ArrayList<String> eventAnnouncements = (ArrayList<String>) documentSnapshot.get("Announcements");
+                            ArrayList<String> checkedInUsers = (ArrayList<String>) documentSnapshot.get("checkedInUsers");
+                            ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
                             // create Event object with retrieved event information and add it to myEventsList
-                            myEventsList.add(new Event(eventId, eventName, eventDate, eventLocation, eventPoster, eventAnnouncements));
+                            myEventsList.add(new Event(eventId, eventName, eventDate, eventLocation, eventPoster, eventAnnouncements, checkedInUsers, signedUpUsers));
 
                             // tell myEventsRecyclerView that the dataset that myEventsRecyclerAdapter is responsible for has changed
                             myEventsRecyclerAdapter.notifyDataSetChanged();

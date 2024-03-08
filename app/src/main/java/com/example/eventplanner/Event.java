@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -13,10 +14,11 @@ public class Event implements Parcelable {
     String eventId;
     String eventName;
     Date eventDate;
-  
     String eventLocation;
     String eventPoster;
     ArrayList<String> eventAnnouncements;
+    ArrayList<String> checkedInUsers;
+    ArrayList<String> signedUpUsers;
 
     //if both poster and announcements are available
     public Event(String eventPoster, String eventName, Date eventDate, ArrayList<String> announcements) {
@@ -60,7 +62,9 @@ public class Event implements Parcelable {
     }
 
     // camille - testing event w/ all info
-    public Event(String eventId, String eventName, Date eventDate, String eventLocation, String eventPoster, ArrayList<String> eventAnnouncements) {
+    public Event(String eventId, String eventName, Date eventDate, String eventLocation, String eventPoster,
+                 ArrayList<String> eventAnnouncements,
+                 ArrayList<String> signedUpUsers, ArrayList<String> checkedInUsers) {
 
         this.eventId = eventId;
         this.eventName = eventName;
@@ -68,15 +72,23 @@ public class Event implements Parcelable {
         this.eventLocation = eventLocation;
         this.eventPoster = eventPoster;
         this.eventAnnouncements = eventAnnouncements;
-
+        this.signedUpUsers = signedUpUsers;
+        this.checkedInUsers = checkedInUsers;
     }
 
     protected Event(Parcel in) {
+        eventId = in.readString();
         eventName = in.readString();
         eventDate = new Date(in.readLong());
         eventLocation = in.readString();
         eventPoster = in.readString();
         eventAnnouncements = in.createStringArrayList();
+        signedUpUsers = in.createStringArrayList();
+        checkedInUsers = in.createStringArrayList();
+    }
+
+    public String getEventId() {
+        return eventId;
     }
 
     public String getEventPoster() {
@@ -140,11 +152,14 @@ public class Event implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(eventId);
         dest.writeString(eventName);
         dest.writeLong(eventDate.getTime());
         dest.writeString(eventLocation);
         dest.writeString(eventPoster);
         dest.writeStringList(eventAnnouncements);
+        dest.writeStringList(signedUpUsers);
+        dest.writeStringList(checkedInUsers);
     }
 }
 

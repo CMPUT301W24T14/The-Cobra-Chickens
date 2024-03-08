@@ -270,10 +270,10 @@ public class ProfileFragment extends Fragment {
 
                         if(document.contains("ProfilePic")){
                             String profilePicURI = document.getString("ProfilePic");
-                            user = new User(name, homePage, contact, profilePicURI, usrlocation, signedUpFor, checkedInto, organizing);
+                            user = new User(userId, name, homePage, contact, profilePicURI, usrlocation, signedUpFor, checkedInto, organizing);
                             Glide.with(requireContext()).load(profilePicURI).into(profilePic);
                         } else {
-                            user = new User(name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
+                            user = new User(userId, name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
                             Glide.with(requireContext()).load("https://www.gravatar.com/avatar/"+userId+"?d=identicon").into(profilePic);
                         }
                         //setting layout objects to the User object's values
