@@ -37,10 +37,11 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
         holder.eventName.setText(events.get(position).getEventName());
         holder.eventLocation.setText(events.get(position).getEventLocation());
 
-        SimpleDateFormat cardViewEventDate = new SimpleDateFormat("MM/dd/yyyy");
-        String formattedCardViewEventData = cardViewEventDate.format(events.get(position).getEventDate());
+        //SimpleDateFormat cardViewEventDate = new SimpleDateFormat("MM/dd/yyyy");
+        holder.eventDate.setText(events.get(position).getEventDate());
+        //String formattedCardViewEventData = cardViewEventDate.format(events.get(position).getEventDate());
 
-        holder.eventDate.setText(formattedCardViewEventData);
+        //holder.eventDate.setText(formattedCardViewEventData);
     }
 
     @Override
