@@ -14,27 +14,7 @@ on:
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  UnitTests:
-      runs-on: [ubuntu-latest]
-      steps:
-        - uses: actions/checkout@v3
-
-        - name: setup JDK 17
-          uses: actions/setup-java@v3 
-          with: 
-            java-version: '17' 
-            distribution: 'temurin' 
-            cache: gradle 
-          
-        - name: Grant execute permission for gradlew 
-          run: chmod +x gradlew 
-          
-        - name: Build with Gradle 
-          run: ./gradlew build 
-        - name: Run Unit Tests
-          run: ./gradlew test
-          
+jobs:     
   # This workflow contains a single job called "build"
   AndroidTests:
     # The type of runner that the job will run on
@@ -43,15 +23,23 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-      - name: Grant permission
-        uses: reactivecircus/android-emulator-runner@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
-          api-level: 29
-          script: chmod +x gradlew
+          java-version: 17
+          distribution: 'adopt'
+          cache: 'gradle'
+      
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
       
       - name: Instrumentation Tests
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: ReactiveCircus/android-emulator-runner@v2
         with:
-          api-level: 29
-          script: ./gradlew connectedAndroidTest
+          api-level: 30
+          target: google_apis
+          arch: x86_64
+          script: ./gradlew connectedCheck

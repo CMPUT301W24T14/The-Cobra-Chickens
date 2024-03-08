@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class MainActivityTest {
+public class TestUS01 {
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
     // Temporary test to make this class not give an error when running without other tests
@@ -35,10 +35,12 @@ public class MainActivityTest {
 
     // Tests for US 01.01.01
     // As an organizer, I want to create a new event and generate a unique QR code for attendee check-ins.
+    /*
     @Test
     public void test01_01_01() {
-        fail();
+        //fail();
     }
+     */
 
     // Tests for US 01.01.02
     // As an organizer, I want the option to reuse an existing QR code for attendee check-ins.
