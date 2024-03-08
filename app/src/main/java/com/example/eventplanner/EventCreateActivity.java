@@ -58,6 +58,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Activity for creating events.
+ */
 public class EventCreateActivity extends AppCompatActivity {
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
@@ -141,6 +144,7 @@ public class EventCreateActivity extends AppCompatActivity {
                         }
                     }
                 });
+        // Check for click on image upload button.
         imageUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,14 +168,15 @@ public class EventCreateActivity extends AppCompatActivity {
             }
         });
 
+        // Check for click on event creation button, and handle backend logic.
         eventCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String event_name, guests, location;
                 event_name = String.valueOf(editTextEventName.getText());
                 guests = String.valueOf(editTextMaxAttendees.getText());
                 location = String.valueOf(editTextEventLocation.getText());
+                // Create a map of items to be put into the database
                 Map<String, Object> doc_event = new HashMap<>();
                 doc_event.put("eventName", event_name);
                 doc_event.put("eventMaxAttendees", guests);
@@ -188,41 +193,43 @@ public class EventCreateActivity extends AppCompatActivity {
                 //DocumentReference key;
                 key = db.collection("events").document();
                 key.set(doc_event).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
+                    @Override
+                    public void onSuccess(Void unused) {
 
-                                Log.d("TESTING", "added this event id:" + (key.getId()));
+                        Log.d("TESTING", "added this event id:" + (key.getId()));
 
-                                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                                DocumentReference userRef = db.collection("users").document(userId);
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        DocumentReference userRef = db.collection("users").document(userId);
 
-                                userRef.update("Organizing", FieldValue.arrayUnion(key.getId()))
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                Log.d("TESTING", "SUCCESS added  " + (key.getId()));
+                        userRef.update("Organizing", FieldValue.arrayUnion(key.getId()))
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Log.d("TESTING", "SUCCESS added  " + (key.getId()));
 
-                                            }
-                                        });
-                            }
-                        });
-
+                                    }
+                                });
+                    }
+                });
                 finish();
             }
         });
     }
 
+    // Function for opening the gallery on user device.
     private void openGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryLauncher.launch(galleryIntent);
     }
 
+    // Function to open the calendar to select a date.
     private void openDateDialog() {
         DatePickerDialog dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            // When user confirms the date, grab those values.
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                dateButton.setText(String.valueOf(year)+"/"+String.valueOf(month + 1)+"/"+String.valueOf(day));
+                dateButton.setText(String.valueOf(year)+"/"+String.valueOf(month + 1)+"/"+String.valueOf(day)); // add one to month because month starts at 0 here.
                 date_year = String.valueOf(year);
                 date_month = String.valueOf(month + 1);
                 date_day = String.valueOf(day);
@@ -231,11 +238,13 @@ public class EventCreateActivity extends AppCompatActivity {
 
         dialog.show();
     }
-
+    // Function to open the clock to select a time.
     private void openTimeDialog() {
         TimePickerDialog dialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            // When user confirms the time, grab those values.
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                // Some logic to properly format time for our uses. IE AM/PM, 12:05 vs 12:5, etc.
                 time_am_pm = (hourOfDay < 12) ? "am" : "pm";
                 time_hour = String.valueOf((hourOfDay <= 12) ? hourOfDay : hourOfDay - 12);
                 if (minute < 10) {
