@@ -102,7 +102,7 @@ public class profilesRecyclerAdapter extends RecyclerView.Adapter<profilesRecycl
         private TextView contact;
         private TextView homepage;
         private ImageView proPic;
-        private LinearLayout row;
+        LinearLayout row;
         public ViewHolder(View itemView){
             super(itemView);
             name = itemView.findViewById(R.id.name);

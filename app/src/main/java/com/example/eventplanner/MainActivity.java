@@ -21,6 +21,14 @@ public class MainActivity extends AppCompatActivity {
     private ProfileFragment profileFragment;
     private BottomNavigationView bottomNavigationBar;
 
+    /**
+     * Sets up the bottom navigation bar and its listeners, then binds the respective fragments
+     * to its button icons.
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -40,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
                 int itemId = item.getItemId();
 
+                // select the fragment based on what was clicked in the bottomNavigationBar
                 if (itemId == R.id.home) {
                     selectFragment(new HomeFragmentUpdated());
                 } else if (itemId == R.id.scan) {
@@ -61,8 +70,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void selectFragment(Fragment fragment) {
 
+        // grab the fragment currently associated with MainActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
 
+        // replace the fragment container with the new fragment
         fragmentManager
                 .beginTransaction()
                 .replace(R.id.fragment_container, fragment)

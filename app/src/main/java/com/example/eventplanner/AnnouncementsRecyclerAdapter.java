@@ -34,8 +34,7 @@ public class AnnouncementsRecyclerAdapter extends RecyclerView.Adapter<Announcem
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String announcement = announcementsList.get(position);
-        holder.announcementTextView.setText(announcement);
+
     }
 
     @Override
