@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
 
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -135,6 +136,12 @@ public class TestUS02 {
         onView(withId(R.id.editHomepage)).perform(replaceText("https://www.facebook.com/zuck/"));
         onView(withId(R.id.saveBtn)).perform(click());
 
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+
         onView(withId(R.id.profile)).perform(click());
         onView(withId(R.id.profileName)).check(matches(withText("Name: Mark Zukerberg")));
         onView(withId(R.id.profileContact)).check(matches(withText("Contact: zuck@fb.com")));
@@ -155,13 +162,31 @@ public class TestUS02 {
     // As an attendee, I want to view event details and announcements within the app.
     @Test
     public void test02_04_01() {
-        /*onView(withId(R.id.home)).perform(click());
-        onView(withText("My Events")).check(matches(isDisplayed()));
-        onView(withText("My Events")).perform(click());
+        onView(withId(R.id.home)).perform(click());
+        onView(withText("All Events")).check(matches(isDisplayed()));
+        onView(withText("All Events")).perform(click());
         onView(withText("Event1")).perform(click());
         onView(withText("Event Details")).check(matches(isDisplayed()));
-        onView(withText("Announcements:")).check(matches(isDisplayed()));*/
+        onView(withText("Sign Up")).perform(click());
+        onView(withText(("Confirm"))).perform(click());
+        Espresso.pressBack();
 
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+        onView(withId(R.id.home)).perform(click());
+        onView(withText("My Events")).check(matches(isDisplayed()));
+        onView(withText("My Events")).perform(click());
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+        onView(withText("Event1")).perform(click());
+        onView(withText("Event Details")).check(matches(isDisplayed()));
+        onView(withText("Announcements:")).check(matches(isDisplayed()));
     }
 
     // Tests for US 02.05.01
