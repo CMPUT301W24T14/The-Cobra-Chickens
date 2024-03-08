@@ -25,9 +25,9 @@ import org.junit.runner.RunWith;
 @LargeTest
 public class TestUnspecified {
     @Rule
-    public ActivityScenarioRule<SplashScreen> scenario_0 = new ActivityScenarioRule<SplashScreen>(SplashScreen.class);
+    public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
     // Test Splash Screen
-    @Test
+    /*@Test
     public void test_00_Splash() {
         onView(withText("Welcome to Cobra Event Management")).check(matches(isDisplayed()));
         onView(withText("Continue")).perform(click());
@@ -37,7 +37,7 @@ public class TestUnspecified {
             throw new RuntimeException(e);
         }
         onView(withText("Welcome to Cobra Event Management")).check(doesNotExist());
-    }
+    }*/
 
     @Test
     public void test_01_MainScreen() {

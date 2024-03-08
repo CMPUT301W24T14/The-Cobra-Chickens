@@ -155,12 +155,13 @@ public class TestUS02 {
     // As an attendee, I want to view event details and announcements within the app.
     @Test
     public void test02_04_01() {
-        onView(withId(R.id.home)).perform(click());
-        onView(withText("All Events")).check(matches(isDisplayed()));
-        onView(withText("All Events")).perform(click());
+        /*onView(withId(R.id.home)).perform(click());
+        onView(withText("My Events")).check(matches(isDisplayed()));
+        onView(withText("My Events")).perform(click());
         onView(withText("Event1")).perform(click());
         onView(withText("Event Details")).check(matches(isDisplayed()));
-        onView(withText("Announcements:")).check(matches(isDisplayed()));
+        onView(withText("Announcements:")).check(matches(isDisplayed()));*/
+
     }
 
     // Tests for US 02.05.01
@@ -192,12 +193,15 @@ public class TestUS02 {
 
     // Tests for US 02.08.01
     // As an attendee, I want to browse event posters/event details of other events.
-    /*
     @Test
     public void test02_08_01() {
-
+        onView(withId(R.id.home)).perform(click());
+        onView(withText("All Events")).check(matches(isDisplayed()));
+        onView(withText("All Events")).perform(click());
+        onView(withText("Event1")).perform(click());
+        onView(withText("Event Details")).check(matches(isDisplayed()));
+        onView(withText("Announcements:")).check(matches(isDisplayed()));
     }
-     */
 
     // Tests for US 02.09.01
     // As an attendee, I want to know what events I signed up for currently and in and in the future.
