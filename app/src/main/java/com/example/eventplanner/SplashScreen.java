@@ -112,7 +112,8 @@ public class SplashScreen extends AppCompatActivity {
 
                             HashMap<String, Object> userMap = new HashMap<>();
 
-                            userMap.put("Name", "Robby");
+                            userMap.put("Name", mAuth.getCurrentUser().getUid());
+
                             userMap.put("Homepage", "");
                             userMap.put("Contact", "");
                             userMap.put("ProfilePic", "");

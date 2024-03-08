@@ -53,7 +53,7 @@ public class EventCreateActivity extends AppCompatActivity {
     private String time_am_pm;
     private String event_poster;
     private String event_location;
-    private TextInputEditText editTextEventName, editTextMaxAttendees;
+    private TextInputEditText editTextEventName, editTextMaxAttendees, editTextEventLocation;
 
 
     @Override
@@ -63,6 +63,7 @@ public class EventCreateActivity extends AppCompatActivity {
 
         editTextEventName = findViewById(R.id.event_name);
         editTextMaxAttendees = findViewById(R.id.event_max_attendees);
+        editTextEventLocation = findViewById(R.id.event_location);
 
         dateButton = findViewById(R.id.buttonDatePicker);
         timeButton = findViewById(R.id.buttonTimePicker);
@@ -106,17 +107,18 @@ public class EventCreateActivity extends AppCompatActivity {
         eventCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String event_name, guests;
+                String event_name, guests, location;
                 event_name = String.valueOf(editTextEventName.getText());
                 guests = String.valueOf(editTextMaxAttendees.getText());
+                location = String.valueOf(editTextEventLocation.getText());
                 Map<String, Object> doc_event = new HashMap<>();
                 doc_event.put("eventName", event_name);
                 doc_event.put("eventMaxAttendees", guests);
                 doc_event.put("eventDate", date_year+"/"+date_month+"/"+date_day);
                 doc_event.put("eventTime", time_hour+":"+time_minute+" "+time_am_pm);
+                doc_event.put("eventLocation", location);
                 doc_event.put("eventOrganizer", event_creator);
                 doc_event.put("eventPoster", "test value");
-                doc_event.put("eventLocation", "Fakesies House");
                 db.collection("events").document()
                         .set(doc_event);
                 finish();
