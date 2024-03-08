@@ -23,6 +23,16 @@ import org.junit.runner.RunWith;
 
 public abstract class AbstractTest {
     public void splashScreenContinue() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
         try {onView(withId(R.id.btn_continue)).perform(click());} catch (Exception ignored) {}
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
     }
 }
