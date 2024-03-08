@@ -1,4 +1,3 @@
-// OpenAI, 2024, ChatGPT
 package com.example.eventplanner;
 
 import android.os.Parcel;
@@ -12,19 +11,17 @@ import java.util.Date;
 
 public class Event implements Parcelable {
 
-    String eventId;
-    String eventName;
-    String eventMaxAttendees;
-    String eventDate;
-    String eventTime;
-    String eventLocation;
-    String eventPoster;
-    ArrayList<String> eventAnnouncements;
-    ArrayList<String> checkedInUsers;
-    ArrayList<String> signedUpUsers;
+    private String eventId;
+    private String eventName;
+    private String eventMaxAttendees;
+    private String eventDate;
+    private String eventTime;
+    private String eventLocation;
+    private String eventPoster;
+    private ArrayList<String> eventAnnouncements;
+    private ArrayList<String> checkedInUsers;
+    private ArrayList<String> signedUpUsers;
 
-
-    // camille - testing event w/ all info
     public Event(String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime,String eventLocation, String eventPoster,
                  ArrayList<String> eventAnnouncements,
                  ArrayList<String> signedUpUsers, ArrayList<String> checkedInUsers) {
@@ -39,6 +36,7 @@ public class Event implements Parcelable {
         this.eventAnnouncements = eventAnnouncements;
         this.signedUpUsers = signedUpUsers;
         this.checkedInUsers = checkedInUsers;
+
     }
 
     protected Event(Parcel in) {
@@ -165,5 +163,3 @@ public class Event implements Parcelable {
         dest.writeStringList(checkedInUsers);
     }
 }
-
-//comment to commit (ignore)

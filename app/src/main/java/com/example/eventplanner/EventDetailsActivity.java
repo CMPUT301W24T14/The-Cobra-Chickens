@@ -33,19 +33,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-
 public class EventDetailsActivity extends AppCompatActivity {
 
     private TextView eventNameTextView, eventDateTextView, eventTimeTextView, eventOrganizerTextView;
     private RecyclerView announcementsRecyclerView;
     private ArrayList<String> announcements = new ArrayList<>();;
-
     private ImageView poster;
-
     private Button signUpButton;
-    Bundle bundle;
+    private Bundle bundle;
     private FirebaseFirestore db; // the database
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -161,13 +157,4 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     }
 
-//    private String formatDate(Date eventDate) {
-//        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-//        return sdf.format(eventDate);
-//    }
-//
-//    private String formatTime(Date eventDate) {
-//        SimpleDateFormat sdf = new SimpleDateFormat("h:mma");
-//        return sdf.format(eventDate).toUpperCase();
-//    }
 }

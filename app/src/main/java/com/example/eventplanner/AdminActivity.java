@@ -9,11 +9,10 @@ import android.view.View;
 import android.widget.Button;
 
 public class AdminActivity extends AppCompatActivity {
-    Button eventsBtn;
-    Button picsBtn;
-    Button profilesBtn;
-
-    Button logout;
+    private Button eventsBtn;
+    private Button picsBtn;
+    private Button profilesBtn;
+    private Button logout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +61,6 @@ public class AdminActivity extends AppCompatActivity {
                 finish();
             }
         });
-
 
     }
 }

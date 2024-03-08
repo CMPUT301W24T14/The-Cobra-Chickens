@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapter.ViewHolder> {
 
-    ArrayList<User> users;
+    private ArrayList<User> users;
     private Context context;
     private RecyclerViewInterface recyclerViewInterface;
 
@@ -60,8 +60,8 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView userName;
-        ImageView userProfilePic;
+        private TextView userName;
+        private ImageView userProfilePic;
 
         public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
 

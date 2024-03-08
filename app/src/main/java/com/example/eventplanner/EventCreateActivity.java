@@ -61,23 +61,20 @@ import java.util.Objects;
 public class EventCreateActivity extends AppCompatActivity {
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
-
     private FirebaseFirestore db; // the database
-    FirebaseAuth auth;
-    FirebaseUser user;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
     private Button dateButton;
     private Button timeButton;
     private FloatingActionButton backButton;
-    Event event;
-    CollectionReference eventsRef;
+    private Event event;
+    private CollectionReference eventsRef;
     private Button eventCreateButton;
-
     private static final int PICK_IMAGE_REQUEST = 1;
-    ImageView eventPosterImageView;
+    private ImageView eventPosterImageView;
     private Button imageUploadButton;
     private Uri imageUri;
     private ActivityResultLauncher<Intent> galleryLauncher;
-
     private String event_creator;
     private String event_name;
     private String event_max_attendees;
@@ -90,8 +87,7 @@ public class EventCreateActivity extends AppCompatActivity {
     private String event_poster;
     private String event_location;
     private TextInputEditText editTextEventName, editTextMaxAttendees, editTextEventLocation;
-    DocumentReference key;
-
+    private DocumentReference key;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
