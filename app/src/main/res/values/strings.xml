@@ -17,13 +17,12 @@
     <string name="continue_to_home">Continue</string>
     <string name="enter_event_location">Enter Event Location</string>
     <string name="title_activity_admin">Admin</string>
+
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-    <string name="default_notification_channel_id">"your_channel_id"</string>
-    <string name="fcm_message">"FCM Message"</string>
     <string name="generate">Generate</string>
     <string name="qrcode">QRCode</string>
 </resources>
