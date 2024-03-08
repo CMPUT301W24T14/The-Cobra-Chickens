@@ -22,16 +22,24 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 /**
- * Represents the fragment that shows users notifications, mimicking the logic of AllEventsFragment.
+ * Represents the fragment that shows users notifications.
  */
 public class NotificationsFragment extends Fragment {
 
     private FirebaseFirestore db;
     private CollectionReference notificationsCollectionReference;
     private RecyclerView notificationsRecyclerView;
-    private ArrayList<Notification> notificationsList; // Assume Notification is a defined class similar to Event
+    private ArrayList<Notification> notificationsList;
     private NotificationsRecyclerAdapter notificationsAdapter;
 
+    /**
+     * Called to have the fragment instantiate its user interface view.
+     *
+     * @param inflater           The LayoutInflater object that can be used to inflate views in the fragment,
+     * @param container          If non-null, this is the parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     * @return The View for the fragment's UI, or null.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,7 +47,7 @@ public class NotificationsFragment extends Fragment {
 
         // Initialize Firestore and get reference to notifications/events collection
         db = FirebaseFirestore.getInstance();
-        notificationsCollectionReference = db.collection("notifications"); // Adjust if your collection name differs
+        notificationsCollectionReference = db.collection("events");
 
         // Setup the RecyclerView
         notificationsRecyclerView = view.findViewById(R.id.recyclerView_notifications);
