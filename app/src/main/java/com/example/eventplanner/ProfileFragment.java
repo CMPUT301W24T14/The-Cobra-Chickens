@@ -298,11 +298,11 @@ public class ProfileFragment extends Fragment {
                         } else {
 
                             if (name != null && name.equals("")) {
-                                user = new User(name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
+                                user = new User(userId, name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
                                 Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + userId + "?d=identicon").into(profilePic);
                             }
                             else {
-                                user = new User(name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
+                                user = new User(userId, name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
                                 Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + user.getName() + "?d=identicon").into(profilePic);
                             }
                         }
