@@ -141,14 +141,6 @@ public class TestUS02 {
         onView(withId(R.id.profileHomepage)).check(matches(withText("Homepage: https://www.facebook.com/zuck/")));
 
     }
-    @Test
-    public void test02_02_03_03() {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            //throw new RuntimeException(e);
-        }
-    }
 
     // Tests for US 02.03.01
     // As an attendee, I want to receive push notifications with important updates from the event organizers.
@@ -161,12 +153,15 @@ public class TestUS02 {
 
     // Tests for US 02.04.01
     // As an attendee, I want to view event details and announcements within the app.
-    /*
     @Test
     public void test02_04_01() {
-
+        onView(withId(R.id.home)).perform(click());
+        onView(withText("All Events")).check(matches(isDisplayed()));
+        onView(withText("All Events")).perform(click());
+        onView(withText("Event1")).perform(click());
+        onView(withText("Event Details")).check(matches(isDisplayed()));
+        onView(withText("Announcements:")).check(matches(isDisplayed()));
     }
-     */
 
     // Tests for US 02.05.01
     // As an attendee, I want my profile picture to be deterministically generated from my profile name if I haven't uploaded an profile image yet.
