@@ -33,6 +33,13 @@ public class User implements Parcelable {
         this.checkedInEventsList = checkedInEventsList;
     }
 
+    public User(String name, String homepage, String contactInformation, String profilePicture){
+        this.name = name;
+        this.homepage = homepage;
+        this.contactInformation = contactInformation;
+        this.profilePicture = profilePicture;
+    }
+
     protected User(Parcel in) {
         userId = in.readString();
         name = in.readString();

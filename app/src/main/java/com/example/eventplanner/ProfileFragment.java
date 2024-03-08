@@ -52,6 +52,8 @@ public class ProfileFragment extends Fragment {
     Button editDetails;
     Button location;
 
+    Button adminLogin;
+
 //    FirebaseAuth auth;
 //    FirebaseUser currentUser;
 
@@ -83,6 +85,7 @@ public class ProfileFragment extends Fragment {
         userHomepage = view.findViewById(R.id.profileHomepage);
         location = view.findViewById(R.id.location);
         editDetails = view.findViewById(R.id.editProfile);
+        adminLogin = view.findViewById(R.id.adminLoginBtn);
 
 
 
@@ -171,7 +174,13 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-
+        adminLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), AdminActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 
