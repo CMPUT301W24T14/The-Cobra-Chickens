@@ -22,9 +22,9 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class TestUS01 {
+public class TestUS01 extends AbstractTest {
     @Rule
-    public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
+    public ActivityScenarioRule<SplashScreen> scenario = new ActivityScenarioRule<SplashScreen>(SplashScreen.class);
     // Temporary test to make this class not give an error when running without other tests
     @Test
     public void useAppContext() {
@@ -38,7 +38,7 @@ public class TestUS01 {
     /*
     @Test
     public void test01_01_01() {
-        //fail();
+        splashScreenContinue();
     }
      */
 
@@ -47,7 +47,7 @@ public class TestUS01 {
     /*
     @Test
     public void test01_01_02() {
-
+        splashScreenContinue();
     }
      */
 
@@ -56,7 +56,7 @@ public class TestUS01 {
     /*
     @Test
     public void test01_02_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -65,7 +65,7 @@ public class TestUS01 {
     /*
     @Test
     public void test01_03_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -74,7 +74,7 @@ public class TestUS01 {
     /*
     @Test
     public void test01_04_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -83,7 +83,7 @@ public class TestUS01 {
     /*
     @Test
     public void test01_05_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -92,7 +92,7 @@ public class TestUS01 {
     /*
     @Test
     public void test01_06_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -101,7 +101,7 @@ public class TestUS01 {
     /*
     @Test
     public void test01_07_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -110,7 +110,7 @@ public class TestUS01 {
     /*
     @Test
     public void test01_08_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -119,7 +119,7 @@ public class TestUS01 {
     /*
     @Test
     public void test01_09_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -128,7 +128,7 @@ public class TestUS01 {
     /*
     @Test
     public void test01_10_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -137,7 +137,7 @@ public class TestUS01 {
     /*
     @Test
     public void test01_11_01() {
-
+        splashScreenContinue();
     }
      */
 }

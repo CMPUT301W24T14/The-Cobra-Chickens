@@ -9,16 +9,20 @@ import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
 
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class TestUS04 {
+public class TestUS04 extends AbstractTest {
+    @Rule
+    public ActivityScenarioRule<SplashScreen> scenario = new ActivityScenarioRule<SplashScreen>(SplashScreen.class);
     // Temporary test to make this class not give an error when running without other tests
     @Test
     public void useAppContext() {
@@ -32,7 +36,7 @@ public class TestUS04 {
     /*
     @Test
     public void test04_01_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -41,7 +45,7 @@ public class TestUS04 {
     /*
     @Test
     public void test04_02_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -50,7 +54,7 @@ public class TestUS04 {
     /*
     @Test
     public void test04_03_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -59,7 +63,7 @@ public class TestUS04 {
     /*
     @Test
     public void test04_04_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -68,7 +72,7 @@ public class TestUS04 {
     /*
     @Test
     public void test004_05_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -77,7 +81,7 @@ public class TestUS04 {
     /*
     @Test
     public void test04_06_01() {
-
+        splashScreenContinue();
     }
      */
 }
