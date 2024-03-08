@@ -1,3 +1,5 @@
+// OpenAI, 2024, ChatGPT
+
 package com.example.eventplanner;
 
 import android.app.Activity;
@@ -25,6 +27,8 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -32,8 +36,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-//import com.google.firebase.auth.FirebaseAuth;
-//import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -52,12 +56,9 @@ public class ProfileFragment extends Fragment {
     Button editDetails;
     Button location;
 
+
+
     Button adminLogin;
-
-//    FirebaseAuth auth;
-//    FirebaseUser currentUser;
-
-
 
     User user;
 
@@ -65,6 +66,8 @@ public class ProfileFragment extends Fragment {
 
     FirebaseFirestore db;
     CollectionReference usersRef;
+    FirebaseUser user_test;
+    FirebaseAuth auth_test;
 
 
     @Nullable
@@ -73,8 +76,7 @@ public class ProfileFragment extends Fragment {
 
         // inflate the layout for the profile fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
-        getUser();
+        
 
         //getting all the layout objects
         profilePic = view.findViewById(R.id.profilePic);
@@ -87,7 +89,10 @@ public class ProfileFragment extends Fragment {
         editDetails = view.findViewById(R.id.editProfile);
         adminLogin = view.findViewById(R.id.adminLoginBtn);
 
+        auth_test = FirebaseAuth.getInstance();
+        user_test = auth_test.getCurrentUser();
 
+        getUser();
 
         //listening for edit button
         editDetails.setOnClickListener(new View.OnClickListener() {
@@ -190,7 +195,7 @@ public class ProfileFragment extends Fragment {
 
     private void deleteProfilePic() {
 
-        userId = "0nNgFlbgVscmZVWyd5492dSjjX02";
+        userId = user_test.getUid();
         usersRef.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -282,7 +287,7 @@ public class ProfileFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         usersRef = db.collection("users");
 
-        userId = "0nNgFlbgVscmZVWyd5492dSjjX02";
+        userId = user_test.getUid();
 
         usersRef.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

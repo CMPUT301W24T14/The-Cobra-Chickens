@@ -1,3 +1,5 @@
+// OpenAI, 2024, ChatGPT, creating back button, changing intent
+
 package com.example.eventplanner;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,11 +46,12 @@ public class AdminProfilesActivity extends AppCompatActivity {
         usersRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
             for (DocumentSnapshot document : queryDocumentSnapshots) {
                 // Extract user data and add it to the list
+                String documentId = document.getId();
                 String name = document.getString("Name");
                 String contact = document.getString("Contact");
                 String homepage = document.getString("Homepage");
                 String proPic = document.getString("ProfilePic");
-                profilesList.add(new User(name, homepage,contact,proPic));
+                profilesList.add(new User(documentId,name, homepage,contact,proPic));
             }
 
 //            // Display the users in the ListView

@@ -1,3 +1,4 @@
+// OpenAI, 2024, ChatGPT
 package com.example.eventplanner;
 
 import android.os.Parcel;
