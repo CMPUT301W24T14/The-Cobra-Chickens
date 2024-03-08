@@ -2,6 +2,12 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="TestUS02">
+        <State />
+      </entry>
+      <entry key="TestUnspecified">
+        <State />
+      </entry>
       <entry key="Tests in 'com.example.eventplanner'">
         <State />
       </entry>

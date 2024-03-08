@@ -1,3 +1,4 @@
+// OpenAI, 2024, ChatGPT
 package com.example.eventplanner;
 
 import android.os.Parcel;
@@ -31,6 +32,14 @@ public class User implements Parcelable {
         this.signedUpForEventList = signedUpForEventList;
         this.organizingEventsList = organizingEventsList;
         this.checkedInEventsList = checkedInEventsList;
+    }
+
+    public User(String userId, String name, String homepage, String contactInformation, String profilePicture){
+        this.userId = userId;
+        this.name = name;
+        this.homepage = homepage;
+        this.contactInformation = contactInformation;
+        this.profilePicture = profilePicture;
     }
 
     protected User(Parcel in) {
@@ -82,6 +91,7 @@ public class User implements Parcelable {
         this.contactInformation = contactInformation;
     }
 
+    public String getUserId(){return userId;}
     public String getProfilePicture() {
         return profilePicture;
     }

@@ -1,3 +1,5 @@
+// OpenAI, 2024, ChatGPT
+
 package com.example.eventplanner;
 
 import android.app.Activity;
@@ -54,6 +56,10 @@ public class ProfileFragment extends Fragment {
     Button editDetails;
     Button location;
 
+
+
+    Button adminLogin;
+
     User user;
 
     String userId;
@@ -81,6 +87,7 @@ public class ProfileFragment extends Fragment {
         userHomepage = view.findViewById(R.id.profileHomepage);
         location = view.findViewById(R.id.location);
         editDetails = view.findViewById(R.id.editProfile);
+        adminLogin = view.findViewById(R.id.adminLoginBtn);
 
         auth_test = FirebaseAuth.getInstance();
         user_test = auth_test.getCurrentUser();
@@ -172,7 +179,13 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-
+        adminLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), AdminActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 

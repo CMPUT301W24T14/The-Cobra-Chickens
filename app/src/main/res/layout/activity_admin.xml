@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AdminActivity"
+    android:orientation="vertical"
+    android:padding="30dp"
+    android:layout_margin="30dp"
+    android:gravity="center">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/profilesBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="See Profiles"/>
+        <Button
+            android:id="@+id/eventsBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="See Events"/>
+        <Button
+            android:id="@+id/picsBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="See Pics"/>
+
+        <Button
+            android:id="@+id/logOutBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#E60C0C"
+            android:text="Log Out" />
+    </LinearLayout>
+
+</LinearLayout>
