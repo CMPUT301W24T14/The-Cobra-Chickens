@@ -17,7 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -99,7 +103,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                         // get all events in user's organizing ArrayList and put them in another ArrayList of eventIds
-                        ArrayList<String> eventIds = (ArrayList<String>) documentSnapshot.get("organizing");
+                        ArrayList<String> eventIds = (ArrayList<String>) documentSnapshot.get("Organizing");
 
                         if (eventIds != null) {
                             loadEventDocs(eventIds, organizeEventsRecyclerAdapter);
@@ -170,7 +174,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
     public void onItemClick(int position) {
 
         // set up a new intent to jump from the current activity to EventDetailsActivity
-        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+        Intent intent = new Intent(getActivity(), OrganizerEventViewActivity.class);
 
         // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
         intent.putExtra("event", organizeEventsList.get(position));

@@ -13,68 +13,79 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.CompoundBarcodeView;
 
-/**
- * This is the ScanFragment class which is responsible for scanning QR codes.
- * It extends the Fragment class and uses the CompoundBarcodeView for scanning.
- */
 public class ScanFragment extends Fragment {
     CompoundBarcodeView barcodeView;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private SharedViewModel sharedViewModel;
 
-    /**
-     * This method is called to do initial creation of the fragment.
-     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
-     * @param container If non-null, this is the parent view that the fragment's UI should be attached to.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
-     * @return Return the View for the fragment's UI, or null.
-     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
         barcodeView = view.findViewById(R.id.barcode_scanner);
 
-        //Makes sure app can access users camera
+        // In your onCreateView method, before calling decodeContinuous
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
         if (ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            //Creates dialog box to ask to user to give camera access
             ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, 1);
         }
 
-        //Manages result of QRCode, shows Success if valid QRCode scan and False otherwise
         barcodeView.decodeContinuous(result -> {
             barcodeView.pause();
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             if (result.getResult() != null) {
-                builder.setTitle("Success!");
-                builder.setMessage("Event: " + result.getResult());
+                String[] parts = String.valueOf(result.getResult()).split(":");
+                String eventId = parts[0];
+                String userId = auth.getCurrentUser().getUid();
+
+                db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        db.collection("events").document(eventId).update("checkedInUsers", FieldValue.arrayUnion(userId));
+                        db.collection("events").document(eventId).update("signedUpUsers", FieldValue.arrayUnion(userId));
+                        db.collection("users").document(userId).update("myEvents", FieldValue.arrayUnion(eventId));
+                        db.collection("users").document(userId).update("checkedInto", FieldValue.arrayUnion(eventId));
+
+                        sharedViewModel.setEventUpdated(true);
+
+                        builder.setTitle("Success!");
+                        builder.setMessage("You have successfully signed up for the event!");
+                    } else {
+                        builder.setTitle("Failure!");
+                        builder.setMessage("User does not exist!");
+                    }
+                    builder.setPositiveButton("OK", (dialog, which) -> {
+                        dialog.dismiss();
+                        barcodeView.resume();
+                    }).show();
+                });
             } else {
                 builder.setTitle("Failure!");
-                builder.setMessage("You have scanned an invalid QRCode");
+                builder.setMessage("result is null!");
+                builder.setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                    barcodeView.resume();
+                }).show();
             }
-            builder.setPositiveButton("OK", (dialog, which) -> {
-                dialog.dismiss();
-                barcodeView.resume();
-            }).show();
         });
 
         return view;
     }
 
-    /**
-     * Called when the Fragment is visible to the user.
-     * Makes sure the barcodeView is resumed.
-     */
     @Override
     public void onResume() {
         super.onResume();
         barcodeView.resume();
     }
 
-    /**
-     * Called when the Fragment is no longer resumed.
-     * Makes sure barcodeView is paused.
-     */
     @Override
     public void onPause() {
         super.onPause();

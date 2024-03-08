@@ -8,16 +8,20 @@ import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
 
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class TestUS03 {
+public class TestUS03 extends AbstractTest {
+    @Rule
+    public ActivityScenarioRule<SplashScreen> scenario = new ActivityScenarioRule<SplashScreen>(SplashScreen.class);
     // Temporary test to make this class not give an error when running without other tests
     @Test
     public void useAppContext() {
@@ -31,7 +35,7 @@ public class TestUS03 {
     /*
     @Test
     public void test03_02_01() {
-
+        splashScreenContinue();
     }
      */
 }
