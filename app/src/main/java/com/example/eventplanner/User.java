@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 
 public class User implements Parcelable {
+    private String userId;
     private String name;
     private String homepage;
     private String contactInformation;
@@ -18,9 +19,10 @@ public class User implements Parcelable {
     private ArrayList <String> checkedInEventsList;
 
 
-    public User(String name, String homepage, String contactInformation, String profilePicture, Boolean geolocationTrackingEnabled,
+    public User(String userId, String name, String homepage, String contactInformation, String profilePicture, Boolean geolocationTrackingEnabled,
                 ArrayList<String> signedUpForEventList, ArrayList<String> organizingEventsList, ArrayList<String> checkedInEventsList) {
 
+        this.userId = userId;
         this.name = name;
         this.homepage = homepage;
         this.contactInformation = contactInformation;
@@ -32,6 +34,7 @@ public class User implements Parcelable {
     }
 
     protected User(Parcel in) {
+        userId = in.readString();
         name = in.readString();
         homepage = in.readString();
         contactInformation = in.readString();
@@ -126,6 +129,7 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(userId);
         dest.writeString(name);
         dest.writeString(homepage);
         dest.writeString(contactInformation);

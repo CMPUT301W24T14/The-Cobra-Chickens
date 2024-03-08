@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.util.Log;
 import android.view.View;
@@ -22,9 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
@@ -37,6 +42,8 @@ public class EventDetailsActivity extends AppCompatActivity {
     private ImageView poster;
 
     private Button signUpButton;
+    Bundle bundle;
+    private FirebaseFirestore db; // the database
 
 
     @Override
@@ -61,7 +68,10 @@ public class EventDetailsActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(view -> finish());
 
         // Get event details from intent
-        Bundle bundle = getIntent().getExtras();
+
+        bundle = getIntent().getExtras();
+
+
         if (bundle != null && bundle.containsKey("event")) {
             Event event = bundle.getParcelable("event");
             if (event != null) {
@@ -89,6 +99,8 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         }
 
+        db = FirebaseFirestore.getInstance();
+
         signUpButton = findViewById(R.id.signupBtn);
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -109,6 +121,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
 
+                        signUserUp();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -117,8 +130,33 @@ public class EventDetailsActivity extends AppCompatActivity {
                         Toast.makeText(EventDetailsActivity.this, "cancelled", Toast.LENGTH_SHORT).show();
                     }
                 });
-
         confirmDialog.create().show();
+    }
+
+    private void signUserUp() {
+
+        Event event = bundle.getParcelable("event");
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        DocumentReference userRef = db.collection("users").document(userId);
+
+        userRef.update("myEvents", FieldValue.arrayUnion(event.getEventId()))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("TESTING", "successfully added eventId " + event.getEventId() + " to myEvents");
+                    }
+                });
+
+        DocumentReference eventRef = db.collection("events").document(event.getEventId());
+
+        eventRef.update("signedUpUsers", FieldValue.arrayUnion(userId))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("TESTING", "successfully added userId " + userId + " to this event's signedUpUsers");
+                    }
+                });
 
     }
 
