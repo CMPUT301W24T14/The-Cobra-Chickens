@@ -1,17 +1,28 @@
 package com.example.eventplanner;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,7 +47,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.core.ArrayContainsFilter;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,8 +68,15 @@ public class EventCreateActivity extends AppCompatActivity {
     private Button dateButton;
     private Button timeButton;
     private FloatingActionButton backButton;
-    private Button imageUploadButton;
+    Event event;
+    CollectionReference eventsRef;
     private Button eventCreateButton;
+
+    private static final int PICK_IMAGE_REQUEST = 1;
+    ImageView eventPosterImageView;
+    private Button imageUploadButton;
+    private Uri imageUri;
+    private ActivityResultLauncher<Intent> galleryLauncher;
 
     private String event_creator;
     private String event_name;
@@ -68,6 +90,7 @@ public class EventCreateActivity extends AppCompatActivity {
     private String event_poster;
     private String event_location;
     private TextInputEditText editTextEventName, editTextMaxAttendees, editTextEventLocation;
+    DocumentReference key;
 
 
     @Override
@@ -76,6 +99,9 @@ public class EventCreateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_create);
 
         db = FirebaseFirestore.getInstance();
+        eventsRef = db.collection("events");
+
+        backButton = findViewById(R.id.button_back);
 
         editTextEventName = findViewById(R.id.event_name);
         editTextMaxAttendees = findViewById(R.id.event_max_attendees);
@@ -84,8 +110,9 @@ public class EventCreateActivity extends AppCompatActivity {
         dateButton = findViewById(R.id.buttonDatePicker);
         timeButton = findViewById(R.id.buttonTimePicker);
 
-        backButton = findViewById(R.id.button_back);
         imageUploadButton = findViewById(R.id.btn_upload_img);
+        eventPosterImageView = findViewById(R.id.posterImageView);
+
         eventCreateButton = findViewById(R.id.btn_create_event);
 
         auth = FirebaseAuth.getInstance();
@@ -103,6 +130,27 @@ public class EventCreateActivity extends AppCompatActivity {
 
         // Return to previous page if user does not wish to create an event
         backButton.setOnClickListener(view -> finish());
+
+        // Initialize the ActivityResultLauncher
+        galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Intent data = result.getData();
+                        imageUri = data.getData();
+                        try {
+                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                            eventPosterImageView.setImageBitmap(bitmap);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        imageUploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openGallery();
+            }
+        });
 
         // Date button pressed -> Open date picker dialog.
         dateButton.setOnClickListener(new View.OnClickListener() {
@@ -141,7 +189,7 @@ public class EventCreateActivity extends AppCompatActivity {
                 doc_event.put("checkedInUsers", new ArrayList<>());
 
 
-                DocumentReference key;
+                //DocumentReference key;
                 key = db.collection("events").document();
                 key.set(doc_event).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -160,13 +208,18 @@ public class EventCreateActivity extends AppCompatActivity {
 
                                             }
                                         });
-
                             }
                         });
 
                 finish();
             }
         });
+    }
+
+    private void openGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryLauncher.launch(galleryIntent);
     }
 
     private void openDateDialog() {
@@ -202,5 +255,4 @@ public class EventCreateActivity extends AppCompatActivity {
 
         dialog.show();
     }
-
 }
