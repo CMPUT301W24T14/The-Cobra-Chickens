@@ -13,6 +13,7 @@ public class Event implements Parcelable {
 
     String eventId;
     String eventName;
+    String eventMaxAttendees;
     String eventDate;
     String eventTime;
     String eventLocation;
@@ -23,12 +24,13 @@ public class Event implements Parcelable {
 
 
     // camille - testing event w/ all info
-    public Event(String eventId, String eventName, String eventDate, String eventTime,String eventLocation, String eventPoster,
+    public Event(String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime,String eventLocation, String eventPoster,
                  ArrayList<String> eventAnnouncements,
                  ArrayList<String> signedUpUsers, ArrayList<String> checkedInUsers) {
 
         this.eventId = eventId;
         this.eventName = eventName;
+        this.eventMaxAttendees = eventMaxAttendees;
         this.eventDate = eventDate;
         this.eventTime = eventTime;
         this.eventLocation = eventLocation;
@@ -41,6 +43,7 @@ public class Event implements Parcelable {
     protected Event(Parcel in) {
         eventId = in.readString();
         eventName = in.readString();
+        eventMaxAttendees = in.readString();
         eventDate = in.readString();
         eventTime = in.readString();
         eventLocation = in.readString();
@@ -88,6 +91,14 @@ public class Event implements Parcelable {
 
     public void setCheckedInUsers(ArrayList<String> checkedInUsers) {
         this.checkedInUsers = checkedInUsers;
+    }
+
+    public String getEventMaxAttendees() {
+        return eventMaxAttendees;
+    }
+
+    public void setEventMaxAttendees(String eventMaxAttendees) {
+        this.eventMaxAttendees = eventMaxAttendees;
     }
 
     public ArrayList<String> getSignedUpUsers() {
@@ -143,6 +154,7 @@ public class Event implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(eventId);
         dest.writeString(eventName);
+        dest.writeString(eventMaxAttendees);
         dest.writeString(eventDate);
         dest.writeString(eventTime);
         dest.writeString(eventLocation);

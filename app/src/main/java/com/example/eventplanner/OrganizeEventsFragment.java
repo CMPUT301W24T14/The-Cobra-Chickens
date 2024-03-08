@@ -139,6 +139,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                             // retrieve all event information associated with the event
                             String eventId = documentSnapshot.getId();
                             String eventName = documentSnapshot.getString("eventName");
+                            String eventMaxAttendees = documentSnapshot.getString("eventMaxAttendees");
                             String eventDate = documentSnapshot.getString("eventDate");
                             String eventTime = documentSnapshot.getString("eventTime");
                             String eventLocation = documentSnapshot.getString("eventLocation");
@@ -148,7 +149,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                             ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
                             // create Event object with retrieved event information and add it to organizeEventsList
-                            organizeEventsList.add(new Event(eventId, eventName, eventDate, eventTime, eventLocation, eventPoster, eventAnnouncements, checkedInUsers, signedUpUsers));
+                            organizeEventsList.add(new Event(eventId, eventName, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, eventAnnouncements, checkedInUsers, signedUpUsers));
 
                             // tell organizeEventsRecyclerView that the dataset that organizingEventsRecyclerAdapter is responsible for has changed
                             organizingEventsRecyclerAdapter.notifyDataSetChanged();

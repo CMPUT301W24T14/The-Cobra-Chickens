@@ -110,13 +110,13 @@ public class EventCreateActivity extends AppCompatActivity {
                 event_name = String.valueOf(editTextEventName.getText());
                 guests = String.valueOf(editTextMaxAttendees.getText());
                 Map<String, Object> doc_event = new HashMap<>();
-                doc_event.put("Name", event_name);
-                doc_event.put("Max Attendees", guests);
-                doc_event.put("Date", date_year+"/"+date_month+"/"+date_day);
-                doc_event.put("Time", time_hour+":"+time_minute+" "+time_am_pm);
-                doc_event.put("Organizer", event_creator);
-                doc_event.put("Poster", "test value");
-                doc_event.put("Location", "Fakesies House");
+                doc_event.put("eventName", event_name);
+                doc_event.put("eventMaxAttendees", guests);
+                doc_event.put("eventDate", date_year+"/"+date_month+"/"+date_day);
+                doc_event.put("eventTime", time_hour+":"+time_minute+" "+time_am_pm);
+                doc_event.put("eventOrganizer", event_creator);
+                doc_event.put("eventPoster", "test value");
+                doc_event.put("eventLocation", "Fakesies House");
                 db.collection("events").document()
                         .set(doc_event);
                 finish();
