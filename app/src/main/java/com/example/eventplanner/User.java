@@ -33,7 +33,8 @@ public class User implements Parcelable {
         this.checkedInEventsList = checkedInEventsList;
     }
 
-    public User(String name, String homepage, String contactInformation, String profilePicture){
+    public User(String userId, String name, String homepage, String contactInformation, String profilePicture){
+        this.userId = userId;
         this.name = name;
         this.homepage = homepage;
         this.contactInformation = contactInformation;
@@ -89,6 +90,7 @@ public class User implements Parcelable {
         this.contactInformation = contactInformation;
     }
 
+    public String getUserId(){return userId;}
     public String getProfilePicture() {
         return profilePicture;
     }
