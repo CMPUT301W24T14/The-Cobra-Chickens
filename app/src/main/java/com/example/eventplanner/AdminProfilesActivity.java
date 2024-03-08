@@ -1,3 +1,5 @@
+// OpenAI, 2024, ChatGPT, creating back button, changing intent
+
 package com.example.eventplanner;
 
 import androidx.appcompat.app.AppCompatActivity;
