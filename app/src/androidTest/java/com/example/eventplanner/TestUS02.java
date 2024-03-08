@@ -29,14 +29,15 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class TestUS02 {
-
+public class TestUS02 extends AbstractTest {
+    @Rule
+    public ActivityScenarioRule<SplashScreen> scenario = new ActivityScenarioRule<SplashScreen>(SplashScreen.class);
     // Tests for US 02.01.01
     // As an attendee, I want to quickly check into an event by scanning the provided QR code.
     /*
     @Test
     public void test02_01_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -45,7 +46,7 @@ public class TestUS02 {
     /*
     @Test
     public void test02_02_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -54,16 +55,15 @@ public class TestUS02 {
     /*
     @Test
     public void test02_02_02() {
-
+        splashScreenContinue();
     }
      */
 
     // Tests for US 02.02.03
     // As an attendee, I want to update information such as name, homepage, and contact information on my profile.
-    @Rule
-    public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
     @Test
     public void test02_02_03_00() {
+        splashScreenContinue();
         onView(withId(R.id.profile)).perform(click());
         try {
             Thread.sleep(1000);
@@ -81,6 +81,7 @@ public class TestUS02 {
     }
     @Test
     public void test02_02_03_01() {
+        splashScreenContinue();
         onView(withId(R.id.profile)).perform(click());
         try {
             Thread.sleep(1000);
@@ -110,6 +111,7 @@ public class TestUS02 {
     }
     @Test
     public void test02_02_03_02() {
+        splashScreenContinue();
         onView(withId(R.id.profile)).perform(click());
 
         onView(withText("edit details")).perform(click());
@@ -154,7 +156,7 @@ public class TestUS02 {
     /*
     @Test
     public void test02_03_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -162,13 +164,25 @@ public class TestUS02 {
     // As an attendee, I want to view event details and announcements within the app.
     @Test
     public void test02_04_01() {
+        splashScreenContinue();
         onView(withId(R.id.home)).perform(click());
         onView(withText("All Events")).check(matches(isDisplayed()));
         onView(withText("All Events")).perform(click());
         onView(withText("Event1")).perform(click());
         onView(withText("Event Details")).check(matches(isDisplayed()));
         onView(withText("Sign Up")).perform(click());
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+
         onView(withText(("Confirm"))).perform(click());
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
         Espresso.pressBack();
 
         try {
@@ -194,25 +208,26 @@ public class TestUS02 {
     /*
     @Test
     public void test02_05_01() {
-
+        splashScreenContinue();
     }
      */
 
     // Tests for US 02.06.01
     // As an attendee, I do not want to login to the app. No username, no password.
-    /*
     @Test
     public void test02_06_01() {
-
+        splashScreenContinue();
+        onView(withText("All Events")).check(matches(isDisplayed()));
+        onView(withText("My Events")).check(matches(isDisplayed()));
+        onView(withText("Organize")).check(matches(isDisplayed()));
     }
-     */
 
     // Tests for US 02.07.01
     // As an attendee, I want to sign up to attend an event from the event details (as in I promise to go).
     /*
     @Test
     public void test02_07_01() {
-
+        splashScreenContinue();
     }
      */
 
@@ -220,6 +235,7 @@ public class TestUS02 {
     // As an attendee, I want to browse event posters/event details of other events.
     @Test
     public void test02_08_01() {
+        splashScreenContinue();
         onView(withId(R.id.home)).perform(click());
         onView(withText("All Events")).check(matches(isDisplayed()));
         onView(withText("All Events")).perform(click());
@@ -233,7 +249,7 @@ public class TestUS02 {
     /*
     @Test
     public void test02_09_01() {
-
+        splashScreenContinue();
     }
      */
 }

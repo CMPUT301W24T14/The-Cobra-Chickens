@@ -21,29 +21,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(AndroidJUnit4.class)
-@LargeTest
-public class TestUnspecified extends AbstractTest {
-    @Rule
-    public ActivityScenarioRule<SplashScreen> scenario = new ActivityScenarioRule<SplashScreen>(SplashScreen.class);
-    // Test Splash Screen
-    /*@Test
-    public void test_00_Splash() {
-        onView(withText("Welcome to Cobra Event Management")).check(matches(isDisplayed()));
-        onView(withText("Continue")).perform(click());
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        onView(withText("Welcome to Cobra Event Management")).check(doesNotExist());
-    }*/
-
-    @Test
-    public void test_01_MainScreen() {
-        splashScreenContinue();
-        onView(withText("All Events")).check(matches(isDisplayed()));
-        onView(withText("My Events")).check(matches(isDisplayed()));
-        onView(withText("Organize")).check(matches(isDisplayed()));
+public abstract class AbstractTest {
+    public void splashScreenContinue() {
+        try {onView(withId(R.id.btn_continue)).perform(click());} catch (Exception ignored) {}
     }
 }
