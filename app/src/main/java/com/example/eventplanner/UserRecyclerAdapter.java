@@ -5,21 +5,24 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyclerAdapterUpdated.ViewHolder> {
+public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapter.ViewHolder> {
 
-    private ArrayList<Event> events;
+    ArrayList<User> users;
     private Context context;
     private RecyclerViewInterface recyclerViewInterface;
 
-    public EventRecyclerAdapterUpdated(Context context, ArrayList<Event> events, RecyclerViewInterface recyclerViewInterface) {
-        this.events = events;
+    public UserRecyclerAdapter(Context context, ArrayList<User> users, RecyclerViewInterface recyclerViewInterface) {
+        this.users = users;
         this.context = context;
         this.recyclerViewInterface = recyclerViewInterface;
     }
@@ -27,41 +30,45 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.event_item, parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.user_row_organizer, parent,false);
         return new ViewHolder(view, recyclerViewInterface);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        holder.eventName.setText(events.get(position).getEventName());
-        holder.eventLocation.setText(events.get(position).getEventLocation());
+        String showName = users.get(position).getName();
+        String proPicUrl = users.get(position).getProfilePicture();
 
-        //SimpleDateFormat cardViewEventDate = new SimpleDateFormat("MM/dd/yyyy");
-        holder.eventDate.setText(events.get(position).getEventDate());
-        //String formattedCardViewEventData = cardViewEventDate.format(events.get(position).getEventDate());
+        holder.userName.setText(showName);
 
-        //holder.eventDate.setText(formattedCardViewEventData);
+        if(proPicUrl !=null && proPicUrl.equals("")){
+            Glide.with(holder.itemView.getContext())
+                    .load("https://www.gravatar.com/avatar/default" + "?d=identicon")
+                    .into(holder.userProfilePic);
+        } else {
+            Glide.with(holder.itemView.getContext())
+                    .load(proPicUrl)
+                    .into(holder.userProfilePic);
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return events.size();
+        return users.size();
     }
 
-
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView eventName;
-        TextView eventDate;
-        TextView eventLocation;
+        TextView userName;
+        ImageView userProfilePic;
 
         public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
 
             super(itemView);
 
-            eventName = itemView.findViewById(R.id.event_name_cardview);
-            eventDate = itemView.findViewById(R.id.event_date_cardview);
-            eventLocation = itemView.findViewById(R.id.event_location_cardview);
+            userName = itemView.findViewById(R.id.user_name);
+            userProfilePic = itemView.findViewById(R.id.image_user_pro_pic);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -78,15 +85,5 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
                 }
             });
         }
-    }
-
-    public void updateEventListItems(ArrayList<Event> events2){
-
-        final EventDiffCallback diffCallback = new EventDiffCallback(this.events, events2);
-        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
-
-        this.events.clear();
-        this.events.addAll(events2);
-        diffResult.dispatchUpdatesTo(this);
     }
 }

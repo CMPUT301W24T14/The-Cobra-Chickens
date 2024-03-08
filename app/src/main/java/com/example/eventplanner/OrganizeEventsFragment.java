@@ -174,7 +174,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
     public void onItemClick(int position) {
 
         // set up a new intent to jump from the current activity to EventDetailsActivity
-        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+        Intent intent = new Intent(getActivity(), OrganizerEventViewActivity.class);
 
         // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
         intent.putExtra("event", organizeEventsList.get(position));
