@@ -1,5 +1,7 @@
 package com.example.eventplanner;
-
+// WsCube Tech, 2022, Youtube, Recycler View in Android Studio Explained with Example | Android Recycler View Tutorial, https://www.youtube.com/watch?v=FEqF1_jDV-A
+// WsCube Tech, 2022, Youtube, How to Add, Delete, and Update Items in Android RecyclerView | Android Studio Tutorial #26, https://www.youtube.com/watch?v=AUow1zsO6mg
+// OpenAI, 2024, ChatGPT
 import android.content.Context;
 
 import android.view.LayoutInflater;
