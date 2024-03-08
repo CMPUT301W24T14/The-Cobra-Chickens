@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,6 +45,7 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
     private ArrayList<Event> myEventsList; // ArrayList that holds all events that the user has signed up for
     private EventRecyclerAdapterUpdated myEventsRecyclerAdapter; // EventRecyclerAdapter for myEventsRecyclerView
     private CollectionReference userRef;
+    private SharedViewModel sharedViewModel;
 
     /**
      * Creates the view for MyEventsFragment, which is contained within HomeFragmentUpdated
@@ -81,6 +83,13 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
         myEventsRecyclerView.setAdapter(myEventsRecyclerAdapter);
 
         getMyEvents();
+
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        sharedViewModel.isEventUpdated().observe(getViewLifecycleOwner(), isUpdated -> {
+            if (isUpdated) {
+                getMyEvents();
+            }
+        });
 
         return view;
     }
