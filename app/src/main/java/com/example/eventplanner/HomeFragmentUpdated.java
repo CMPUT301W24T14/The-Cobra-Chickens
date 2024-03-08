@@ -23,6 +23,15 @@ import com.google.android.material.tabs.TabLayoutMediator;
  */
 public class HomeFragmentUpdated extends Fragment {
 
+    /* General information on implementing a tab layout for a ViewPager.
+    Reference:
+    Author        : Foxandroid
+    Date Accessed : 3/8/2024
+    License       : Creative Commons
+    URL           : https://www.youtube.com/watch?v=ziJ6-AT3ymg&ab_channel=Foxandroid
+    Used in       : Throughout entire class.
+    */
+
     private TabLayout tabLayout; // the tabLayout
     private ViewPager2 viewPager2; // the viewPager2 widget
 

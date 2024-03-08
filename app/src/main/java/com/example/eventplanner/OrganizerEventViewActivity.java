@@ -22,6 +22,9 @@ import org.checkerframework.checker.units.qual.A;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+/**
+ * The displays an activity that shows an organizer details of an event they are managing.
+ */
 public class OrganizerEventViewActivity extends AppCompatActivity {
 
     private ArrayList<String> announcementsList;
@@ -114,7 +117,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         getCheckedInUsers();
 
         Log.d("TESTING", "got here 7");
-
     }
 
     private void getSignedUpUsers() {
