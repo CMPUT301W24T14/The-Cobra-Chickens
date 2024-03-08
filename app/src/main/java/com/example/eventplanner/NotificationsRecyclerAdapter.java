@@ -7,54 +7,74 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
 public class NotificationsRecyclerAdapter extends RecyclerView.Adapter<NotificationsRecyclerAdapter.ViewHolder> {
 
+    private ArrayList<Notification> notifications;
     private Context context;
-    private ArrayList<Notification> notificationsList;
+    private RecyclerViewInterface recyclerViewInterface;
 
-    public NotificationsRecyclerAdapter(Context context, ArrayList<Notification> notificationsList) {
+    public NotificationsRecyclerAdapter(Context context, ArrayList<Notification> notifications, RecyclerViewInterface recyclerViewInterface) {
+        this.notifications = notifications;
         this.context = context;
-        this.notificationsList = notificationsList;
+        this.recyclerViewInterface = recyclerViewInterface;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.notification, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, recyclerViewInterface);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Notification notification = notificationsList.get(position);
-        holder.notificationTitleTextView.setText(notification.getTitle());
-        holder.notificationMessageTextView.setText(notification.getMessage());
-        if (notification.getDate() != null) {
-            holder.notificationDateTextView.setText(notification.getDate().toString());
-        } else {
-            holder.notificationDateTextView.setText("No date available");
-        }
+        Notification notification = notifications.get(position);
+        holder.notificationTitle.setText(notification.getEventName());
+        holder.notificationDate.setText(notification.getEventDate());
+        holder.notificationTime.setText(notification.getEventTime());
+
+        // If your notification items include more details, set them here as well.
     }
 
     @Override
     public int getItemCount() {
-        return notificationsList.size();
+        return notifications.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView notificationTitleTextView;
-        TextView notificationMessageTextView;
-        TextView notificationDateTextView;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView notificationTitle;
+        TextView notificationDate;
+        TextView notificationTime;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
-            notificationTitleTextView = itemView.findViewById(R.id.notification_title);
-            notificationMessageTextView = itemView.findViewById(R.id.notification_message);
-            notificationDateTextView = itemView.findViewById(R.id.notification_date);
+
+            notificationTitle = itemView.findViewById(R.id.notification_title);
+            notificationDate = itemView.findViewById(R.id.notification_date);
+
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && recyclerViewInterface != null) {
+                    recyclerViewInterface.onItemClick(position);
+                }
+            });
         }
     }
+
+    public void updateNotificationListItems(ArrayList<Notification> newNotifications) {
+        final NotificationDiffCallback diffCallback = new NotificationDiffCallback(this.notifications, newNotifications);
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+
+        this.notifications.clear();
+        this.notifications.addAll(newNotifications);
+        diffResult.dispatchUpdatesTo(this);
+    }
+
+    // You'll need to implement NotificationDiffCallback similar to EventDiffCallback for this to work.
+
 }
