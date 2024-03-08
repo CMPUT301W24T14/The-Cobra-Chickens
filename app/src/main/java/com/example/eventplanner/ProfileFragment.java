@@ -32,8 +32,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+//import com.google.firebase.auth.FirebaseAuth;
+//import com.google.firebase.auth.FirebaseUser;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -52,8 +52,8 @@ public class ProfileFragment extends Fragment {
     Button editDetails;
     Button location;
 
-    FirebaseAuth auth;
-    FirebaseUser currentUser;
+//    FirebaseAuth auth;
+//    FirebaseUser currentUser;
 
 
 
@@ -124,6 +124,13 @@ public class ProfileFragment extends Fragment {
                         user.setContactInformation(contact);
                         user.setHomepage(homePage);
 
+                        if (name != null && name.equals("")) {
+                            Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + userId + "?d=identicon").into(profilePic);
+                        }
+                        else {
+                            Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + name + "?d=identicon").into(profilePic);
+                        }
+
                         dialog.dismiss();
                     }
                 });
@@ -174,16 +181,24 @@ public class ProfileFragment extends Fragment {
 
     private void deleteProfilePic() {
 
-        userId = "et9ykXKsNzo3ETU3Vwwg";
+        userId = "0nNgFlbgVscmZVWyd5492dSjjX02";
         usersRef.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        if(document.contains("ProfilePic")){
-                            usersRef.document(userId).update("ProfilePic", FieldValue.delete());
-                            Glide.with(requireContext()).load("https://www.gravatar.com/avatar/"+userId+"?d=identicon").into(profilePic);
+                        String ProfilePicUrl = document.getString("ProfilePic");
+                        String usrname = document.getString("Name");
+                        if(ProfilePicUrl != null && !ProfilePicUrl.equals("")){
+                            usersRef.document(userId).update("ProfilePic", "");
+
+                            if (usrname != null && usrname.equals("")) {
+                                Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + userId + "?d=identicon").into(profilePic);
+                            }
+                            else {
+                                Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + usrname + "?d=identicon").into(profilePic);
+                            }
 
                         } else {
                             Toast toast = Toast.makeText(getContext(), "You can't delete default Profile Picture", Toast.LENGTH_LONG);
@@ -258,7 +273,7 @@ public class ProfileFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         usersRef = db.collection("users");
 
-        userId = "et9ykXKsNzo3ETU3Vwwg";
+        userId = "0nNgFlbgVscmZVWyd5492dSjjX02";
 
         usersRef.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -269,19 +284,26 @@ public class ProfileFragment extends Fragment {
                         String name = document.getString("Name");
                         String contact = document.getString("Contact");
                         String homePage = document.getString("Homepage");
+                        String profilePicUrl = document.getString("ProfilePic");
                         boolean usrlocation = document.getBoolean("Location");
 
                         ArrayList<String> checkedInto = (ArrayList<String>) document.get("checkedInto");
                         ArrayList<String> signedUpFor = (ArrayList<String>) document.get("myEvents");
                         ArrayList<String> organizing = (ArrayList<String>) document.get("checkedInto");
 
-                        if(document.contains("ProfilePic")){
+                        if(profilePicUrl != null && !profilePicUrl.equals("")){
                             String profilePicURI = document.getString("ProfilePic");
                             user = new User(name, homePage, contact, profilePicURI, usrlocation, signedUpFor, checkedInto, organizing);
                             Glide.with(requireContext()).load(profilePicURI).into(profilePic);
                         } else {
-                            user = new User(name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
-                            Glide.with(requireContext()).load("https://www.gravatar.com/avatar/"+userId+"?d=identicon").into(profilePic);
+                            if (name != null && name.equals("")) {
+                                user = new User(name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
+                                Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + userId + "?d=identicon").into(profilePic);
+                            }
+                            else {
+                                user = new User(name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
+                                Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + user.getName() + "?d=identicon").into(profilePic);
+                            }
                         }
                         //setting layout objects to the User object's values
                         userName.setText("Name: " + user.getName());
