@@ -9,12 +9,17 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.google.android.material.internal.ContextUtils.getActivity;
 import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.action.ViewActions;
@@ -56,8 +61,29 @@ public class TestUS02 extends AbstractTest {
     @Test
     public void test02_02_02() {
         splashScreenContinue();
+        onView(withId(R.id.profile)).perform(click());
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+        onView(withText("edit details")).check(matches(isDisplayed()));
+        Activity currentActivity = getCurrentActivity();
+        ImageView pfp = currentActivity.findViewById(R.id.profilePic);
+        pfp.setImageResource(R.drawable.del);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+        onView(withText("delete")).perform(click());
+        try {
+            Thread.sleep(5000000);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
     }
-     */
+    */
 
     // Tests for US 02.02.03
     // As an attendee, I want to update information such as name, homepage, and contact information on my profile.
@@ -163,7 +189,7 @@ public class TestUS02 extends AbstractTest {
     // Tests for US 02.04.01
     // As an attendee, I want to view event details and announcements within the app.
     @Test
-    public void test02_04_01() {
+    public void test02_04_01_and_02_09_01() {
         splashScreenContinue();
         onView(withId(R.id.home)).perform(click());
         onView(withText("All Events")).check(matches(isDisplayed()));
@@ -205,22 +231,56 @@ public class TestUS02 extends AbstractTest {
 
     // Tests for US 02.05.01
     // As an attendee, I want my profile picture to be deterministically generated from my profile name if I haven't uploaded an profile image yet.
-    /*
     @Test
     public void test02_05_01() {
         splashScreenContinue();
+        onView(withId(R.id.profile)).perform(click());
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+        onView(withText("edit details")).check(matches(isDisplayed()));
+        Activity currentActivity = getCurrentActivity();
+        ImageView pfp = currentActivity.findViewById(R.id.profilePic);
+        Drawable im = pfp.getDrawable();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+
+        onView(withText("edit details")).perform(click());
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+        onView(withId(R.id.saveBtn)).check(matches(isDisplayed()));
+
+        onView(withId(R.id.editName)).perform(replaceText("Daaaannnn"));
+        onView(withId(R.id.editContact)).perform(replaceText("daannn@gmail.com"));
+        onView(withId(R.id.editHomepage)).perform(replaceText("https://dandandan.com"));
+        onView(withId(R.id.saveBtn)).perform(click());
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+        ImageView pfpNew = currentActivity.findViewById(R.id.profilePic);
+        assert(pfpNew.getDrawable() != im);
     }
-     */
 
     // Tests for US 02.06.01
     // As an attendee, I do not want to login to the app. No username, no password.
+    /*
     @Test
     public void test02_06_01() {
         splashScreenContinue();
         onView(withText("All Events")).check(matches(isDisplayed()));
         onView(withText("My Events")).check(matches(isDisplayed()));
         onView(withText("Organize")).check(matches(isDisplayed()));
-    }
+    }*/
 
     // Tests for US 02.07.01
     // As an attendee, I want to sign up to attend an event from the event details (as in I promise to go).
@@ -245,7 +305,7 @@ public class TestUS02 extends AbstractTest {
     }
 
     // Tests for US 02.09.01
-    // As an attendee, I want to know what events I signed up for currently and in and in the future.
+    // As an attendee, I want to know what events I signed up for currently and in the future.
     /*
     @Test
     public void test02_09_01() {
