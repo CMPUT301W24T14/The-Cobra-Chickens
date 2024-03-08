@@ -10,10 +10,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -25,6 +27,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -39,7 +42,8 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
     private FirebaseFirestore db; // the database
     private RecyclerView myEventsRecyclerView; // RecyclerView list of user's singed-up-for events
     private ArrayList<Event> myEventsList; // ArrayList that holds all events that the user has signed up for
-    String userId;
+    private EventRecyclerAdapterUpdated myEventsRecyclerAdapter; // EventRecyclerAdapter for myEventsRecyclerView
+    private CollectionReference userRef;
 
     /**
      * Creates the view for MyEventsFragment, which is contained within HomeFragmentUpdated
@@ -73,18 +77,23 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
         myEventsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // initialize myEventsRecyclerAdapter and set it as the adapter for myEventsRecyclerView
-        EventRecyclerAdapterUpdated myEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), myEventsList, this);
+        myEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), myEventsList, this);
         myEventsRecyclerView.setAdapter(myEventsRecyclerAdapter);
 
-        // need to fix --> currently testing with a hardcoded user
-        // Set up Firebase Authentication and use what's below to get a userId dynamically
-        // FirebaseAuth auth = FirebaseAuth.getInstance();
-        // FirebaseUser currentUser = auth.getCurrentUser();
-        userId = "et9ykXKsNzo3ETU3Vwwg";
+        getMyEvents();
+
+        return view;
+    }
+
+    /**
+     * Retrieves all events from user's myEvents list in the database and populates myEventsList
+     * with them.
+     */
+    private void getMyEvents() {
 
         // read specific document for userId given
         db.collection("users")
-                .document(userId)
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -96,12 +105,8 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
                         if (eventIds != null) {
                             loadEventDocs(eventIds, myEventsRecyclerAdapter);
                         }
-
-                        // handle if the user's myEvents Array is null/empty (user has not signed up for any events)
                     }
                 });
-
-        return view;
     }
 
     /**
@@ -121,14 +126,17 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
 
                             // retrieve all event information associated with the event
                             String eventId = documentSnapshot.getId();
-                            String eventName = documentSnapshot.getString("Name");
-                            Date eventDate = documentSnapshot.getDate("Date");
-                            String eventLocation = documentSnapshot.getString("Location");
-                            String eventPoster = documentSnapshot.getString("Poster");
-                            ArrayList<String> eventAnnouncements = (ArrayList<String>) documentSnapshot.get("Announcements");
+                            String eventName = documentSnapshot.getString("eventName");
+                            String eventDate = documentSnapshot.getString("eventDate");
+                            String eventTime = documentSnapshot.getString("eventTime");
+                            String eventLocation = documentSnapshot.getString("eventLocation");
+                            String eventPoster = documentSnapshot.getString("eventPoster");
+                            ArrayList<String> eventAnnouncements = (ArrayList<String>) documentSnapshot.get("eventAnnouncements");
+                            ArrayList<String> checkedInUsers = (ArrayList<String>) documentSnapshot.get("checkedInUsers");
+                            ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
                             // create Event object with retrieved event information and add it to myEventsList
-                            myEventsList.add(new Event(eventId, eventName, eventDate, eventLocation, eventPoster, eventAnnouncements));
+                            myEventsList.add(new Event(eventId, eventName, eventDate, eventTime, eventLocation, eventPoster, eventAnnouncements, checkedInUsers, signedUpUsers));
 
                             // tell myEventsRecyclerView that the dataset that myEventsRecyclerAdapter is responsible for has changed
                             myEventsRecyclerAdapter.notifyDataSetChanged();

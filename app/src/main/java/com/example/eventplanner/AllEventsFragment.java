@@ -107,14 +107,17 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
 
                                 // retrieve all event information associated with the event
                                 String eventId = doc.getId();
-                                String eventName = doc.getString("Name");
-                                Date eventDate = doc.getDate("Date");
-                                String eventLocation = doc.getString("Location");
-                                String eventPoster = doc.getString("Poster");
-                                ArrayList<String> eventAnnouncements = (ArrayList<String>) doc.get("Announcements");
+                                String eventName = doc.getString("eventName");
+                                String eventDate = doc.getString("eventDate");
+                                String eventTime = doc.getString("eventTime");
+                                String eventLocation = doc.getString("eventLocation");
+                                String eventPoster = doc.getString("eventPoster");
+                                ArrayList<String> eventAnnouncements = (ArrayList<String>) doc.get("eventAnnouncements");
+                                ArrayList<String> checkedInUsers = (ArrayList<String>) doc.get("checkedInUsers");
+                                ArrayList<String> signedUpUsers = (ArrayList<String>) doc.get("signedUpUsers");
 
                                 // create the Event object with retrieved event information and add it to allEventsList
-                                allEventsList.add(new Event(eventId, eventName, eventDate, eventLocation, eventPoster, eventAnnouncements));
+                                allEventsList.add(new Event(eventId, eventName, eventDate, eventTime, eventLocation, eventPoster, eventAnnouncements, checkedInUsers, signedUpUsers));
                             }
 
                             // tell allEventsRecyclerView that the dataset that allEventsRecyclerAdapter is responsible for has changed

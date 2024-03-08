@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -30,8 +31,8 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
     private FirebaseFirestore db; // the database
     private RecyclerView organizeEventsRecyclerView; // RecyclerView list of the events user is organizing
     private ArrayList<Event> organizeEventsList; // ArrayList that holds all events that the user is organizing
-    String userId;
     private Button createEventButton; // Button that takes you to CreateEventActivity
+    private EventRecyclerAdapterUpdated organizeEventsRecyclerAdapter; // EventRecyclerAdapter for organizeEventsRecyclerView
 
     /**
      * Creates the view for OrganizeEventsFragment, which is contained within HomeFragmentUpdated
@@ -65,7 +66,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
         organizeEventsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // initialize organizeEventsRecyclerAdapter and set it as the adapter for organizeEventsRecyclerView
-        EventRecyclerAdapterUpdated organizeEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), organizeEventsList, this);
+        organizeEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), organizeEventsList, this);
         organizeEventsRecyclerView.setAdapter(organizeEventsRecyclerAdapter);
 
         // initialize createEventButton
@@ -79,15 +80,19 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
             }
         });
 
-        // need to fix --> currently testing with a hardcoded user
-        // Set up Firebase Authentication and use what's below to get a userId dynamically
-        // FirebaseAuth auth = FirebaseAuth.getInstance();
-        // FirebaseUser currentUser = auth.getCurrentUser();
-        userId = "et9ykXKsNzo3ETU3Vwwg";
+        getOrganizingEvents();
 
-        // read specific document for userId given
+        return view;
+    }
+
+    /**
+     * Retrieves all events from user's organizing list in the database and populates organizeEventsList
+     * with them.
+     */
+    private void getOrganizingEvents() {
+
         db.collection("users")
-                .document(userId)
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -99,12 +104,8 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                         if (eventIds != null) {
                             loadEventDocs(eventIds, organizeEventsRecyclerAdapter);
                         }
-
-                        // handle if the user's organizing Array is null/empty (user is not organizing any events)
                     }
                 });
-
-        return view;
     }
 
     /**
@@ -137,14 +138,17 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
 
                             // retrieve all event information associated with the event
                             String eventId = documentSnapshot.getId();
-                            String eventName = documentSnapshot.getString("Name");
-                            Date eventDate = documentSnapshot.getDate("Date");
-                            String eventLocation = documentSnapshot.getString("Location");
-                            String eventPoster = documentSnapshot.getString("Poster");
-                            ArrayList<String> eventAnnouncements = (ArrayList<String>) documentSnapshot.get("Announcements");
+                            String eventName = documentSnapshot.getString("eventName");
+                            String eventDate = documentSnapshot.getString("eventDate");
+                            String eventTime = documentSnapshot.getString("eventTime");
+                            String eventLocation = documentSnapshot.getString("eventLocation");
+                            String eventPoster = documentSnapshot.getString("eventPoster");
+                            ArrayList<String> eventAnnouncements = (ArrayList<String>) documentSnapshot.get("eventAnnouncements");
+                            ArrayList<String> checkedInUsers = (ArrayList<String>) documentSnapshot.get("checkedInUsers");
+                            ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
                             // create Event object with retrieved event information and add it to organizeEventsList
-                            organizeEventsList.add(new Event(eventId, eventName, eventDate, eventLocation, eventPoster, eventAnnouncements));
+                            organizeEventsList.add(new Event(eventId, eventName, eventDate, eventTime, eventLocation, eventPoster, eventAnnouncements, checkedInUsers, signedUpUsers));
 
                             // tell organizeEventsRecyclerView that the dataset that organizingEventsRecyclerAdapter is responsible for has changed
                             organizingEventsRecyclerAdapter.notifyDataSetChanged();

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
@@ -36,10 +37,11 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
         holder.eventName.setText(events.get(position).getEventName());
         holder.eventLocation.setText(events.get(position).getEventLocation());
 
-        SimpleDateFormat cardViewEventDate = new SimpleDateFormat("MM/dd/yyyy");
-        String formattedCardViewEventData = cardViewEventDate.format(events.get(position).getEventDate());
+        //SimpleDateFormat cardViewEventDate = new SimpleDateFormat("MM/dd/yyyy");
+        holder.eventDate.setText(events.get(position).getEventDate());
+        //String formattedCardViewEventData = cardViewEventDate.format(events.get(position).getEventDate());
 
-        holder.eventDate.setText(formattedCardViewEventData);
+        //holder.eventDate.setText(formattedCardViewEventData);
     }
 
     @Override
@@ -76,5 +78,15 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
                 }
             });
         }
+    }
+
+    public void updateEventListItems(ArrayList<Event> events2){
+
+        final EventDiffCallback diffCallback = new EventDiffCallback(this.events, events2);
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+
+        this.events.clear();
+        this.events.addAll(events2);
+        diffResult.dispatchUpdatesTo(this);
     }
 }

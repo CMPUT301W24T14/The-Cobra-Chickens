@@ -32,6 +32,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+//import com.google.firebase.auth.FirebaseAuth;
+//import com.google.firebase.auth.FirebaseUser;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * Represents the fragment for displaying and editing a user's profile.
@@ -46,6 +51,13 @@ public class ProfileFragment extends Fragment {
     TextView userName, userContact, userHomepage;
     Button editDetails;
     Button location;
+
+    Button adminLogin;
+
+//    FirebaseAuth auth;
+//    FirebaseUser currentUser;
+
+
 
     User user;
 
@@ -73,6 +85,7 @@ public class ProfileFragment extends Fragment {
         userHomepage = view.findViewById(R.id.profileHomepage);
         location = view.findViewById(R.id.location);
         editDetails = view.findViewById(R.id.editProfile);
+        adminLogin = view.findViewById(R.id.adminLoginBtn);
 
 
 
@@ -110,9 +123,16 @@ public class ProfileFragment extends Fragment {
 
                         usersRef = db.collection("users");
                         usersRef.document(userId).update("Name", name, "Contact", contact, "Homepage",homePage);
-                        user.setUsername(name);
-                        user.setUsercontact(contact);
-                        user.setUserhomepage(homePage);
+                        user.setName(name);
+                        user.setContactInformation(contact);
+                        user.setHomepage(homePage);
+
+                        if (name != null && name.equals("")) {
+                            Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + userId + "?d=identicon").into(profilePic);
+                        }
+                        else {
+                            Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + name + "?d=identicon").into(profilePic);
+                        }
 
                         dialog.dismiss();
                     }
@@ -126,14 +146,14 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 usersRef = db.collection("users");
 
-                if(user.location){
+                if(user.getGeolocationTrackingEnabled()){
                     location.setText("OFF");
                     usersRef.document(userId).update("Location", false);
-                    user.setLocation(false);
+                    user.setGeolocationTrackingEnabled(false);
                 } else {
                     location.setText("ON");
                     usersRef.document(userId).update("Location", true);
-                    user.setLocation(true);
+                    user.setGeolocationTrackingEnabled(true);
                 }
             }
         });
@@ -154,7 +174,13 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-
+        adminLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), AdminActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 
@@ -164,16 +190,24 @@ public class ProfileFragment extends Fragment {
 
     private void deleteProfilePic() {
 
-        userId = "et9ykXKsNzo3ETU3Vwwg";
+        userId = "0nNgFlbgVscmZVWyd5492dSjjX02";
         usersRef.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        if(document.contains("ProfilePic")){
-                            usersRef.document(userId).update("ProfilePic", FieldValue.delete());
-                            Glide.with(requireContext()).load("https://www.gravatar.com/avatar/"+userId+"?d=identicon").into(profilePic);
+                        String ProfilePicUrl = document.getString("ProfilePic");
+                        String usrname = document.getString("Name");
+                        if(ProfilePicUrl != null && !ProfilePicUrl.equals("")){
+                            usersRef.document(userId).update("ProfilePic", "");
+
+                            if (usrname != null && usrname.equals("")) {
+                                Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + userId + "?d=identicon").into(profilePic);
+                            }
+                            else {
+                                Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + usrname + "?d=identicon").into(profilePic);
+                            }
 
                         } else {
                             Toast toast = Toast.makeText(getContext(), "You can't delete default Profile Picture", Toast.LENGTH_LONG);
@@ -194,11 +228,11 @@ public class ProfileFragment extends Fragment {
 
 
     ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
-        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-            Uri imageuri = result.getData().getData();
-            uploadImage(imageuri);
-        }
-    }
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Uri imageuri = result.getData().getData();
+                    uploadImage(imageuri);
+                }
+            }
     );
 
     private void uploadImage(Uri imageUri) {
@@ -215,7 +249,7 @@ public class ProfileFragment extends Fragment {
                     usersRef.document(userId).update("ProfilePic", uri.toString())
                             .addOnSuccessListener(aVoid -> {
                                 // Update the user object with the new profile picture URI
-                                user.setImg(uri.toString());
+                                user.setProfilePicture(uri.toString());
 //                                // Update the ImageView with the new profile picture
                                 Glide.with(requireContext()).load(uri).into(profilePic);
 
@@ -248,7 +282,7 @@ public class ProfileFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         usersRef = db.collection("users");
 
-        userId = "et9ykXKsNzo3ETU3Vwwg";
+        userId = "0nNgFlbgVscmZVWyd5492dSjjX02";
 
         usersRef.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -259,21 +293,33 @@ public class ProfileFragment extends Fragment {
                         String name = document.getString("Name");
                         String contact = document.getString("Contact");
                         String homePage = document.getString("Homepage");
+                        String profilePicUrl = document.getString("ProfilePic");
                         boolean usrlocation = document.getBoolean("Location");
 
-                        if(document.contains("ProfilePic")){
+                        ArrayList<String> checkedInto = (ArrayList<String>) document.get("checkedInto");
+                        ArrayList<String> signedUpFor = (ArrayList<String>) document.get("myEvents");
+                        ArrayList<String> organizing = (ArrayList<String>) document.get("checkedInto");
+
+                        if(profilePicUrl != null && !profilePicUrl.equals("")){
                             String profilePicURI = document.getString("ProfilePic");
-                            user = new User(profilePicURI, name, contact, homePage, usrlocation);
+                            user = new User(userId, name, homePage, contact, profilePicURI, usrlocation, signedUpFor, checkedInto, organizing);
                             Glide.with(requireContext()).load(profilePicURI).into(profilePic);
                         } else {
-                            user = new User(name, contact, homePage, usrlocation);
-                            Glide.with(requireContext()).load("https://www.gravatar.com/avatar/"+userId+"?d=identicon").into(profilePic);
+
+                            if (name != null && name.equals("")) {
+                                user = new User(userId, name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
+                                Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + userId + "?d=identicon").into(profilePic);
+                            }
+                            else {
+                                user = new User(userId, name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
+                                Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + user.getName() + "?d=identicon").into(profilePic);
+                            }
                         }
                         //setting layout objects to the User object's values
-                        userName.setText("Name: " + user.getUsername());
-                        userContact.setText("Contact: " + user.getUsercontact());
-                        userHomepage.setText("Homepage: " + user.getUserhomepage());
-                        if (user.getLocation()) {
+                        userName.setText("Name: " + user.getName());
+                        userContact.setText("Contact: " + user.getContactInformation());
+                        userHomepage.setText("Homepage: " + user.getHomepage());
+                        if (user.getGeolocationTrackingEnabled()) {
                             location.setText("ON");
                         } else {
                             location.setText("OFF");

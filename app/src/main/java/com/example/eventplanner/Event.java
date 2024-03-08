@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -12,71 +13,45 @@ public class Event implements Parcelable {
 
     String eventId;
     String eventName;
-    Date eventDate;
-  
+    String eventDate;
+    String eventTime;
     String eventLocation;
     String eventPoster;
     ArrayList<String> eventAnnouncements;
+    ArrayList<String> checkedInUsers;
+    ArrayList<String> signedUpUsers;
 
-    //if both poster and announcements are available
-    public Event(String eventPoster, String eventName, Date eventDate, ArrayList<String> announcements) {
-        this.eventName = eventName;
-        this.eventDate = eventDate;
-        this.eventPoster = eventPoster;
-        this.eventAnnouncements = announcements;
-    }
-
-    //if announcements is available, but poster are not available
-    public Event(String eventName, Date eventDate, ArrayList<String> announcements){
-        this.eventName = eventName;
-        this.eventDate = eventDate;
-        this.eventAnnouncements = announcements;
-    }
-
-    //if poster available but announcements are not available
-    public Event(String eventPoster, String eventName, Date eventDate){
-        this.eventPoster = eventPoster;
-        this.eventName = eventName;
-        this.eventDate = eventDate;
-    }
-
-
-    //if poster and announcements both unavailable
-    public Event(String eventName, Date eventDate){
-
-        this.eventName = eventName;
-        this.eventDate = eventDate;
-    }
-
-
-    // camille-testing event w/ a location
-    public Event(String eventId, String eventName, Date eventDate, String eventLocation) {
-
-        this.eventId = eventId;
-        this.eventName = eventName;
-        this.eventDate = eventDate;
-        this.eventLocation = eventLocation;
-
-    }
 
     // camille - testing event w/ all info
-    public Event(String eventId, String eventName, Date eventDate, String eventLocation, String eventPoster, ArrayList<String> eventAnnouncements) {
+    public Event(String eventId, String eventName, String eventDate, String eventTime,String eventLocation, String eventPoster,
+                 ArrayList<String> eventAnnouncements,
+                 ArrayList<String> signedUpUsers, ArrayList<String> checkedInUsers) {
 
         this.eventId = eventId;
         this.eventName = eventName;
         this.eventDate = eventDate;
+        this.eventTime = eventTime;
         this.eventLocation = eventLocation;
         this.eventPoster = eventPoster;
         this.eventAnnouncements = eventAnnouncements;
-
+        this.signedUpUsers = signedUpUsers;
+        this.checkedInUsers = checkedInUsers;
     }
 
     protected Event(Parcel in) {
+        eventId = in.readString();
         eventName = in.readString();
-        eventDate = new Date(in.readLong());
+        eventDate = in.readString();
+        eventTime = in.readString();
         eventLocation = in.readString();
         eventPoster = in.readString();
         eventAnnouncements = in.createStringArrayList();
+        signedUpUsers = in.createStringArrayList();
+        checkedInUsers = in.createStringArrayList();
+    }
+
+    public String getEventId() {
+        return eventId;
     }
 
     public String getEventPoster() {
@@ -87,7 +62,41 @@ public class Event implements Parcelable {
         this.eventPoster = eventPoster;
     }
 
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
 
+    public String getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(String eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public String getEventTime() {
+        return eventTime;
+    }
+
+    public void setEventTime(String eventTime) {
+        this.eventTime = eventTime;
+    }
+
+    public ArrayList<String> getCheckedInUsers() {
+        return checkedInUsers;
+    }
+
+    public void setCheckedInUsers(ArrayList<String> checkedInUsers) {
+        this.checkedInUsers = checkedInUsers;
+    }
+
+    public ArrayList<String> getSignedUpUsers() {
+        return signedUpUsers;
+    }
+
+    public void setSignedUpUsers(ArrayList<String> signedUpUsers) {
+        this.signedUpUsers = signedUpUsers;
+    }
 
     public ArrayList<String> getEventAnnouncements() {
         return eventAnnouncements;
@@ -103,14 +112,6 @@ public class Event implements Parcelable {
 
     public void setEventName(String eventName) {
         this.eventName = eventName;
-    }
-
-    public Date getEventDate() {
-        return eventDate;
-    }
-
-    public void setEventDate(Date eventDate) {
-        this.eventDate = eventDate;
     }
 
     public String getEventLocation() {
@@ -140,11 +141,15 @@ public class Event implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(eventId);
         dest.writeString(eventName);
-        dest.writeLong(eventDate.getTime());
+        dest.writeString(eventDate);
+        dest.writeString(eventTime);
         dest.writeString(eventLocation);
         dest.writeString(eventPoster);
         dest.writeStringList(eventAnnouncements);
+        dest.writeStringList(signedUpUsers);
+        dest.writeStringList(checkedInUsers);
     }
 }
 
