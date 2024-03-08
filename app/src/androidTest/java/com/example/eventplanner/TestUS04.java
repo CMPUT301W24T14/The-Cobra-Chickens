@@ -27,8 +27,7 @@ import org.junit.runner.RunWith;
 @LargeTest
 public class TestUS04 extends AbstractTest {
     @Rule
-    public ActivityScenarioRule<AdminActivity> scenario = new ActivityScenarioRule<AdminActivity>(AdminActivity.class);
-    // Temporary test to make this class not give an error when running without other tests
+    public ActivityScenarioRule<SplashScreen> scenario = new ActivityScenarioRule<SplashScreen>(SplashScreen.class);
 
     // Tests for US 04.01.01
     // As an administrator, I want to be able to remove events.
@@ -36,6 +35,18 @@ public class TestUS04 extends AbstractTest {
     @Test
     public void test04_01_01() {
         splashScreenContinue();
+        onView(withId(R.id.profile)).perform(click());
+        onView(withText("Admin Login")).perform(click());
+        onView(withText("See Events")).check(matches(isDisplayed()));
+        onView(withText("See Events")).perform(click());
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+        onView(withId(R.id.adminEventsRecyclerView)).perform(click());
+        onView(withText("YES")).check(matches(isDisplayed()));
+        onView(withText("YES")).perform(click());
     }
     */
 
@@ -44,6 +55,8 @@ public class TestUS04 extends AbstractTest {
     @Test
     public void test04_02_01() {
         splashScreenContinue();
+        onView(withId(R.id.profile)).perform(click());
+        onView(withText("Admin Login")).perform(click());
         onView(withText("See Profiles")).check(matches(isDisplayed()));
         onView(withText("See Profiles")).perform(click());
         try {
@@ -68,18 +81,22 @@ public class TestUS04 extends AbstractTest {
 
     // Tests for US 04.04.01
     // As an administrator, I want to be able to browse events.
-    /*
     @Test
     public void test04_04_01() {
         splashScreenContinue();
+        onView(withId(R.id.profile)).perform(click());
+        onView(withText("Admin Login")).perform(click());
+        onView(withText("See Events")).check(matches(isDisplayed()));
+        onView(withText("See Events")).perform(click());
     }
-     */
 
     // Tests for US 04.05.01
     // As an administrator, I want to be able to browse profiles.
     @Test
     public void test004_05_01() {
         splashScreenContinue();
+        onView(withId(R.id.profile)).perform(click());
+        onView(withText("Admin Login")).perform(click());
         onView(withText("See Profiles")).check(matches(isDisplayed()));
         onView(withText("See Profiles")).perform(click());
     }

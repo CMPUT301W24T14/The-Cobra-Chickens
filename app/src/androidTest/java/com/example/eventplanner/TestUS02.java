@@ -189,7 +189,7 @@ public class TestUS02 extends AbstractTest {
     // Tests for US 02.04.01
     // As an attendee, I want to view event details and announcements within the app.
     @Test
-    public void test02_04_01_and_02_09_01() {
+    public void test02_04_01_and_02_09_01_and_02_07_01() {
         splashScreenContinue();
         onView(withId(R.id.home)).perform(click());
         onView(withText("All Events")).check(matches(isDisplayed()));
