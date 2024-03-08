@@ -16,7 +16,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Represents the fragment that shows users notifications.
@@ -48,9 +47,7 @@ public class NotificationsFragment extends Fragment {
         notificationsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 notificationsList = new ArrayList<>();
-                for (Notification notification : task.getResult().toObjects(Notification.class)) {
-                    notificationsList.add(notification);
-                }
+                notificationsList.addAll(task.getResult().toObjects(Notification.class));
                 // Initialize the adapter with the fetched data
                 notificationsAdapter = new NotificationsRecyclerAdapter(getActivity(), notificationsList);
                 notificationsRecyclerView.setAdapter(notificationsAdapter);
