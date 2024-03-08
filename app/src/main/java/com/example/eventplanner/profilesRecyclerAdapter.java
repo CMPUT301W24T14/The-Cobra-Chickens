@@ -4,6 +4,7 @@
 
 package com.example.eventplanner;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -44,7 +45,7 @@ public class profilesRecyclerAdapter extends RecyclerView.Adapter<profilesRecycl
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         String showName = "Name:"+profilesList.get(position).getName();
         String showContact = "Contact:"+profilesList.get(position).getContactInformation();
         String showHomepage = "HomePage:"+profilesList.get(position).getHomepage();
