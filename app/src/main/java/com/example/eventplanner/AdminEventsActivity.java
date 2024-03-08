@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 public class AdminEventsActivity extends AppCompatActivity {
-    Button back;
+    private Button back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

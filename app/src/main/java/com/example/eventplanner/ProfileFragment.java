@@ -49,26 +49,19 @@ public class ProfileFragment extends Fragment {
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final String TAG = "ProfileFragment";
-    ImageView profilePic;
-    Button editPic;
-    Button delPic;
-    TextView userName, userContact, userHomepage;
-    Button editDetails;
-    Button location;
-
-
-
-    Button adminLogin;
-
-    User user;
-
-    String userId;
-
-    FirebaseFirestore db;
-    CollectionReference usersRef;
-    FirebaseUser user_test;
-    FirebaseAuth auth_test;
-
+    private ImageView profilePic;
+    private Button editPic;
+    private Button delPic;
+    private TextView userName, userContact, userHomepage;
+    private Button editDetails;
+    private Button location;
+    private Button adminLogin;
+    private User user;
+    private String userId;
+    private FirebaseFirestore db;
+    private CollectionReference usersRef;
+    private FirebaseUser user_test;
+    private FirebaseAuth auth_test;
 
     @Nullable
     @Override
@@ -76,7 +69,6 @@ public class ProfileFragment extends Fragment {
 
         // inflate the layout for the profile fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        
 
         //getting all the layout objects
         profilePic = view.findViewById(R.id.profilePic);
@@ -187,10 +179,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-
-
         return view;
-
     }
 
     private void deleteProfilePic() {
@@ -281,8 +270,6 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-
-
     private void getUser(){
         db = FirebaseFirestore.getInstance();
         usersRef = db.collection("users");
@@ -339,7 +326,6 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
-
 
     }
 }

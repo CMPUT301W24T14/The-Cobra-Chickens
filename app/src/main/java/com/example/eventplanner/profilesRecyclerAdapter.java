@@ -30,8 +30,8 @@ import java.util.ArrayList;
 
 public class profilesRecyclerAdapter extends RecyclerView.Adapter<profilesRecyclerAdapter.ViewHolder> {
 
-    Context context;
-    ArrayList<User> profilesList;
+    private Context context;
+    private ArrayList<User> profilesList;
     profilesRecyclerAdapter(Context context, ArrayList<User> profilesList){
         this.context = context;
         this.profilesList = profilesList;
@@ -98,10 +98,11 @@ public class profilesRecyclerAdapter extends RecyclerView.Adapter<profilesRecycl
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView name, contact, homepage;
-        ImageView proPic;
-
-        LinearLayout row;
+        private TextView name;
+        private TextView contact;
+        private TextView homepage;
+        private ImageView proPic;
+        private LinearLayout row;
         public ViewHolder(View itemView){
             super(itemView);
             name = itemView.findViewById(R.id.name);

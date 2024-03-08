@@ -29,16 +29,15 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
     private ArrayList<User> checkedInList;
     private ImageView eventPoster;
     private FirebaseFirestore db; // the database
-    Bundle bundle;
-    RecyclerViewInterface recyclerViewInterface;
-    Event currEvent;
+    private Bundle bundle;
+    private RecyclerViewInterface recyclerViewInterface;
+    private Event currEvent;
     private UserRecyclerAdapter signedUserRecyclerAdapter;
     private UserRecyclerAdapter checkedInUserRecyclerAdapter;
     private AnnouncementsRecyclerAdapter announcementsRecyclerAdapter;
-    RecyclerView announcementsRecyclerView;
-    RecyclerView signedUpRecyclerView;
-    RecyclerView checkedInRecyclerView;
-
+    private RecyclerView announcementsRecyclerView;
+    private RecyclerView signedUpRecyclerView;
+    private RecyclerView checkedInRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

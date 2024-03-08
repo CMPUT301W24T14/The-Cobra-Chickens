@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Button;
 
 public class AdminPicsActivity extends AppCompatActivity {
-    Button back;
+    private Button back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

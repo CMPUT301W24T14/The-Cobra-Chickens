@@ -21,7 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.CompoundBarcodeView;
 
 public class ScanFragment extends Fragment {
-    CompoundBarcodeView barcodeView;
+    private CompoundBarcodeView barcodeView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private SharedViewModel sharedViewModel;

@@ -21,13 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminProfilesActivity extends AppCompatActivity {
-    Button back;
-    RecyclerView profilesRecyclerView;
-    FirebaseFirestore db;
-    CollectionReference usersRef;
-
-    ArrayList<User> profilesList = new ArrayList<>();
-
+    private Button back;
+    private RecyclerView profilesRecyclerView;
+    private FirebaseFirestore db;
+    private CollectionReference usersRef;
+    private ArrayList<User> profilesList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
