@@ -1,5 +1,6 @@
 package com.example.eventplanner;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
@@ -10,6 +11,8 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,9 +26,20 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.core.ArrayContainsFilter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -33,7 +47,7 @@ public class EventCreateActivity extends AppCompatActivity {
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
 
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db; // the database
     FirebaseAuth auth;
     FirebaseUser user;
     private Button dateButton;
@@ -60,6 +74,8 @@ public class EventCreateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_create);
+
+        db = FirebaseFirestore.getInstance();
 
         editTextEventName = findViewById(R.id.event_name);
         editTextMaxAttendees = findViewById(R.id.event_max_attendees);
@@ -107,6 +123,7 @@ public class EventCreateActivity extends AppCompatActivity {
         eventCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String event_name, guests, location;
                 event_name = String.valueOf(editTextEventName.getText());
                 guests = String.valueOf(editTextMaxAttendees.getText());
@@ -119,8 +136,34 @@ public class EventCreateActivity extends AppCompatActivity {
                 doc_event.put("eventLocation", location);
                 doc_event.put("eventOrganizer", event_creator);
                 doc_event.put("eventPoster", "test value");
-                db.collection("events").document()
-                        .set(doc_event);
+                doc_event.put("eventAnnouncements", new ArrayList<>());
+                doc_event.put("signedUpUsers", new ArrayList<>());
+                doc_event.put("checkedInUsers", new ArrayList<>());
+
+
+                DocumentReference key;
+                key = db.collection("events").document();
+                key.set(doc_event).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+
+                                Log.d("TESTING", "added this event id:" + (key.getId()));
+
+                                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                DocumentReference userRef = db.collection("users").document(userId);
+
+                                userRef.update("Organizing", FieldValue.arrayUnion(key.getId()))
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                Log.d("TESTING", "SUCCESS added  " + (key.getId()));
+
+                                            }
+                                        });
+
+                            }
+                        });
+
                 finish();
             }
         });
