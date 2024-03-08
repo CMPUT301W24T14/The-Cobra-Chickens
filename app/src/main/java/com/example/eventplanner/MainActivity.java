@@ -16,8 +16,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
-
-    private HomeFragment homeFragment;
     private ScanFragment scanFragment;
     private NotificationsFragment notificationsFragment;
     private ProfileFragment profileFragment;

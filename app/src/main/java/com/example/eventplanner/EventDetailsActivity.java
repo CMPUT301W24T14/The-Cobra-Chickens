@@ -77,8 +77,8 @@ public class EventDetailsActivity extends AppCompatActivity {
             if (event != null) {
                 // Set event details to views
                 eventNameTextView.setText("Name:" + event.getEventName());
-                eventDateTextView.setText("Date:" + formatDate(event.getEventDate()));
-                eventTimeTextView.setText("Time:" + formatTime(event.getEventDate()));
+                eventDateTextView.setText("Date:" + event.getEventDate());
+                eventTimeTextView.setText("Time:" + event.getEventTime());
 
                 if (event.getEventPoster() != null && !event.getEventPoster().isEmpty()) {
                     Glide.with(this)
@@ -160,13 +160,13 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     }
 
-    private String formatDate(Date eventDate) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-        return sdf.format(eventDate);
-    }
-
-    private String formatTime(Date eventDate) {
-        SimpleDateFormat sdf = new SimpleDateFormat("h:mma");
-        return sdf.format(eventDate).toUpperCase();
-    }
+//    private String formatDate(Date eventDate) {
+//        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+//        return sdf.format(eventDate);
+//    }
+//
+//    private String formatTime(Date eventDate) {
+//        SimpleDateFormat sdf = new SimpleDateFormat("h:mma");
+//        return sdf.format(eventDate).toUpperCase();
+//    }
 }
