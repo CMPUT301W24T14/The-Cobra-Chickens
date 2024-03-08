@@ -16,4 +16,5 @@
     <string name="upload_image">Upload Image</string>
     <string name="welcome_msg">Welcome to Cobra Event Management</string>
     <string name="continue_to_home">Continue</string>
+    <string name="enter_event_location">Enter Event Location</string>
 </resources>

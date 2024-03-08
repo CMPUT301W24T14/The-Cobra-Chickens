@@ -99,7 +99,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                         // get all events in user's organizing ArrayList and put them in another ArrayList of eventIds
-                        ArrayList<String> eventIds = (ArrayList<String>) documentSnapshot.get("organizing");
+                        ArrayList<String> eventIds = (ArrayList<String>) documentSnapshot.get("Organizing");
 
                         if (eventIds != null) {
                             loadEventDocs(eventIds, organizeEventsRecyclerAdapter);
