@@ -200,12 +200,12 @@ public class TestUS02 {
 
     // Tests for US 02.06.01
     // As an attendee, I do not want to login to the app. No username, no password.
-    /*
     @Test
     public void test02_06_01() {
-
+        onView(withText("All Events")).check(matches(isDisplayed()));
+        onView(withText("My Events")).check(matches(isDisplayed()));
+        onView(withText("Organize")).check(matches(isDisplayed()));
     }
-     */
 
     // Tests for US 02.07.01
     // As an attendee, I want to sign up to attend an event from the event details (as in I promise to go).
