@@ -2,6 +2,7 @@
 package com.example.eventplanner;
 
 import android.content.DialogInterface;
+import android.health.connect.datatypes.units.Length;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -116,9 +117,15 @@ public class EventDetailsActivity extends AppCompatActivity {
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
+                        Event event = bundle.getParcelable("event");
+                        if (event.getSignedUpUsers().size() >= Integer.valueOf(event.getEventMaxAttendees())) {
+                            Toast.makeText(EventDetailsActivity.this, "Event is full!", Toast.LENGTH_SHORT).show();
+                        }
 
-                        signUserUp();
+                        else {
+                            Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
+                            signUserUp();
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
