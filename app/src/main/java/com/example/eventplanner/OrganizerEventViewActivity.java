@@ -62,19 +62,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         checkedInList = new ArrayList<>();
 
 
-        announcementsRecyclerAdapter = new AnnouncementsRecyclerAdapter(this, announcementsList);
-        announcementsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        announcementsRecyclerView.setAdapter(announcementsRecyclerAdapter);
-
-        signedUserRecyclerAdapter = new UserRecyclerAdapter(this, signedUpList, recyclerViewInterface);
-        signedUpRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        signedUpRecyclerView.setAdapter(signedUserRecyclerAdapter);
-
-        checkedInUserRecyclerAdapter = new UserRecyclerAdapter(this, checkedInList, recyclerViewInterface);
-        checkedInRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        checkedInRecyclerView.setAdapter(checkedInUserRecyclerAdapter);
-
-
         ImageView poster = findViewById(R.id.poster2);
 
         bundle = getIntent().getExtras();
@@ -95,8 +82,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                 eventDateTextView.setText("Date: " + currEvent.getEventDate());
                 eventTimeTextView.setText("Time: " + currEvent.getEventTime());
 
-                Log.d("TESTING", "got here 7");
-
                 if (currEvent.getEventPoster() != null && !currEvent.getEventPoster().isEmpty()) {
                     Glide.with(this)
                             .load(currEvent.getEventPoster())
@@ -109,14 +94,26 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     announcementsList = currEvent.getEventAnnouncements();
                 }
 
+                announcementsRecyclerAdapter = new AnnouncementsRecyclerAdapter(this, announcementsList);
+                announcementsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                announcementsRecyclerView.setAdapter(announcementsRecyclerAdapter);
+
             }
+
+            signedUserRecyclerAdapter = new UserRecyclerAdapter(this, signedUpList, recyclerViewInterface);
+            signedUpRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            signedUpRecyclerView.setAdapter(signedUserRecyclerAdapter);
+
+            checkedInUserRecyclerAdapter = new UserRecyclerAdapter(this, checkedInList, recyclerViewInterface);
+            checkedInRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            checkedInRecyclerView.setAdapter(checkedInUserRecyclerAdapter);
+
 
         }
 
         getSignedUpUsers();
         getCheckedInUsers();
 
-        Log.d("TESTING", "got here 7");
     }
 
     private void getSignedUpUsers() {
@@ -127,8 +124,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                        Log.d("TESTING", "got here.");
 
                         // get all events in user's organizing ArrayList and put them in another ArrayList of eventIds
                         ArrayList<String> signedUpUserIds = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
@@ -149,8 +144,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                        Log.d("TESTING", "got here.");
-
                         // get all events in user's organizing ArrayList and put them in another ArrayList of eventIds
                         ArrayList<String> checkedInUserIds = (ArrayList<String>) documentSnapshot.get("checkedInUsers");
 
@@ -163,7 +156,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
     private void loadSignedUpUserDocs(ArrayList<String> userIds, UserRecyclerAdapter userRecyclerAdapter) {
 
-        Log.d("TESTING", "got here 2");
         for (String userId : userIds) { // for every eventId in user's organizing Array
             db.collection("users")
                     .document(userId)
@@ -172,8 +164,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                            Log.d("TESTING", "got here 3");
-
                             String userId = documentSnapshot.getId();
                             String name = documentSnapshot.getString("Name");
                             String contact = documentSnapshot.getString("Contact");
@@ -181,17 +171,13 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                             String profilePicUrl = documentSnapshot.getString("ProfilePic");
                             boolean usrlocation = documentSnapshot.getBoolean("Location");
 
-                            Log.d("TESTING", "got here 4");
-
                             ArrayList<String> checkedInto = (ArrayList<String>) documentSnapshot.get("checkedInto");
                             ArrayList<String> signedUpFor = (ArrayList<String>) documentSnapshot.get("myEvents");
                             ArrayList<String> organizing = (ArrayList<String>) documentSnapshot.get("Organizing");
 
                             signedUpList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing));
-                            Log.d("TESTING", "got here 5");
 
                             userRecyclerAdapter.notifyDataSetChanged();
-                            Log.d("TESTING", "got here 6");
                         }
                     });
 
@@ -200,7 +186,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
     private void loadCheckedInUserDocs(ArrayList<String> userIds, UserRecyclerAdapter userRecyclerAdapter) {
 
-        Log.d("TESTING", "got here 2");
         for (String userId : userIds) { // for every eventId in user's organizing Array
             db.collection("users")
                     .document(userId)
@@ -209,8 +194,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                            Log.d("TESTING", "got here 3");
-
                             String userId = documentSnapshot.getId();
                             String name = documentSnapshot.getString("Name");
                             String contact = documentSnapshot.getString("Contact");
@@ -218,17 +201,13 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                             String profilePicUrl = documentSnapshot.getString("ProfilePic");
                             boolean usrlocation = documentSnapshot.getBoolean("Location");
 
-                            Log.d("TESTING", "got here 4");
-
                             ArrayList<String> checkedInto = (ArrayList<String>) documentSnapshot.get("checkedInto");
                             ArrayList<String> signedUpFor = (ArrayList<String>) documentSnapshot.get("myEvents");
                             ArrayList<String> organizing = (ArrayList<String>) documentSnapshot.get("Organizing");
 
                             checkedInList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing));
-                            Log.d("TESTING", "got here 5");
 
                             userRecyclerAdapter.notifyDataSetChanged();
-                            Log.d("TESTING", "got here 6");
                         }
                     });
 
