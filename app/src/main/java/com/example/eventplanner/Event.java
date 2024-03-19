@@ -39,6 +39,16 @@ public class Event implements Parcelable {
 
     }
 
+    public Event (String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime,String eventLocation, String eventPoster){
+        this.eventId = eventId;
+        this.eventName = eventName;
+        this.eventMaxAttendees = eventMaxAttendees;
+        this.eventDate = eventDate;
+        this.eventTime = eventTime;
+        this.eventLocation = eventLocation;
+        this.eventPoster = eventPoster;
+    }
+
     protected Event(Parcel in) {
         eventId = in.readString();
         eventName = in.readString();
