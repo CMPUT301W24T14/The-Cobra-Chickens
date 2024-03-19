@@ -52,6 +52,7 @@ public class AdminEventsActivity extends AppCompatActivity {
                 String time = document.getString("eventTime");
                 String location = document.getString("eventLocation");
                 String poster = document.getString("eventPoster");
+                Event e = new Event(documentId, name, maxAttendees,date, time,location, poster);
                 eventsList.add(new Event(documentId, name, maxAttendees,date, time,location, poster));
             }
 
