@@ -76,7 +76,7 @@
 
         <Button
             android:id="@+id/buttonDatePicker"
-            android:layout_width="140sp"
+            android:layout_width="190sp"
             android:layout_height="wrap_content"
             android:text="@string/example_date"
             android:textColor="@color/black"
@@ -92,7 +92,7 @@
 
         <Button
             android:id="@+id/buttonTimePicker"
-            android:layout_width="140sp"
+            android:layout_width="190sp"
             android:layout_height="wrap_content"
             android:text="@string/example_time"
             android:textColor="@color/black"

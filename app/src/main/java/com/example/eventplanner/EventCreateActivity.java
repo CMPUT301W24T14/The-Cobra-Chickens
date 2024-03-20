@@ -172,6 +172,17 @@ public class EventCreateActivity extends AppCompatActivity {
         eventCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                /// Null checks for date and time.
+                if (date_day == null || date_month == null || date_year == null) {
+                    Toast.makeText(EventCreateActivity.this, "Please Enter a Valid Date!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (time_hour == null || time_minute == null) {
+                    Toast.makeText(EventCreateActivity.this, "Please Enter a Valid Time!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 String event_name, guests, location;
                 event_name = String.valueOf(editTextEventName.getText());
                 guests = String.valueOf(editTextMaxAttendees.getText());
