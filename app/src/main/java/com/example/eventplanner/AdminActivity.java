@@ -11,6 +11,7 @@ import android.widget.Button;
 public class AdminActivity extends AppCompatActivity {
     private Button eventsBtn;
     private Button picsBtn;
+    private Button postersBtn;
     private Button profilesBtn;
     private Button logout;
     @Override
@@ -20,6 +21,7 @@ public class AdminActivity extends AppCompatActivity {
 
         eventsBtn = findViewById(R.id.eventsBtn);
         picsBtn = findViewById(R.id.picsBtn);
+        postersBtn = findViewById(R.id.postersBtn);
         profilesBtn = findViewById(R.id.profilesBtn);
         logout = findViewById(R.id.logOutBtn);
 
@@ -35,7 +37,15 @@ public class AdminActivity extends AppCompatActivity {
         picsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AdminActivity.this, AdminPicsActivity.class);
+                Intent intent = new Intent(AdminActivity.this, AdminProPicActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        postersBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AdminActivity.this, AdminPosterActivity.class);
                 startActivity(intent);
             }
         });
