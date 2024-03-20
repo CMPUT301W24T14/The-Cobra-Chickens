@@ -55,6 +55,9 @@ public class AdminEventsRecyclerAdapter extends RecyclerView.Adapter<AdminEvents
         if (posterUrl != null && !posterUrl.equals("")){
             Glide.with(holder.itemView.getContext()).load(posterUrl).into(holder.poster);
         }
+        else {
+            holder.poster.setImageResource(R.drawable.a);
+        }
 
         holder.row.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,9 +69,14 @@ public class AdminEventsRecyclerAdapter extends RecyclerView.Adapter<AdminEvents
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                eventsList.remove(position);
-                                deleteEventFromDatabase(position);
-                                notifyItemRemoved(position);
+//                                eventsList.remove(position);
+//                                deleteEventFromDatabase(position);
+//                                notifyItemRemoved(position);
+                                int newPosition = holder.getAdapterPosition(); // Use getAdapterPosition to get the current item position
+                                deleteEventFromDatabase(newPosition); // Assuming there's an 'id' field and a method to delete the profile from the database
+                                eventsList.remove(newPosition);
+                                notifyItemRemoved(newPosition);
+                                notifyItemRangeChanged(newPosition, eventsList.size());
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {

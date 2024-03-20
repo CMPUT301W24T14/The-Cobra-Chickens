@@ -58,9 +58,14 @@ public class AdminPostersRecyclerAdapter extends RecyclerView.Adapter<AdminPoste
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                eventsList.remove(position);
-                                deletePosterFromDatabase(position);
-                                notifyItemRemoved(position);
+//                                eventsList.remove(position);
+//                                deletePosterFromDatabase(position);
+//                                notifyItemRemoved(position);
+                                int newPosition = holder.getAdapterPosition(); // Use getAdapterPosition to get the current item position
+                                deletePosterFromDatabase(newPosition); // Assuming there's an 'id' field and a method to delete the profile from the database
+                                eventsList.remove(newPosition);
+                                notifyItemRemoved(newPosition);
+                                notifyItemRangeChanged(newPosition, eventsList.size());
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
