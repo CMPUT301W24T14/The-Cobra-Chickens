@@ -79,10 +79,12 @@ public class MainActivity extends AppCompatActivity {
                         String token = task.getResult();
 
                         // Log and toast
+                        Log.d("FCM", "Token: " + token);
                         System.out.println(token);
-                        Toast.makeText(MainActivity.this,token, Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, token, Toast.LENGTH_LONG).show();
                     }
                 });
+
     }
 
     /**
