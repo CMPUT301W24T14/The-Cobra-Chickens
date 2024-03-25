@@ -195,6 +195,10 @@ public class Event implements Parcelable {
         dest.writeString(eventTime);
         dest.writeString(eventLocation);
         dest.writeString(eventPoster);
+
+        dest.writeString(checkInCode);
+        dest.writeString(promoCode);
+
         dest.writeStringList(eventAnnouncements);
         dest.writeStringList(signedUpUsers);
         dest.writeStringList(checkedInUsers);

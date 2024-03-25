@@ -137,6 +137,14 @@ public class User implements Parcelable {
         this.checkedInEventsList = checkedInEventsList;
     }
 
+    public ArrayList<String> getReusableCodes() {
+        return reusableCodes;
+    }
+
+    public void setReusableCodes(ArrayList<String> reusableCodes) {
+        this.reusableCodes = reusableCodes;
+    }
+
     @Override
     public int describeContents() {
         return 0;
