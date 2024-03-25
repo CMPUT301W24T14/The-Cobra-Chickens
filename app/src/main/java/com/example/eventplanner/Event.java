@@ -18,11 +18,14 @@ public class Event implements Parcelable {
     private String eventTime;
     private String eventLocation;
     private String eventPoster;
+    private String checkInCode;
+    private String promoCode;
     private ArrayList<String> eventAnnouncements;
     private ArrayList<String> checkedInUsers;
     private ArrayList<String> signedUpUsers;
 
     public Event(String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime,String eventLocation, String eventPoster,
+                 String checkInCode, String promoCode,
                  ArrayList<String> eventAnnouncements,
                  ArrayList<String> signedUpUsers, ArrayList<String> checkedInUsers) {
 
@@ -33,6 +36,10 @@ public class Event implements Parcelable {
         this.eventTime = eventTime;
         this.eventLocation = eventLocation;
         this.eventPoster = eventPoster;
+
+        this.checkInCode = checkInCode;
+        this.promoCode = promoCode;
+
         this.eventAnnouncements = eventAnnouncements;
         this.signedUpUsers = signedUpUsers;
         this.checkedInUsers = checkedInUsers;
@@ -57,9 +64,29 @@ public class Event implements Parcelable {
         eventTime = in.readString();
         eventLocation = in.readString();
         eventPoster = in.readString();
+
+        checkInCode = in.readString();
+        promoCode = in.readString();
+
         eventAnnouncements = in.createStringArrayList();
         signedUpUsers = in.createStringArrayList();
         checkedInUsers = in.createStringArrayList();
+    }
+
+    public String getCheckInCode() {
+        return checkInCode;
+    }
+
+    public void setCheckInCode(String checkInCode) {
+        this.checkInCode = checkInCode;
+    }
+
+    public String getPromoCode() {
+        return promoCode;
+    }
+
+    public void setPromoCode(String promoCode) {
+        this.promoCode = promoCode;
     }
 
     public String getEventId() {
