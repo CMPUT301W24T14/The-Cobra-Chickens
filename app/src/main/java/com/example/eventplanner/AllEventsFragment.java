@@ -113,12 +113,16 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
                                 String eventTime = doc.getString("eventTime");
                                 String eventLocation = doc.getString("eventLocation");
                                 String eventPoster = doc.getString("eventPoster");
+
+                                String checkInCode = doc.getString("checkInCode");
+                                String promoCode = doc.getString("promoCode");
+
                                 ArrayList<String> eventAnnouncements = (ArrayList<String>) doc.get("eventAnnouncements");
                                 ArrayList<String> checkedInUsers = (ArrayList<String>) doc.get("checkedInUsers");
                                 ArrayList<String> signedUpUsers = (ArrayList<String>) doc.get("signedUpUsers");
 
                                 // create the Event object with retrieved event information and add it to allEventsList
-                                allEventsList.add(new Event(eventId, eventName, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, eventAnnouncements, checkedInUsers, signedUpUsers));
+                                allEventsList.add(new Event(eventId, eventName, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
                             }
 
                             // tell allEventsRecyclerView that the dataset that allEventsRecyclerAdapter is responsible for has changed

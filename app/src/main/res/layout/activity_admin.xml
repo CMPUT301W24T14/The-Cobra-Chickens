@@ -27,7 +27,12 @@
             android:id="@+id/picsBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="See Pics"/>
+            android:text="See Profile Pictures"/>
+        <Button
+            android:id="@+id/postersBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="See Event Posters"/>
 
         <Button
             android:id="@+id/logOutBtn"

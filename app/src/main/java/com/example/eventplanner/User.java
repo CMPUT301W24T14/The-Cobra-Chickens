@@ -18,10 +18,11 @@ public class User implements Parcelable {
     private ArrayList<String> signedUpForEventList;
     private ArrayList<String> organizingEventsList;
     private ArrayList <String> checkedInEventsList;
+    private ArrayList<String> reusableCodes;
 
 
     public User(String userId, String name, String homepage, String contactInformation, String profilePicture, Boolean geolocationTrackingEnabled,
-                ArrayList<String> signedUpForEventList, ArrayList<String> organizingEventsList, ArrayList<String> checkedInEventsList) {
+                ArrayList<String> signedUpForEventList, ArrayList<String> organizingEventsList, ArrayList<String> checkedInEventsList, ArrayList<String> reusableCodes) {
 
         this.userId = userId;
         this.name = name;
@@ -32,6 +33,8 @@ public class User implements Parcelable {
         this.signedUpForEventList = signedUpForEventList;
         this.organizingEventsList = organizingEventsList;
         this.checkedInEventsList = checkedInEventsList;
+
+        this.reusableCodes = reusableCodes;
     }
 
     public User(String userId, String name, String homepage, String contactInformation, String profilePicture){
@@ -53,6 +56,8 @@ public class User implements Parcelable {
         signedUpForEventList = in.createStringArrayList();
         organizingEventsList = in.createStringArrayList();
         checkedInEventsList = in.createStringArrayList();
+
+        reusableCodes = in.createStringArrayList();
     }
 
     public  static final Creator<User> CREATOR = new Creator<User>() {
@@ -148,5 +153,7 @@ public class User implements Parcelable {
         dest.writeStringList(signedUpForEventList);
         dest.writeStringList(organizingEventsList);
         dest.writeStringList(checkedInEventsList);
+
+        dest.writeStringList(reusableCodes);
     }
 }
