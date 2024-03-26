@@ -2,12 +2,21 @@
 
 package com.example.eventplanner;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,10 +31,17 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,6 +56,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.lang.reflect.Array;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 /**
@@ -63,6 +80,15 @@ public class ProfileFragment extends Fragment {
     private FirebaseUser user_test;
     private FirebaseAuth auth_test;
 
+
+    private TextView latitude, longitude;
+    private SwitchCompat locationSwitch;
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationManager locationManager;
+    private LocationCallback locationCallback;
+    private SharedPreferences sharedPreferences;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,6 +106,15 @@ public class ProfileFragment extends Fragment {
         location = view.findViewById(R.id.location);
         editDetails = view.findViewById(R.id.editProfile);
         adminLogin = view.findViewById(R.id.adminLoginBtn);
+
+
+        // location stuff 3/26
+        latitude = view.findViewById(R.id.textview_lat);
+        longitude = view.findViewById(R.id.textview_long);
+        locationSwitch = view.findViewById(R.id.switch_locationtracking);
+
+        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+
 
         auth_test = FirebaseAuth.getInstance();
         user_test = auth_test.getCurrentUser();
@@ -179,7 +214,101 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+
+
+        // location stuff 3/26
+        sharedPreferences = getContext().getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        locationSwitch.setChecked(sharedPreferences.getBoolean("switchState", false));
+
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+
+                updateLatAndLong(locationResult.getLastLocation());
+            }
+        };
+
+        locationSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (locationSwitch.isChecked()) {
+                    requestPermission();
+                }
+                else {
+                    stopLocationUpdates();
+                }
+            }
+        });
+
+
         return view;
+    }
+
+    private void stopLocationUpdates() {
+
+        latitude.setText("Not currently tracking");
+        longitude.setText("Not currently tracking");
+
+        fusedLocationClient.removeLocationUpdates(locationCallback);
+
+        // Remove location updates
+        if (fusedLocationClient != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
+
+        // Store switch state
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("switchState", locationSwitch.isChecked());
+        editor.apply();
+
+    }
+
+    private ActivityResultLauncher<String[]> requestLocationPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissions -> {
+
+        if (permissions.containsKey(Manifest.permission.ACCESS_FINE_LOCATION) && permissions.get(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            getLocation();
+        }
+        else {
+            Toast.makeText(getContext(), "Location permission denied", Toast.LENGTH_SHORT).show();
+        }
+    });
+
+    private void getLocation() {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // Permission granted, get location
+            fusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        updateLatAndLong(location);
+                    }
+                }
+            });
+        } else {
+            // Permission denied, handle accordingly
+            Toast.makeText(getContext(), "Location permission denied", Toast.LENGTH_SHORT).show();
+            locationSwitch.setChecked(false); // Uncheck the switch
+        }
+    }
+
+    private void requestPermission() {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // Permission already granted
+            getLocation();
+        } else {
+            // Request permission
+            requestLocationPermissionLauncher.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION});
+        }
+    }
+
+    private void updateLatAndLong(Location location) {
+        latitude.setText(String.valueOf(location.getLatitude()));
+        longitude.setText(String.valueOf(location.getLongitude()));
     }
 
     private void deleteProfilePic() {
