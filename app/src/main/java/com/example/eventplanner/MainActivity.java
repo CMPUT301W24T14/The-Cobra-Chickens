@@ -6,14 +6,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
     private ScanFragment scanFragment;
@@ -39,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationBar = findViewById(R.id.bottom_nav_bar);
 
         // begin on the home screen
-        selectFragment(new HomeFragmentUpdated());
+        selectFragment(new HomeFragment());
 
         // set listener for the bottom navigation bar for each menu item/button
         bottomNavigationBar.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -50,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // select the fragment based on what was clicked in the bottomNavigationBar
                 if (itemId == R.id.home) {
-                    selectFragment(new HomeFragmentUpdated());
+                    selectFragment(new HomeFragment());
                 } else if (itemId == R.id.scan) {
                     selectFragment(new ScanFragment());
                 } else if (itemId == R.id.notifications) {

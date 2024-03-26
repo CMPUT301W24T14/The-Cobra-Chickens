@@ -141,12 +141,16 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
                             String eventTime = documentSnapshot.getString("eventTime");
                             String eventLocation = documentSnapshot.getString("eventLocation");
                             String eventPoster = documentSnapshot.getString("eventPoster");
+
+                            String checkInCode = documentSnapshot.getString("checkInCode");
+                            String promoCode = documentSnapshot.getString("promoCode");
+
                             ArrayList<String> eventAnnouncements = (ArrayList<String>) documentSnapshot.get("eventAnnouncements");
                             ArrayList<String> checkedInUsers = (ArrayList<String>) documentSnapshot.get("checkedInUsers");
                             ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
                             // create Event object with retrieved event information and add it to myEventsList
-                            myEventsList.add(new Event(eventId, eventName, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, eventAnnouncements, checkedInUsers, signedUpUsers));
+                            myEventsList.add(new Event(eventId, eventName, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
 
                             // tell myEventsRecyclerView that the dataset that myEventsRecyclerAdapter is responsible for has changed
                             myEventsRecyclerAdapter.notifyDataSetChanged();

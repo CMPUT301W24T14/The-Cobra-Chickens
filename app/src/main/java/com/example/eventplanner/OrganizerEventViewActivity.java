@@ -175,7 +175,9 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                             ArrayList<String> signedUpFor = (ArrayList<String>) documentSnapshot.get("myEvents");
                             ArrayList<String> organizing = (ArrayList<String>) documentSnapshot.get("Organizing");
 
-                            signedUpList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing));
+                            ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
+
+                            signedUpList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing, reusableCodes));
 
                             userRecyclerAdapter.notifyDataSetChanged();
                         }
@@ -205,7 +207,9 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                             ArrayList<String> signedUpFor = (ArrayList<String>) documentSnapshot.get("myEvents");
                             ArrayList<String> organizing = (ArrayList<String>) documentSnapshot.get("Organizing");
 
-                            checkedInList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing));
+                            ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
+
+                            checkedInList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing, reusableCodes));
 
                             userRecyclerAdapter.notifyDataSetChanged();
                         }

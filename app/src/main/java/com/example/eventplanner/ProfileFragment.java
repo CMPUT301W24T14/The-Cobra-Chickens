@@ -292,18 +292,20 @@ public class ProfileFragment extends Fragment {
                         ArrayList<String> signedUpFor = (ArrayList<String>) document.get("myEvents");
                         ArrayList<String> organizing = (ArrayList<String>) document.get("checkedInto");
 
+                        ArrayList<String> reusableCodes = (ArrayList<String>) document.get("reusableCodes");
+
                         if(profilePicUrl != null && !profilePicUrl.equals("")){
                             String profilePicURI = document.getString("ProfilePic");
-                            user = new User(userId, name, homePage, contact, profilePicURI, usrlocation, signedUpFor, checkedInto, organizing);
+                            user = new User(userId, name, homePage, contact, profilePicURI, usrlocation, signedUpFor, checkedInto, organizing, reusableCodes);
                             Glide.with(requireContext()).load(profilePicURI).into(profilePic);
                         } else {
 
                             if (name != null && name.equals("")) {
-                                user = new User(userId, name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
+                                user = new User(userId, name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing, reusableCodes);
                                 Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + userId + "?d=identicon").into(profilePic);
                             }
                             else {
-                                user = new User(userId, name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing);
+                                user = new User(userId, name, homePage, contact, null, usrlocation, signedUpFor, checkedInto, organizing, reusableCodes);
                                 Glide.with(requireContext()).load("https://www.gravatar.com/avatar/" + user.getName() + "?d=identicon").into(profilePic);
                             }
                         }
