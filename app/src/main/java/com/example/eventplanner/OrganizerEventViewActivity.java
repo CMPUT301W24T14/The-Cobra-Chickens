@@ -1,31 +1,61 @@
 package com.example.eventplanner;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.zxing.WriterException;
 
 import org.checkerframework.checker.units.qual.A;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * The displays an activity that shows an organizer details of an event they are managing.
  */
 public class OrganizerEventViewActivity extends AppCompatActivity {
+
+    private Button generateCheckinQR;
+    private Button generatePromoQR;
+    private Button shareCheckInQR;
+    private Button sharePromoQR;
+    private ImageView checkinQR;
+    private ImageView promoQR;
+
+    private QRCodeGenerator generator;
 
     private ArrayList<String> announcementsList;
     private ArrayList<User> signedUpList;
@@ -61,6 +91,16 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         signedUpList = new ArrayList<>();
         checkedInList = new ArrayList<>();
 
+        generator = new QRCodeGenerator();
+
+        generateCheckinQR = findViewById(R.id.generateCheckInQR);
+        generatePromoQR = findViewById(R.id.generatePromoQR);
+
+        shareCheckInQR = findViewById(R.id.shareCheckInQR);
+        sharePromoQR = findViewById(R.id.sharePromoQR);
+
+        checkinQR = findViewById(R.id.checkInQR);
+        promoQR = findViewById(R.id.promoQR);
 
         ImageView poster = findViewById(R.id.poster2);
 
@@ -71,7 +111,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         backButton.setOnClickListener(view -> finish());
 
         bundle = getIntent().getExtras();
-
 
         if (bundle != null && bundle.containsKey("event")) {
             currEvent = bundle.getParcelable("event");
@@ -98,6 +137,71 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                 announcementsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                 announcementsRecyclerView.setAdapter(announcementsRecyclerAdapter);
 
+                if (currEvent.getCheckInCode() != "") {
+                    generateCheckinQR.setText("Change Checkin QR");
+                    Bitmap qrCode = null; // Replace with your method to generate a QR code
+
+                    try {
+                        qrCode = QRCodeGenerator.generateQRCode(currEvent.getCheckInCode(), 1000, 1000);
+                    } catch (WriterException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    // Set the generated QR code as the image for the checkinQR ImageView.
+                    checkinQR.setImageBitmap(qrCode);
+                }
+
+                if (currEvent.getPromoCode() != "") {
+                    // Generate a new QR code. You'll need to replace "qrCodeData" with the actual data you want to encode in the QR code.
+                    Bitmap qrCode = null; // Replace with your method to generate a QR code
+                    try {
+                        qrCode = QRCodeGenerator.generateQRCode(currEvent.getPromoCode(), 1000, 1000);
+                    } catch (WriterException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    // Set the generated QR code as the image for the checkinQR ImageView.
+                    promoQR.setImageBitmap(qrCode);
+                }
+
+                generateCheckinQR.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Generate a new QR code. You'll need to replace "qrCodeData" with the actual data you want to encode in the QR code.
+                        Bitmap qrCode = null; // Replace with your method to generate a QR code
+
+                        currEvent.setCheckInCode(generateRandomCode(25));
+                        db.collection("events").document(currEvent.getEventId()).update("checkInCode", currEvent.getCheckInCode());
+                        try {
+                            qrCode = QRCodeGenerator.generateQRCode(currEvent.getCheckInCode(), 1000, 1000);
+                        } catch (WriterException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        // Set the generated QR code as the image for the checkinQR ImageView.
+                        checkinQR.setImageBitmap(qrCode);
+                    }
+                });
+
+                generatePromoQR.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Generate a new QR code. You'll need to replace "qrCodeData" with the actual data you want to encode in the QR code.
+                        Bitmap qrCode = null; // Replace with your method to generate a QR code
+
+                        currEvent.setPromoCode(generateRandomCode(25));
+                        db.collection("events").document(currEvent.getEventId()).update("promoCode", currEvent.getPromoCode());
+                        try {
+                            qrCode = QRCodeGenerator.generateQRCode(currEvent.getPromoCode(), 1000, 1000);
+                        } catch (WriterException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        // Set the generated QR code as the image for the checkinQR ImageView.
+                        promoQR.setImageBitmap(qrCode);
+                    }
+                });
+
             }
 
             signedUserRecyclerAdapter = new UserRecyclerAdapter(this, signedUpList, recyclerViewInterface);
@@ -110,6 +214,90 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
 
         }
+
+        shareCheckInQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Convert the image to a bitmap
+                Bitmap bitmap = ((BitmapDrawable) checkinQR.getDrawable()).getBitmap();
+
+                // Convert the Bitmap to a byte array
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
+                Uri imageUri = Uri.parse(path);
+
+                Intent share = new Intent(Intent.ACTION_SEND);
+                share.setType("image/jpeg");
+                share.putExtra(Intent.EXTRA_STREAM, imageUri);
+                startActivity(Intent.createChooser(share, "Share Check in QR"));
+            }
+        });
+
+        sharePromoQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Convert the image to a bitmap
+                Bitmap bitmap = ((BitmapDrawable) promoQR.getDrawable()).getBitmap();
+
+                // Convert the Bitmap to a byte array
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
+                Uri imageUri = Uri.parse(path);
+
+                Intent share = new Intent(Intent.ACTION_SEND);
+                share.setType("image/jpeg");
+                share.putExtra(Intent.EXTRA_STREAM, imageUri);
+                startActivity(Intent.createChooser(share, "Share Promo QR"));
+            }
+        });
+
+        checkinQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create a Dialog
+                Dialog dialog = new Dialog(OrganizerEventViewActivity.this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.dialog_qr_code); // You need to create a new layout file 'dialog_qr_code.xml' for this dialog
+
+                // Get the ImageView from the dialog layout and set the QR code to it
+                ImageView dialogQrCode = dialog.findViewById(R.id.dialogQrCode);
+                dialogQrCode.setImageDrawable(checkinQR.getDrawable());
+
+                // Set the ImageView size to a larger value
+                ViewGroup.LayoutParams layoutParams = dialogQrCode.getLayoutParams();
+                layoutParams.width = 1300; // Set the width to a larger value
+                layoutParams.height = 1300; // Set the height to a larger value
+                dialogQrCode.setLayoutParams(layoutParams);
+
+                // Show the dialog
+                dialog.show();
+            }
+        });
+
+        promoQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create a Dialog
+                Dialog dialog = new Dialog(OrganizerEventViewActivity.this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.dialog_qr_code); // You need to create a new layout file 'dialog_qr_code.xml' for this dialog
+
+                // Get the ImageView from the dialog layout and set the QR code to it
+                ImageView dialogQrCode = dialog.findViewById(R.id.dialogQrCode);
+                dialogQrCode.setImageDrawable(promoQR.getDrawable());
+
+                // Set the ImageView size to a larger value
+                ViewGroup.LayoutParams layoutParams = dialogQrCode.getLayoutParams();
+                layoutParams.width = 1300; // Set the width to a larger value
+                layoutParams.height = 1300; // Set the height to a larger value
+                dialogQrCode.setLayoutParams(layoutParams);
+
+                // Show the dialog
+                dialog.show();
+            }
+        });
 
         getSignedUpUsers();
         getCheckedInUsers();
@@ -152,6 +340,18 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private String generateRandomCode(int codeLength) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random rnd = new Random();
+        StringBuilder sb = new StringBuilder(codeLength);
+
+        for (int i = 0; i < codeLength; i++) {
+            sb.append(characters.charAt(rnd.nextInt(characters.length())));
+        }
+
+        return sb.toString();
     }
 
     private void loadSignedUpUserDocs(ArrayList<String> userIds, UserRecyclerAdapter userRecyclerAdapter) {
