@@ -1,12 +1,6 @@
-// WsCube Tech, 2022, Youtube, Recycler View in Android Studio Explained with Example | Android Recycler View Tutorial, https://www.youtube.com/watch?v=FEqF1_jDV-A
-// WsCube Tech, 2022, Youtube, How to Add, Delete, and Update Items in Android RecyclerView | Android Studio Tutorial #26, https://www.youtube.com/watch?v=AUow1zsO6mg
-// OpenAI, 2024, ChatGPT
-
 package com.example.eventplanner;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
@@ -28,60 +22,61 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
-public class profilesRecyclerAdapter extends RecyclerView.Adapter<profilesRecyclerAdapter.ViewHolder> {
+public class AdminEventsRecyclerAdapter extends RecyclerView.Adapter<AdminEventsRecyclerAdapter.ViewHolder>{
+    Context context;
+    ArrayList<Event> eventsList;
 
-    private Context context;
-    private ArrayList<User> profilesList;
-    profilesRecyclerAdapter(Context context, ArrayList<User> profilesList){
+    AdminEventsRecyclerAdapter(Context context,ArrayList<Event> eventsList ){
         this.context = context;
-        this.profilesList = profilesList;
+        this.eventsList = eventsList;
     }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.profiles_row,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.events_row,parent,false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        String showName = "Name:"+profilesList.get(position).getName();
-        String showContact = "Contact:"+profilesList.get(position).getContactInformation();
-        String showHomepage = "HomePage:"+profilesList.get(position).getHomepage();
-        String proPicUrl = profilesList.get(position).getProfilePicture();
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        String showName = "Name:"+eventsList.get(position).getEventName();
+        String showMaxAttendees = "Max Attendees:"+eventsList.get(position).getEventMaxAttendees();
+        String showDate = "Date:"+eventsList.get(position).getEventDate();
+        String showTime = "Time:"+eventsList.get(position).getEventTime();
+        String showLocation = "Location:"+eventsList.get(position).getEventLocation();
+        String posterUrl = eventsList.get(position).getEventPoster();
         holder.name.setText(showName);
-        holder.contact.setText(showContact);
-        holder.homepage.setText(showHomepage);
+        holder.maxAttendees.setText(showMaxAttendees);
+        holder.date.setText(showDate);
+        holder.time.setText(showTime);
+        holder.location.setText(showLocation);
 
-        if(proPicUrl !=null && proPicUrl.equals("")){
-            Glide.with(holder.itemView.getContext())
-                    .load("https://www.gravatar.com/avatar/default" + "?d=identicon")
-                    .into(holder.proPic);
-        } else {
-            Glide.with(holder.itemView.getContext())
-                    .load(proPicUrl)
-                    .into(holder.proPic);
+        if (posterUrl != null && !posterUrl.equals("")){
+            Glide.with(holder.itemView.getContext()).load(posterUrl).into(holder.poster);
+        }
+        else {
+            holder.poster.setImageResource(R.drawable.a);
         }
 
         holder.row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                        .setTitle("Delete Profile")
-                        .setMessage("Are you sure you want to delete this profile?")
+                        .setTitle("Delete Event")
+                        .setMessage("Are you sure you want to delete this event?")
                         .setIcon(R.drawable.del)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-//                                profilesList.remove(position);
-//                                deleteProfileFromDatabase(position);
+//                                eventsList.remove(position);
+//                                deleteEventFromDatabase(position);
 //                                notifyItemRemoved(position);
                                 int newPosition = holder.getAdapterPosition(); // Use getAdapterPosition to get the current item position
-                                deleteProfileFromDatabase(newPosition); // Assuming there's an 'id' field and a method to delete the profile from the database
-                                profilesList.remove(newPosition);
+                                deleteEventFromDatabase(newPosition); // Assuming there's an 'id' field and a method to delete the profile from the database
+                                eventsList.remove(newPosition);
                                 notifyItemRemoved(newPosition);
-                                notifyItemRangeChanged(newPosition, profilesList.size());
+                                notifyItemRangeChanged(newPosition, eventsList.size());
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -93,54 +88,53 @@ public class profilesRecyclerAdapter extends RecyclerView.Adapter<profilesRecycl
                 builder.show();
             }
         });
-
-
     }
 
     @Override
     public int getItemCount() {
-        return profilesList.size();
+        return eventsList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView name;
-        private TextView contact;
-        private TextView homepage;
-        private ImageView proPic;
+        TextView name, maxAttendees, date, time, location;
+        ImageView poster;
+
         LinearLayout row;
         public ViewHolder(View itemView){
             super(itemView);
             name = itemView.findViewById(R.id.name);
-            contact = itemView.findViewById(R.id.contact);
-            homepage = itemView.findViewById(R.id.homepage);
-            proPic = itemView.findViewById(R.id.profilePic);
+            maxAttendees = itemView.findViewById(R.id.maxAttendees);
+            date = itemView.findViewById(R.id.date);
+            time = itemView.findViewById(R.id.time);
+            location = itemView.findViewById(R.id.location);
             row = itemView.findViewById(R.id.row);
+            poster = itemView.findViewById(R.id.Poster);
 
         }
     }
 
-    private void deleteProfileFromDatabase(int position) {
+    private void deleteEventFromDatabase(int position) {
         FirebaseFirestore db =  FirebaseFirestore.getInstance();
         // Get the user ID from the list
-        String userId = profilesList.get(position).getUserId();
+        String eventId = eventsList.get(position).getEventId();
 
         // Get a reference to the user document in Firestore
-        DocumentReference userRef = db.collection("users").document(userId);
+        DocumentReference eventsRef = db.collection("events").document(eventId);
 
         // Delete the user document from Firestore
-        userRef.delete()
+        eventsRef.delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         // Document successfully deleted
-                        Toast.makeText(context, "Profile deleted successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Event deleted successfully", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         // Handle any errors
-                        Toast.makeText(context, "Failed to delete profile", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Failed to delete event", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

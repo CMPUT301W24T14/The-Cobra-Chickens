@@ -2,6 +2,7 @@
 package com.example.eventplanner;
 
 import android.content.DialogInterface;
+import android.health.connect.datatypes.units.Length;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -33,19 +34,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-
 public class EventDetailsActivity extends AppCompatActivity {
 
     private TextView eventNameTextView, eventDateTextView, eventTimeTextView, eventOrganizerTextView;
     private RecyclerView announcementsRecyclerView;
     private ArrayList<String> announcements = new ArrayList<>();;
-
     private ImageView poster;
-
     private Button signUpButton;
-    Bundle bundle;
+    private Bundle bundle;
     private FirebaseFirestore db; // the database
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -120,9 +117,15 @@ public class EventDetailsActivity extends AppCompatActivity {
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
+                        Event event = bundle.getParcelable("event");
+                        if (event.getSignedUpUsers().size() >= Integer.valueOf(event.getEventMaxAttendees())) {
+                            Toast.makeText(EventDetailsActivity.this, "Event is full!", Toast.LENGTH_SHORT).show();
+                        }
 
-                        signUserUp();
+                        else {
+                            Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
+                            signUserUp();
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -161,13 +164,4 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     }
 
-//    private String formatDate(Date eventDate) {
-//        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-//        return sdf.format(eventDate);
-//    }
-//
-//    private String formatTime(Date eventDate) {
-//        SimpleDateFormat sdf = new SimpleDateFormat("h:mma");
-//        return sdf.format(eventDate).toUpperCase();
-//    }
 }

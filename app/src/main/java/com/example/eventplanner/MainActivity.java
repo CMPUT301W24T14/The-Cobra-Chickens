@@ -6,14 +6,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
     private ScanFragment scanFragment;
@@ -21,6 +17,14 @@ public class MainActivity extends AppCompatActivity {
     private ProfileFragment profileFragment;
     private BottomNavigationView bottomNavigationBar;
 
+    /**
+     * Sets up the bottom navigation bar and its listeners, then binds the respective fragments
+     * to its button icons.
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -31,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationBar = findViewById(R.id.bottom_nav_bar);
 
         // begin on the home screen
-        selectFragment(new HomeFragmentUpdated());
+        selectFragment(new HomeFragment());
 
         // set listener for the bottom navigation bar for each menu item/button
         bottomNavigationBar.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -40,8 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
                 int itemId = item.getItemId();
 
+                // select the fragment based on what was clicked in the bottomNavigationBar
                 if (itemId == R.id.home) {
-                    selectFragment(new HomeFragmentUpdated());
+                    selectFragment(new HomeFragment());
                 } else if (itemId == R.id.scan) {
                     selectFragment(new ScanFragment());
                 } else if (itemId == R.id.notifications) {
@@ -61,8 +66,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void selectFragment(Fragment fragment) {
 
+        // grab the fragment currently associated with MainActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
 
+        // replace the fragment container with the new fragment
         fragmentManager
                 .beginTransaction()
                 .replace(R.id.fragment_container, fragment)

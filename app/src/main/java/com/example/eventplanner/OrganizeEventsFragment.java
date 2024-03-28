@@ -148,12 +148,16 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                             String eventTime = documentSnapshot.getString("eventTime");
                             String eventLocation = documentSnapshot.getString("eventLocation");
                             String eventPoster = documentSnapshot.getString("eventPoster");
+
+                            String checkInCode = documentSnapshot.getString("checkInCode");
+                            String promoCode = documentSnapshot.getString("promoCode");
+
                             ArrayList<String> eventAnnouncements = (ArrayList<String>) documentSnapshot.get("eventAnnouncements");
                             ArrayList<String> checkedInUsers = (ArrayList<String>) documentSnapshot.get("checkedInUsers");
                             ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
                             // create Event object with retrieved event information and add it to organizeEventsList
-                            organizeEventsList.add(new Event(eventId, eventName, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, eventAnnouncements, checkedInUsers, signedUpUsers));
+                            organizeEventsList.add(new Event(eventId, eventName, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
 
                             // tell organizeEventsRecyclerView that the dataset that organizingEventsRecyclerAdapter is responsible for has changed
                             organizingEventsRecyclerAdapter.notifyDataSetChanged();
@@ -174,7 +178,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
     public void onItemClick(int position) {
 
         // set up a new intent to jump from the current activity to EventDetailsActivity
-        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+        Intent intent = new Intent(getActivity(), OrganizerEventViewActivity.class);
 
         // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
         intent.putExtra("event", organizeEventsList.get(position));

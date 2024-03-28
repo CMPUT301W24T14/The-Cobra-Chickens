@@ -8,11 +8,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 
 /**
  * HomeFragmentUpdated is a Fragment that represents the home screen of the application.
@@ -21,7 +19,16 @@ import com.google.android.material.tabs.TabLayoutMediator;
  * HomeFragmentUpdated allows the user to navigate between these via the viewPager2 widget, where
  * the user can select specific tabs that will take them to these fragments.
  */
-public class HomeFragmentUpdated extends Fragment {
+public class HomeFragment extends Fragment {
+
+    /* General information on implementing a tab layout for a ViewPager.
+    Reference:
+    Author        : Foxandroid
+    Date Accessed : 3/8/2024
+    License       : Creative Commons
+    URL           : https://www.youtube.com/watch?v=ziJ6-AT3ymg&ab_channel=Foxandroid
+    Used in       : Throughout entire class.
+    */
 
     private TabLayout tabLayout; // the tabLayout
     private ViewPager2 viewPager2; // the viewPager2 widget

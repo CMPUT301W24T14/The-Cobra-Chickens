@@ -1,4 +1,3 @@
-// OpenAI, 2024, ChatGPT
 package com.example.eventplanner;
 
 import android.os.Parcel;
@@ -12,20 +11,21 @@ import java.util.Date;
 
 public class Event implements Parcelable {
 
-    String eventId;
-    String eventName;
-    String eventMaxAttendees;
-    String eventDate;
-    String eventTime;
-    String eventLocation;
-    String eventPoster;
-    ArrayList<String> eventAnnouncements;
-    ArrayList<String> checkedInUsers;
-    ArrayList<String> signedUpUsers;
+    private String eventId;
+    private String eventName;
+    private String eventMaxAttendees;
+    private String eventDate;
+    private String eventTime;
+    private String eventLocation;
+    private String eventPoster;
+    private String checkInCode;
+    private String promoCode;
+    private ArrayList<String> eventAnnouncements;
+    private ArrayList<String> checkedInUsers;
+    private ArrayList<String> signedUpUsers;
 
-
-    // camille - testing event w/ all info
     public Event(String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime,String eventLocation, String eventPoster,
+                 String checkInCode, String promoCode,
                  ArrayList<String> eventAnnouncements,
                  ArrayList<String> signedUpUsers, ArrayList<String> checkedInUsers) {
 
@@ -36,9 +36,24 @@ public class Event implements Parcelable {
         this.eventTime = eventTime;
         this.eventLocation = eventLocation;
         this.eventPoster = eventPoster;
+
+        this.checkInCode = checkInCode;
+        this.promoCode = promoCode;
+
         this.eventAnnouncements = eventAnnouncements;
         this.signedUpUsers = signedUpUsers;
         this.checkedInUsers = checkedInUsers;
+
+    }
+
+    public Event (String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime,String eventLocation, String eventPoster){
+        this.eventId = eventId;
+        this.eventName = eventName;
+        this.eventMaxAttendees = eventMaxAttendees;
+        this.eventDate = eventDate;
+        this.eventTime = eventTime;
+        this.eventLocation = eventLocation;
+        this.eventPoster = eventPoster;
     }
 
     protected Event(Parcel in) {
@@ -49,9 +64,29 @@ public class Event implements Parcelable {
         eventTime = in.readString();
         eventLocation = in.readString();
         eventPoster = in.readString();
+
+        checkInCode = in.readString();
+        promoCode = in.readString();
+
         eventAnnouncements = in.createStringArrayList();
         signedUpUsers = in.createStringArrayList();
         checkedInUsers = in.createStringArrayList();
+    }
+
+    public String getCheckInCode() {
+        return checkInCode;
+    }
+
+    public void setCheckInCode(String checkInCode) {
+        this.checkInCode = checkInCode;
+    }
+
+    public String getPromoCode() {
+        return promoCode;
+    }
+
+    public void setPromoCode(String promoCode) {
+        this.promoCode = promoCode;
     }
 
     public String getEventId() {
@@ -160,10 +195,12 @@ public class Event implements Parcelable {
         dest.writeString(eventTime);
         dest.writeString(eventLocation);
         dest.writeString(eventPoster);
+
+        dest.writeString(checkInCode);
+        dest.writeString(promoCode);
+
         dest.writeStringList(eventAnnouncements);
         dest.writeStringList(signedUpUsers);
         dest.writeStringList(checkedInUsers);
     }
 }
-
-//comment to commit (ignore)
