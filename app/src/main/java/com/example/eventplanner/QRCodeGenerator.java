@@ -13,11 +13,12 @@ import com.google.zxing.common.BitMatrix;
 import java.util.Hashtable;
 
 public class QRCodeGenerator {
-    public static Bitmap generateQRCode(String eventID, int width, int height) throws WriterException {
+    public static Bitmap generateQRCode(String eventID, String checkin_or_promo, int width, int height) throws WriterException {
+        String text = eventID + ":" + checkin_or_promo;
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<>();
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-        BitMatrix bitMatrix = qrCodeWriter.encode(eventID, BarcodeFormat.QR_CODE, width, height, hintMap);
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height, hintMap);
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {

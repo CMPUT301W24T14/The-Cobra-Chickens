@@ -41,6 +41,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -137,12 +138,12 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                 announcementsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                 announcementsRecyclerView.setAdapter(announcementsRecyclerAdapter);
 
-                if (currEvent.getCheckInCode() != "") {
+                if (!Objects.equals(currEvent.getCheckInCode(), "")) {
                     generateCheckinQR.setText("Change Checkin QR");
                     Bitmap qrCode = null; // Replace with your method to generate a QR code
 
                     try {
-                        qrCode = QRCodeGenerator.generateQRCode(currEvent.getCheckInCode(), 1000, 1000);
+                        qrCode = QRCodeGenerator.generateQRCode(currEvent.getCheckInCode(), "check", 1000, 1000);
                     } catch (WriterException e) {
                         throw new RuntimeException(e);
                     }
@@ -151,11 +152,11 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     checkinQR.setImageBitmap(qrCode);
                 }
 
-                if (currEvent.getPromoCode() != "") {
+                if (!Objects.equals(currEvent.getPromoCode(), "")) {
                     // Generate a new QR code. You'll need to replace "qrCodeData" with the actual data you want to encode in the QR code.
                     Bitmap qrCode = null; // Replace with your method to generate a QR code
                     try {
-                        qrCode = QRCodeGenerator.generateQRCode(currEvent.getPromoCode(), 1000, 1000);
+                        qrCode = QRCodeGenerator.generateQRCode(currEvent.getPromoCode(), "promo", 1000, 1000);
                     } catch (WriterException e) {
                         throw new RuntimeException(e);
                     }
@@ -173,7 +174,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         currEvent.setCheckInCode(generateRandomCode(25));
                         db.collection("events").document(currEvent.getEventId()).update("checkInCode", currEvent.getCheckInCode());
                         try {
-                            qrCode = QRCodeGenerator.generateQRCode(currEvent.getCheckInCode(), 1000, 1000);
+                            qrCode = QRCodeGenerator.generateQRCode(currEvent.getCheckInCode(), "check", 1000, 1000);
                         } catch (WriterException e) {
                             throw new RuntimeException(e);
                         }
@@ -192,7 +193,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         currEvent.setPromoCode(generateRandomCode(25));
                         db.collection("events").document(currEvent.getEventId()).update("promoCode", currEvent.getPromoCode());
                         try {
-                            qrCode = QRCodeGenerator.generateQRCode(currEvent.getPromoCode(), 1000, 1000);
+                            qrCode = QRCodeGenerator.generateQRCode(currEvent.getPromoCode(),"promo", 1000, 1000);
                         } catch (WriterException e) {
                             throw new RuntimeException(e);
                         }
@@ -267,8 +268,8 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
                 // Set the ImageView size to a larger value
                 ViewGroup.LayoutParams layoutParams = dialogQrCode.getLayoutParams();
-                layoutParams.width = 1300; // Set the width to a larger value
-                layoutParams.height = 1300; // Set the height to a larger value
+                layoutParams.width = 1000; // Set the width to a larger value
+                layoutParams.height = 1000; // Set the height to a larger value
                 dialogQrCode.setLayoutParams(layoutParams);
 
                 // Show the dialog
@@ -290,8 +291,8 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
                 // Set the ImageView size to a larger value
                 ViewGroup.LayoutParams layoutParams = dialogQrCode.getLayoutParams();
-                layoutParams.width = 1300; // Set the width to a larger value
-                layoutParams.height = 1300; // Set the height to a larger value
+                layoutParams.width = 1000; // Set the width to a larger value
+                layoutParams.height = 1000; // Set the height to a larger value
                 dialogQrCode.setLayoutParams(layoutParams);
 
                 // Show the dialog
