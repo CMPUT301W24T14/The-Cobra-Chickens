@@ -42,7 +42,7 @@ public class NotificationsFragment extends Fragment {
 
         // Initialize Firestore and get reference to notifications collection
         db = FirebaseFirestore.getInstance();
-        notificationsRef = db.collection("events");
+        notificationsRef = db.collection("notifications");
 
         // Fetch notifications from Firestore
         notificationsRef.get().addOnCompleteListener(task -> {
