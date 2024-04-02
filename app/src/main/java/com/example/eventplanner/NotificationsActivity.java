@@ -20,7 +20,7 @@ public class NotificationsActivity extends AppCompatActivity {
     private CollectionReference notificationsRef;
     private RecyclerView notificationsRecyclerView;
     private NotificationsRecyclerAdapter notificationsAdapter;
-    private ArrayList<MyNotification> notificationsList;
+    private ArrayList<MyNotification> notifications;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +38,12 @@ public class NotificationsActivity extends AppCompatActivity {
         // Fetch notifications from Firestore
         notificationsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                notificationsList = new ArrayList<>();
+                notifications = new ArrayList<>();
                 for (MyNotification notification : task.getResult().toObjects(MyNotification.class)) {
-                    notificationsList.add(notification);
+                    notifications.add(notification);
                 }
                 // Initialize the adapter with the fetched data
-                notificationsAdapter = new NotificationsRecyclerAdapter(this, notificationsList);
+                notificationsAdapter = new NotificationsRecyclerAdapter(this, notifications);
                 notificationsRecyclerView.setAdapter(notificationsAdapter);
             } else {
                 Log.e(TAG, "Error getting documents: ", task.getException());

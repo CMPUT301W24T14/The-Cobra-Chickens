@@ -14,11 +14,12 @@ import java.util.ArrayList;
 public class NotificationsRecyclerAdapter extends RecyclerView.Adapter<NotificationsRecyclerAdapter.ViewHolder> {
 
     private Context context;
-    private ArrayList<MyNotification> notificationsList;
+    private ArrayList<MyNotification> notifications;
 
-    public NotificationsRecyclerAdapter(Context context, ArrayList<MyNotification> notificationsList) {
+    public NotificationsRecyclerAdapter(Context context, ArrayList<MyNotification> notifications) {
+        this.notifications = notifications;
         this.context = context;
-        this.notificationsList = notificationsList;
+        this.notifications = notifications;
     }
 
     @NonNull
@@ -30,7 +31,7 @@ public class NotificationsRecyclerAdapter extends RecyclerView.Adapter<Notificat
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        MyNotification notification = notificationsList.get(position);
+        MyNotification notification = notifications.get(position);
         if (notification.getTitle() != null) {
             holder.notificationTitleTextView.setText(notification.getTitle());
         } else {
@@ -45,7 +46,7 @@ public class NotificationsRecyclerAdapter extends RecyclerView.Adapter<Notificat
 
     @Override
     public int getItemCount() {
-        return notificationsList.size();
+        return notifications.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
