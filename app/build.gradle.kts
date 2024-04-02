@@ -38,6 +38,7 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    buildToolsVersion = "34.0.0"
 }
 
 dependencies {
@@ -72,6 +73,7 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0") // This is for QRCodeScanner https://github.com/journeyapps/zxing-android-embedded
     implementation("com.google.zxing:core:3.4.1")
     implementation("androidx.cardview:cardview:1.0.0")
+    implementation("com.onesignal:OneSignal:[5.0.0, 5.99.99]")
 
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.google.zxing:javase:3.4.1")

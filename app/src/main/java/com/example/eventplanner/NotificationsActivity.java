@@ -20,7 +20,7 @@ public class NotificationsActivity extends AppCompatActivity {
     private CollectionReference notificationsRef;
     private RecyclerView notificationsRecyclerView;
     private NotificationsRecyclerAdapter notificationsAdapter;
-    private ArrayList<Notification> notificationsList;
+    private ArrayList<MyNotification> notificationsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class NotificationsActivity extends AppCompatActivity {
         notificationsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 notificationsList = new ArrayList<>();
-                for (Notification notification : task.getResult().toObjects(Notification.class)) {
+                for (MyNotification notification : task.getResult().toObjects(MyNotification.class)) {
                     notificationsList.add(notification);
                 }
                 // Initialize the adapter with the fetched data
