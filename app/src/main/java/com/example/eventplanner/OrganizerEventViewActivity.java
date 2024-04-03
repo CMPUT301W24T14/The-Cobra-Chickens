@@ -2,6 +2,8 @@ package com.example.eventplanner;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +17,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Rect;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +40,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.WriterException;
 
 import org.checkerframework.checker.units.qual.A;
+import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -302,7 +316,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
         getSignedUpUsers();
         getCheckedInUsers();
-
     }
 
     private void getSignedUpUsers() {
