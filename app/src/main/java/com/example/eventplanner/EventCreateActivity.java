@@ -126,7 +126,6 @@ public class EventCreateActivity extends AppCompatActivity {
             finish();
         }
 
-
         // Return to previous page if user does not wish to create an event
         backButton.setOnClickListener(view -> finish());
 
@@ -196,6 +195,10 @@ public class EventCreateActivity extends AppCompatActivity {
                 doc_event.put("eventLocation", location);
                 doc_event.put("eventOrganizer", event_creator);
                 doc_event.put("eventPoster", "test value");
+
+                doc_event.put("checkInCode", "");
+                doc_event.put("promoCode", "");
+
                 doc_event.put("eventAnnouncements", new ArrayList<>());
                 doc_event.put("signedUpUsers", new ArrayList<>());
                 doc_event.put("checkedInUsers", new ArrayList<>());

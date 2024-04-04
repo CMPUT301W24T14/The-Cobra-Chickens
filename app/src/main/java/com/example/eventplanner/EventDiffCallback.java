@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.DiffUtil;
 
 import java.util.ArrayList;
 
+// not currently being used
+
 public class EventDiffCallback extends DiffUtil.Callback {
 
     private final ArrayList<Event> mOldEventList;

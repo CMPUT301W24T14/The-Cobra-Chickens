@@ -13,7 +13,8 @@ import com.google.zxing.common.BitMatrix;
 import java.util.Hashtable;
 
 public class QRCodeGenerator {
-    public static Bitmap generateQRCode(String text, int width, int height) throws WriterException {
+    public static Bitmap generateQRCode(String eventID, String checkin_or_promo, int width, int height) throws WriterException {
+        String text = eventID + ":" + checkin_or_promo;
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<>();
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
@@ -27,5 +28,4 @@ public class QRCodeGenerator {
         return bitmap;
     }
 }
-
 
