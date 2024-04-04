@@ -50,6 +50,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/event_description"
+                android:hint="Enter Event Description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/event_max_attendees"
                 android:hint="@string/max_number_of_attendees_hint"
                 android:layout_width="match_parent"

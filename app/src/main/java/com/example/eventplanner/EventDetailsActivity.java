@@ -36,7 +36,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EventDetailsActivity extends AppCompatActivity {
 
-    private TextView eventNameTextView, eventDateTextView, eventTimeTextView, eventOrganizerTextView;
+    private TextView eventNameTextView, eventDateTextView, eventTimeTextView, eventLocationTextView, eventDescriptionTextView, eventOrganizerTextView;
     private RecyclerView announcementsRecyclerView;
     private ArrayList<String> announcements = new ArrayList<>();;
     private ImageView poster;
@@ -52,6 +52,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventNameTextView = findViewById(R.id.event_name);
         eventDateTextView = findViewById(R.id.event_date);
         eventTimeTextView = findViewById(R.id.event_time);
+        eventLocationTextView = findViewById(R.id.event_location);
+        eventDescriptionTextView = findViewById(R.id.event_description);
+
         announcementsRecyclerView = findViewById(R.id.announcements_recyclerView);
         poster = findViewById(R.id.poster);
 
@@ -74,9 +77,12 @@ public class EventDetailsActivity extends AppCompatActivity {
             Event event = bundle.getParcelable("event");
             if (event != null) {
                 // Set event details to views
-                eventNameTextView.setText("Name:" + event.getEventName());
-                eventDateTextView.setText("Date:" + event.getEventDate());
-                eventTimeTextView.setText("Time:" + event.getEventTime());
+                eventNameTextView.setText("Name: " + event.getEventName());
+                eventDateTextView.setText("Date: " + event.getEventDate());
+                eventTimeTextView.setText("Time: " + event.getEventTime());
+                eventLocationTextView.setText("Location: " + event.getEventLocation());
+
+                eventDescriptionTextView.setText(event.getEventDescription());
 
                 if (event.getEventPoster() != null && !event.getEventPoster().isEmpty()) {
                     Glide.with(this)
