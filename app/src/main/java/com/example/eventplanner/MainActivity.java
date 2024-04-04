@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationBar = findViewById(R.id.bottom_nav_bar);
 
         // begin on the home screen
-        selectFragment(new HomeFragment());
+        selectFragment(new HomeFragment(), "home_fragment");
 
         // set listener for the bottom navigation bar for each menu item/button
         bottomNavigationBar.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -46,13 +46,13 @@ public class MainActivity extends AppCompatActivity {
 
                 // select the fragment based on what was clicked in the bottomNavigationBar
                 if (itemId == R.id.home) {
-                    selectFragment(new HomeFragment());
+                    selectFragment(new HomeFragment(), "home_fragment");
                 } else if (itemId == R.id.scan) {
-                    selectFragment(new ScanFragment());
+                    selectFragment(new ScanFragment(), "scan_fragment");
                 } else if (itemId == R.id.notifications) {
-                    selectFragment(new NotificationsFragment());
+                    selectFragment(new NotificationsFragment(), "notifications_fragment");
                 } else if (itemId == R.id.profile) {
-                    selectFragment(new ProfileFragment());
+                    selectFragment(new ProfileFragment(), "profile_fragment");
                 }
 
                 return true;
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
      * When a navigation bar item is clicked, display the appropriate fragment.
      * @param fragment the fragment to be displayed
      */
-    private void selectFragment(Fragment fragment) {
+    private void selectFragment(Fragment fragment, String tag) {
 
         // grab the fragment currently associated with MainActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         // replace the fragment container with the new fragment
         fragmentManager
                 .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
+                .replace(R.id.fragment_container, fragment, tag)
                 .commit();
 
     }
