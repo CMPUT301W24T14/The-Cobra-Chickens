@@ -36,7 +36,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
     private RecyclerView organizeEventsRecyclerView; // RecyclerView list of the events user is organizing
     private ArrayList<Event> organizeEventsList; // ArrayList that holds all events that the user is organizing
     private Button createEventButton; // Button that takes you to CreateEventActivity
-    private EventRecyclerAdapterUpdated organizeEventsRecyclerAdapter; // EventRecyclerAdapter for organizeEventsRecyclerView
+    private EventRecyclerAdapterUpdated                                                                                                                                            organizeEventsRecyclerAdapter; // EventRecyclerAdapter for organizeEventsRecyclerView
 
     /**
      * Creates the view for OrganizeEventsFragment, which is contained within HomeFragmentUpdated

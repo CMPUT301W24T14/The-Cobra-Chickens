@@ -28,6 +28,7 @@ public class NotificationsFragment extends Fragment {
     private CollectionReference notificationsRef;
     private RecyclerView notificationsRecyclerView;
     private NotificationsRecyclerAdapter notificationsAdapter;
+
     private ArrayList<MyNotification> notificationsList;
 
     @Nullable
@@ -35,13 +36,22 @@ public class NotificationsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notifications, container, false);
 
-        // Initialize the RecyclerView
+        db = FirebaseFirestore.getInstance();
+
+        // connect notificationsRecyclerView to the actual RecyclerView widget in fragment_notifications.xml
         notificationsRecyclerView = view.findViewById(R.id.recyclerView_notifications);
-        notificationsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        notificationsList = new ArrayList<>();
+
+        // configure myEventsRecyclerView to have a vertical orientation when arranging items *
+        notificationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // initialize notificationsRecyclerAdapter and set it as the adapter for notificationsRecyclerView
+        notificationsAdapter = new NotificationsRecyclerAdapter(getContext(), notificationsList);
+        notificationsRecyclerView.setAdapter(notificationsAdapter);
 
         // Initialize Firestore and get reference to notifications collection
-        db = FirebaseFirestore.getInstance();
-        notificationsRef = db.collection("notifications");
+        notificationsRef = db.collection("events");
 
         // Fetch notifications from Firestore
         notificationsRef.get().addOnCompleteListener(task -> {

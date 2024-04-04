@@ -1,9 +1,13 @@
 package com.example.eventplanner;
 
-
 public class MyNotification {
     private String title;
     private String message;
+
+    // Default constructor
+    public MyNotification() {
+        // Default initialization if needed
+    }
 
     // Constructor for all fields
     public MyNotification(String title, String message) {
