@@ -2,6 +2,8 @@
 package com.example.eventplanner;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.health.connect.datatypes.units.Length;
 import android.os.Bundle;
 
@@ -9,13 +11,18 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.util.Log;
@@ -34,8 +41,20 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class EventDetailsActivity extends AppCompatActivity {
+import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+
+public class EventDetailsActivity extends AppCompatActivity {
+    private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private TextView eventNameTextView, eventDateTextView, eventTimeTextView, eventOrganizerTextView;
     private RecyclerView announcementsRecyclerView;
     private ArrayList<String> announcements = new ArrayList<>();;
@@ -43,6 +62,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private Button signUpButton;
     private Bundle bundle;
     private FirebaseFirestore db; // the database
+    private MapView eventMap;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,6 +128,76 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         });
 
+        eventMap = (MapView) findViewById(R.id.event_map);
+        eventMap.setTileSource(TileSourceFactory.OpenTopo);
+        //eventMap.setUseDataConnection(false);
+        String[] permissions = {android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        requestPermissionsIfNecessary(permissions);
+        eventMap.setMultiTouchControls(true);
+        eventMap.setClickable(false);
+        Rect rect = new Rect();
+
+        IMapController mapController = eventMap.getController();
+        mapController.setZoom(12);
+        GeoPoint startPoint = new GeoPoint(53.5461, -113.4937);
+        mapController.setCenter(startPoint);
+
+        Marker marker = new Marker(eventMap);
+        marker.setPosition(startPoint);
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+        eventMap.getOverlays().add(marker);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //this will refresh the osmdroid configuration on resuming.
+        //if you make changes to the configuration, use
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
+        eventMap.onResume(); //needed for compass, my location overlays, v6.0.0 and up
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //this will refresh the osmdroid configuration on resuming.
+        //if you make changes to the configuration, use
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //Configuration.getInstance().save(this, prefs);
+        eventMap.onPause();  //needed for compass, my location overlays, v6.0.0 and up
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        ArrayList<String> permissionsToRequest = new ArrayList<>();
+        for (int i = 0; i < grantResults.length; i++) {
+            permissionsToRequest.add(permissions[i]);
+        }
+        if (permissionsToRequest.size() > 0) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    permissionsToRequest.toArray(new String[0]),
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        }
+    }
+
+    private void requestPermissionsIfNecessary(String[] permissions) {
+        ArrayList<String> permissionsToRequest = new ArrayList<>();
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Permission is not granted
+                permissionsToRequest.add(permission);
+            }
+        }
+        if (permissionsToRequest.size() > 0) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    permissionsToRequest.toArray(new String[0]),
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        }
     }
 
     private void showSignUpConfirmation() {
