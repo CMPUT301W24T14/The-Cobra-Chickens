@@ -30,8 +30,11 @@
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <ImageView
+                    android:id="@+id/cardView_event_poster"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
                     android:background="@drawable/gradient"/>
 
                 <TextView

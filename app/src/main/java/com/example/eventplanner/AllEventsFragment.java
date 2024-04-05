@@ -203,6 +203,9 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
         // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
         intent.putExtra("event", allEventsList.get(position));
 
+        // pass fragment name to EventDetailsActivity so the sign up / deregister button can be set accordingly
+        intent.putExtra("fragment name", getClass().getSimpleName());
+
         // start the EventDetailsActivity
         startActivity(intent);
     }
