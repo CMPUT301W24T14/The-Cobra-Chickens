@@ -2,6 +2,8 @@
 package com.example.eventplanner;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.health.connect.datatypes.units.Length;
 import android.os.Bundle;
 
@@ -9,13 +11,18 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.util.Log;
@@ -33,9 +40,13 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 public class EventDetailsActivity extends AppCompatActivity {
-
     private TextView eventNameTextView, eventDateTextView, eventTimeTextView, eventLocationTextView, eventDescriptionTextView, eventOrganizerTextView;
     private RecyclerView announcementsRecyclerView;
     private ArrayList<String> announcements = new ArrayList<>();;
@@ -115,7 +126,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
 
     }
-
     private void showSignUpConfirmation() {
 
         AlertDialog.Builder confirmDialog = new AlertDialog.Builder(this);
