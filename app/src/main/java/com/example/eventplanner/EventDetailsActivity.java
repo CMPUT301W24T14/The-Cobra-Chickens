@@ -66,7 +66,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(view -> finish());
 
         // Get event details from intent
-
         bundle = getIntent().getExtras();
 
 
