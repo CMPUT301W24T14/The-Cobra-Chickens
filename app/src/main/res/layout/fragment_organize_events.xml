@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- https://stackoverflow.com/questions/22406961/how-to-set-transparency-of-a-background-image-android-xml-file -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#009688"
+    android:background="@drawable/homescreen_background"
+    android:backgroundTint="#80FFFFFF"
+    android:backgroundTintMode="src_over"
     tools:context=".OrganizeEventsFragment">
 
     <View
         android:id="@+id/search_bar_background"
-        android:layout_width="match_parent"
+        android:layout_width="373dp"
         android:layout_height="51dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"

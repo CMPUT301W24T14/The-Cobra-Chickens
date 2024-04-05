@@ -2,16 +2,15 @@ package com.example.eventplanner;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,18 +18,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 /**
  * MyEventsFragment is a Fragment that handles showing a user all events that they have signed up
@@ -46,6 +36,7 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
     private EventRecyclerAdapterUpdated myEventsRecyclerAdapter; // EventRecyclerAdapter for myEventsRecyclerView
     private CollectionReference userRef;
     private SharedViewModel sharedViewModel;
+    private SearchView myEventsSearchBar;
 
     /**
      * Creates the view for MyEventsFragment, which is contained within HomeFragmentUpdated
@@ -82,6 +73,22 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
         myEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), myEventsList, this);
         myEventsRecyclerView.setAdapter(myEventsRecyclerAdapter);
 
+        myEventsSearchBar = view.findViewById(R.id.my_events_search_view);
+        myEventsSearchBar.clearFocus(); // do this so cursor doesn't start in the search bar in lower APIs
+
+        myEventsSearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                filterRecyclerView(newText);
+                return true;
+            }
+        });
+
         return view;
     }
 
@@ -95,6 +102,27 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
     public void onResume() {
         super.onResume();
         getMyEvents();
+    }
+
+    private void filterRecyclerView(String input) {
+
+        ArrayList<Event> filteredEvents = new ArrayList<>();
+
+        String lowerInput = input.toLowerCase();
+
+        for (Event event : myEventsList) {
+            // if the event name or location contains the string the user input
+            if (event.getEventName().toLowerCase().contains(lowerInput)
+                    || event.getEventLocation().toLowerCase().contains(lowerInput)) {
+                filteredEvents.add(event);
+            }
+        }
+
+        if (filteredEvents.isEmpty()) {
+            Toast.makeText(getContext(), "No matches found", Toast.LENGTH_SHORT).show();
+        }
+
+        myEventsRecyclerAdapter.setFilteredList(filteredEvents);
     }
 
     /**

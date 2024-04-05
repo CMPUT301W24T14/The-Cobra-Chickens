@@ -37,6 +37,11 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
         this.recyclerViewInterface = recyclerViewInterface;
     }
 
+    public void setFilteredList(ArrayList<Event> filteredList) {
+        this.events = filteredList;
+        notifyDataSetChanged();
+    }
+
     /**
      * Inflates the view for each event item in the Recycler view.
      * @param parent The ViewGroup into which the new View will be added after it is bound to
