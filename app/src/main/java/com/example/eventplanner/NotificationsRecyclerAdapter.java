@@ -14,11 +14,12 @@ import java.util.ArrayList;
 public class NotificationsRecyclerAdapter extends RecyclerView.Adapter<NotificationsRecyclerAdapter.ViewHolder> {
 
     private Context context;
-    private ArrayList<Notification> notificationsList;
+    private ArrayList<MyNotification> notifications;
 
-    public NotificationsRecyclerAdapter(Context context, ArrayList<Notification> notificationsList) {
+    public NotificationsRecyclerAdapter(Context context, ArrayList<MyNotification> notifications) {
+        this.notifications = notifications;
         this.context = context;
-        this.notificationsList = notificationsList;
+        this.notifications = notifications;
     }
 
     @NonNull
@@ -30,19 +31,22 @@ public class NotificationsRecyclerAdapter extends RecyclerView.Adapter<Notificat
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Notification notification = notificationsList.get(position);
-        holder.notificationTitleTextView.setText(notification.getTitle());
-        holder.notificationMessageTextView.setText(notification.getMessage());
-        if (notification.getDate() != null) {
-            holder.notificationDateTextView.setText(notification.getDate().toString());
+        MyNotification notification = notifications.get(position);
+        if (notification.getTitle() != null) {
+            holder.notificationTitleTextView.setText(notification.getTitle());
         } else {
-            holder.notificationDateTextView.setText("No date available");
+            holder.notificationDateTextView.setText("Unable to Get Notification name");
+        }
+        if (notification.getMessage() != null) {
+            holder.notificationMessageTextView.setText(notification.getMessage());
+        } else {
+            holder.notificationDateTextView.setText("No Message to Display !");
         }
     }
 
     @Override
     public int getItemCount() {
-        return notificationsList.size();
+        return notifications.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

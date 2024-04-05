@@ -79,7 +79,6 @@ public class ProfileFragment extends Fragment {
     private TextView userName, userContact, userHomepage;
     private Button editDetails;
     private Button location;
-    private Button adminLogin;
     private User user;
     private String userId;
     private FirebaseFirestore db;
@@ -110,7 +109,6 @@ public class ProfileFragment extends Fragment {
         userHomepage = view.findViewById(R.id.profileHomepage);
         location = view.findViewById(R.id.location);
         editDetails = view.findViewById(R.id.editProfile);
-        adminLogin = view.findViewById(R.id.adminLoginBtn);
 
         auth_test = FirebaseAuth.getInstance();
         user_test = auth_test.getCurrentUser();
@@ -150,8 +148,8 @@ public class ProfileFragment extends Fragment {
 
                         //updating the user object and the textviews
                         userName.setText("Name:" + name);
-                        userContact.setText("Contact:" +contact);
-                        userHomepage.setText("Homepage:"+homePage);
+                        userContact.setText("Contact:" + contact);
+                        userHomepage.setText("Homepage:"+ homePage);
 
                         usersRef = db.collection("users");
                         usersRef.document(userId).update("Name", name, "Contact", contact, "Homepage",homePage);
@@ -208,13 +206,13 @@ public class ProfileFragment extends Fragment {
         });
 
 
-        adminLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), AdminActivity.class);
-                startActivity(intent);
-            }
-        });
+//        adminLogin.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getContext(), AdminActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
         // handle location stuff
         usersRef = db.collection("users");
