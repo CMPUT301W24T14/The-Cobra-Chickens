@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -106,7 +107,8 @@ public class ScanFragment extends Fragment {
                                 }
                             });
 
-                } else if (Objects.equals(parts[1], "promo")) {
+                }
+                else if (Objects.equals(parts[1], "promo")) {
                     db.collection("events").whereEqualTo("promoCode", checkInCodeFromQR)
                             .get()
                             .addOnCompleteListener(task -> {
@@ -196,9 +198,11 @@ public class ScanFragment extends Fragment {
                                     });
                                 }
                             });
-
                 }
-
+                else if (Objects.equals(parts[1], "admin")) {
+                    Intent intent = new Intent(getContext(), AdminActivity.class);
+                    startActivity(intent);
+                }
             } else {
                 builder.setTitle("Failure!");
                 builder.setMessage("result is null!");
