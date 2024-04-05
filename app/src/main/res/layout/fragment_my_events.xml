@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/homescreen_background"
-    android:backgroundTint="#80FFFFFF"
+    android:background="@drawable/gradient_my_events"
     android:backgroundTintMode="src_over"
     tools:context=".MyEventsFragment">
 
@@ -16,8 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
-
-        android:text="Attend"
+        android:text="Attend 🎉"
         android:textColor="@android:color/black"
         android:textSize="30dp"
         android:textStyle="bold"

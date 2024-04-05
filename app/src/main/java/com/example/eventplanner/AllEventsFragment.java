@@ -76,18 +76,20 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
         allEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), allEventsList, this);
         allEventsRecyclerView.setAdapter(allEventsRecyclerAdapter);
 
+        // initialize search bar
         allEventsSearchBar = view.findViewById(R.id.all_events_search_view);
         allEventsSearchBar.clearFocus(); // do this so cursor doesn't start in the search bar in lower APIs
 
+        // listen for when the user enters something in the search bar and filter
         allEventsSearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
             }
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChange(String searchInput) {
 
-                filterRecyclerView(newText);
+                filterRecyclerView(searchInput);
                 return true;
             }
         });
@@ -107,16 +109,21 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
         displayAllEvents();
     }
 
-    private void filterRecyclerView(String input) {
+    /**
+     * Sets the event RecyclerAdapter to display events from a filtered list based on if an event's
+     * name or location contains the string in searchInput.
+     * @param searchInput The String the user inputs into the search bar and queries
+     */
+    private void filterRecyclerView(String searchInput) {
 
         ArrayList<Event> filteredEvents = new ArrayList<>();
 
-        String lowerInput = input.toLowerCase();
+        String lowerCaseSearchInput = searchInput.toLowerCase();
 
         for (Event event : allEventsList) {
             // if the event name or location contains the string the user input
-            if (event.getEventName().toLowerCase().contains(lowerInput)
-                    || event.getEventLocation().toLowerCase().contains(lowerInput)) {
+            if (event.getEventName().toLowerCase().contains(lowerCaseSearchInput)
+                    || event.getEventLocation().toLowerCase().contains(lowerCaseSearchInput)) {
                 filteredEvents.add(event);
             }
         }
