@@ -3,6 +3,7 @@ package com.example.eventplanner;
 import static android.content.ContentValues.TAG;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 

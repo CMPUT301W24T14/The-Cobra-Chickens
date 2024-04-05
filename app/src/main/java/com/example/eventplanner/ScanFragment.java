@@ -15,7 +15,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -127,6 +129,8 @@ public class ScanFragment extends Fragment {
 
                                             dialog.setContentView(R.layout.activity_event_details);
 
+                                            ImageView poster = dialog.findViewById(R.id.poster);
+                                            poster.setVisibility(View.GONE);
                                             db.collection("events").document(eventId[0]).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -135,15 +139,22 @@ public class ScanFragment extends Fragment {
                                                         String eventName = documentSnapshot.getString("eventName");
                                                         String eventTime = documentSnapshot.getString("eventTime");
                                                         String eventDate = documentSnapshot.getString("eventDate");
+                                                        String eventLocation = documentSnapshot.getString("eventLocation");
+                                                        String eventDescription = documentSnapshot.getString("eventDescription");
 
                                                         // Find the TextView and set the text
+
                                                         TextView eventNameTextView = dialog.findViewById(R.id.event_name);
                                                         TextView eventTimeTextView = dialog.findViewById(R.id.event_time);
                                                         TextView eventDateTextView = dialog.findViewById(R.id.event_date);
+                                                        TextView eventLocationTextView = dialog.findViewById(R.id.event_location);
+                                                        TextView eventDescriptionTextView = dialog.findViewById(R.id.event_description);
 
                                                         eventNameTextView.setText(eventName);
                                                         eventDateTextView.setText(eventDate);
                                                         eventTimeTextView.setText(eventTime);
+                                                        eventDescriptionTextView.setText(eventDescription);
+                                                        eventLocationTextView.setText(eventLocation);
                                                     }
                                                 }
                                             });
@@ -151,6 +162,7 @@ public class ScanFragment extends Fragment {
                                             Button signUpButton = dialog.findViewById(R.id.signupBtn);
 
                                             signUpButton.setOnClickListener(v -> {
+                                                Toast.makeText(requireActivity(), "Your event is in My Events", Toast.LENGTH_SHORT).show();
                                                 db.collection("events").document(eventId[0]).update("signedUpUsers", FieldValue.arrayUnion(userId));
                                                 db.collection("users").document(userId).update("myEvents", FieldValue.arrayUnion(eventId[0]));
                                                 dialog.dismiss();
