@@ -37,6 +37,28 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
         this.recyclerViewInterface = recyclerViewInterface;
     }
 
+    /* How to filter items in a recyclerView.
+        Reference:
+            Author        : CodingSTUFF
+            Date Accessed : 4/5/2024
+            License       : Creative Commons
+            URL           : https://www.youtube.com/watch?v=tQ7V7iBg5zE&ab_channel=CodingSTUFF
+        Used in lines:
+                EventRecyclerAdapterUpdated: 53-55
+                AllEventsFragment: 80-95, 117-135
+                MyEventsFragment: 77-92, 114-132
+                OrganizeEventsFragment: 87-102, 124-144
+     */
+    /**
+     * Sets the list of events that are to be displayed to the filtered list.
+     * @param filteredList The ArrayList of Event objects that represents the list of filtered
+     *                     events that match the search bar query.
+     */
+    public void setFilteredList(ArrayList<Event> filteredList) {
+        this.events = filteredList;
+        notifyDataSetChanged();
+    }
+
     /**
      * Inflates the view for each event item in the Recycler view.
      * @param parent The ViewGroup into which the new View will be added after it is bound to

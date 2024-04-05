@@ -1,64 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- https://stackoverflow.com/questions/22406961/how-to-set-transparency-of-a-background-image-android-xml-file -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#009688"
+    android:background="@drawable/gradient_organize_events"
+    android:backgroundTintMode="src_over"
     tools:context=".OrganizeEventsFragment">
+
+    <TextView
+        android:id="@+id/title_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:text="Create &amp; Manage 🗃️"
+        android:textColor="@android:color/black"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/fragment_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:text="Make new events and oversee ones you've created"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_textView" />
 
     <View
         android:id="@+id/search_bar_background"
-        android:layout_width="373dp"
+        android:layout_width="match_parent"
         android:layout_height="51dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="30dp"
         android:background="@drawable/search_bar_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_description"
         android:elevation="10dp" />
 
-    <View
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="2dp"
-        android:background="@drawable/baseline_search_24"
-        app:layout_constraintBottom_toBottomOf="@+id/all_events_search_edit_text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/all_events_search_edit_text"
-        android:elevation="10dp"/>
-
-    <EditText
-        android:id="@+id/all_events_search_edit_text"
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/organize_events_search_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginStart="80dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="40dp"
-        android:background="@android:color/transparent"
+        android:layout_marginEnd="50dp"
         android:elevation="10dp"
         android:hint="Search Events"
         android:textSize="16sp"
+        app:iconifiedByDefault="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/fragment_description"
+        app:queryBackground="@android:color/transparent"
+        app:queryHint="Search Events"
+        app:searchIcon="@drawable/baseline_search_24" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/organize_events_recyclerView_updated"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_add_new_event"
+        android:background="@android:color/transparent"
+        android:paddingStart="20dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="20dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_bar_background"
-        android:background="@android:color/transparent"
-        android:scrollbars="vertical"/>
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/button_add_new_event"
