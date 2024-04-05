@@ -161,7 +161,7 @@ public class ScanFragment extends Fragment {
                                                 }
                                             });
 
-                                            Button signUpButton = dialog.findViewById(R.id.signupBtn);
+                                            Button signUpButton = dialog.findViewById(R.id.button_signup_or_deregister);
 
                                             signUpButton.setOnClickListener(v -> {
                                                 Toast.makeText(requireActivity(), "Your event is in My Events", Toast.LENGTH_SHORT).show();
