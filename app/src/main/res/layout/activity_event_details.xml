@@ -72,13 +72,6 @@
             android:paddingHorizontal="5dp"
             android:paddingVertical="5dp"/>
 
-        <org.osmdroid.views.MapView
-            android:id="@+id/event_map"
-            android:hardwareAccelerated="true"
-            android:layout_width="match_parent"
-            android:layout_height="337dp"/>
-
-
     </LinearLayout>
 
 

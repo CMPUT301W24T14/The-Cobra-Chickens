@@ -420,8 +420,6 @@ public class ProfileFragment extends Fragment {
         Boolean fineLocationGranted = result.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false);
         Boolean coarseLocationGranted = result.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION,false); // having issues, this always stays false
 
-        Log.d("TESTING", String.valueOf(coarseLocationGranted));
-
         if (fineLocationGranted != null && fineLocationGranted) {
             // precise location access granted
             locationSwitch.setChecked(true);
