@@ -79,9 +79,19 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
         allEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), allEventsList, this);
         allEventsRecyclerView.setAdapter(allEventsRecyclerAdapter);
 
-        displayAllEvents();
-
         return view;
+    }
+
+    /**
+     * Displays all events shown in the database.
+     * This method is invoked once when this fragment is created, and every time the user returns
+     * to it after leaving it (either to another fragment or a different activity).
+     * Ensures that the UI is refreshed whenever the fragment becomes visible again.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        displayAllEvents();
     }
 
     /**
@@ -89,6 +99,9 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
      * with them.
      */
     private void displayAllEvents() {
+
+        // clear list first to ensure no event duplication in the RecyclerView
+        allEventsList.clear();
 
         // retrieve documents from events collection in the database
         eventsCollectionReference
@@ -108,6 +121,7 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
                                 // retrieve all event information associated with the event
                                 String eventId = doc.getId();
                                 String eventName = doc.getString("eventName");
+                                String eventDescription = doc.getString("eventDescription");
                                 String eventMaxAttendees = doc.getString("eventMaxAttendees");
                                 String eventDate = doc.getString("eventDate");
                                 String eventTime = doc.getString("eventTime");
@@ -122,7 +136,7 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
                                 ArrayList<String> signedUpUsers = (ArrayList<String>) doc.get("signedUpUsers");
 
                                 // create the Event object with retrieved event information and add it to allEventsList
-                                allEventsList.add(new Event(eventId, eventName, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
+                                allEventsList.add(new Event(eventId, eventName, eventDescription, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
                             }
 
                             // tell allEventsRecyclerView that the dataset that allEventsRecyclerAdapter is responsible for has changed

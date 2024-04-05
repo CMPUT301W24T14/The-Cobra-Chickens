@@ -82,16 +82,19 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
         myEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), myEventsList, this);
         myEventsRecyclerView.setAdapter(myEventsRecyclerAdapter);
 
-        getMyEvents();
-
-        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-        sharedViewModel.isEventUpdated().observe(getViewLifecycleOwner(), isUpdated -> {
-            if (isUpdated) {
-                getMyEvents();
-            }
-        });
-
         return view;
+    }
+
+    /**
+     * Displays the events a user has signed up for.
+     * This method is invoked once when this fragment is created, and every time the user returns
+     * to it after leaving it (either to another fragment or a different activity).
+     * Ensures that the UI is refreshed whenever the fragment becomes visible again.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        getMyEvents();
     }
 
     /**
@@ -99,6 +102,9 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
      * with them.
      */
     private void getMyEvents() {
+
+        // clear list first to ensure no event duplication in the RecyclerView
+        myEventsList.clear();
 
         // read specific document for userId given
         db.collection("users")
@@ -136,6 +142,7 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
                             // retrieve all event information associated with the event
                             String eventId = documentSnapshot.getId();
                             String eventName = documentSnapshot.getString("eventName");
+                            String eventDescription = documentSnapshot.getString("eventDescription");
                             String eventMaxAttendees = documentSnapshot.getString("eventMaxAttendees");
                             String eventDate = documentSnapshot.getString("eventDate");
                             String eventTime = documentSnapshot.getString("eventTime");
@@ -150,7 +157,7 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
                             ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
                             // create Event object with retrieved event information and add it to myEventsList
-                            myEventsList.add(new Event(eventId, eventName, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
+                            myEventsList.add(new Event(eventId, eventName, eventDescription, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
 
                             // tell myEventsRecyclerView that the dataset that myEventsRecyclerAdapter is responsible for has changed
                             myEventsRecyclerAdapter.notifyDataSetChanged();

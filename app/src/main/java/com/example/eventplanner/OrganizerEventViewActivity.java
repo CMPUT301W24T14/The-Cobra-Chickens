@@ -32,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.WriterException;
 
 import org.checkerframework.checker.units.qual.A;
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -83,6 +84,8 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         TextView eventNameTextView = findViewById(R.id.event_name2);
         TextView eventDateTextView = findViewById(R.id.event_date2);
         TextView eventTimeTextView = findViewById(R.id.event_time2);
+        TextView eventLocationTextView = findViewById(R.id.event_location2);
+        TextView eventDescriptionTextView = findViewById(R.id.event_description2);
 
         announcementsRecyclerView = findViewById(R.id.announcements_recyclerView2);
         signedUpRecyclerView = findViewById(R.id.signedUp_recyclerView);
@@ -121,6 +124,8 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                 eventNameTextView.setText("Name: " + currEvent.getEventName());
                 eventDateTextView.setText("Date: " + currEvent.getEventDate());
                 eventTimeTextView.setText("Time: " + currEvent.getEventTime());
+                eventLocationTextView.setText("Location: " + currEvent.getEventLocation());
+                eventDescriptionTextView.setText(currEvent.getEventDescription());
 
                 if (currEvent.getEventPoster() != null && !currEvent.getEventPoster().isEmpty()) {
                     Glide.with(this)
