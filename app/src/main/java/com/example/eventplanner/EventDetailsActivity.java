@@ -2,28 +2,16 @@
 package com.example.eventplanner;
 
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.graphics.Rect;
-import android.health.connect.datatypes.units.Length;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.sql.Array;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import android.util.Log;
 import android.view.View;
@@ -35,23 +23,16 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
-
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
 
 public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventNameTextView, eventDateTextView, eventTimeTextView, eventLocationTextView, eventDescriptionTextView, eventOrganizerTextView;
     private RecyclerView announcementsRecyclerView;
     private ArrayList<String> announcements = new ArrayList<>();;
     private ImageView poster;
-    private Button signUpButton;
+    private Button signUpOrDeregisterButton;
     private Bundle bundle;
     private FirebaseFirestore db; // the database
 
@@ -116,12 +97,71 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        signUpButton = findViewById(R.id.signupBtn);
 
-        signUpButton.setOnClickListener(new View.OnClickListener() {
+
+
+
+
+
+        signUpOrDeregisterButton = findViewById(R.id.button_signup_or_deregister);
+
+        Event event = bundle.getParcelable("event");
+        if (event != null) {
+
+            ArrayList<String> signedUpUsers = event.getSignedUpUsers();
+            ArrayList<String> checkedInUsers = event.getCheckedInUsers();
+
+            boolean alreadySignedUp = false;
+            boolean alreadyCheckedIn = false;
+
+            if (signedUpUsers != null) {
+                for (String userId : signedUpUsers) {
+                    if (signedUpUsers.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        alreadySignedUp = true;
+                    }
+                }
+            }
+
+            if (checkedInUsers != null) {
+                for (String userId : checkedInUsers) {
+                    if (checkedInUsers.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        alreadyCheckedIn = true;
+                    }
+                }
+            }
+
+            if (bundle != null && bundle.containsKey("fragment name")) {
+
+                Log.d("TESTING4", bundle.getString("fragment name"));
+                Log.d("TESTING4", String.valueOf(alreadyCheckedIn));
+                Log.d("TESTING4", String.valueOf(alreadySignedUp));
+
+                if (bundle.getString("fragment name").equals("MyEventsFragment")) {
+                    signUpOrDeregisterButton.setText("Deregister");
+                }
+
+                else if (bundle.getString("fragment name").equals("AllEventsFragment") && (!alreadySignedUp && !alreadyCheckedIn)) {
+                    signUpOrDeregisterButton.setText("Sign up");
+                }
+
+                else if (bundle.getString("fragment name").equals("AllEventsFragment") && (alreadySignedUp || alreadyCheckedIn)) {
+                    signUpOrDeregisterButton.setText("Deregister");
+                }
+            }
+        }
+
+        signUpOrDeregisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSignUpConfirmation();
+
+                if (signUpOrDeregisterButton.getText() == "Sign up") {
+
+                    showSignUpConfirmation();
+                }
+
+                else {
+                    Toast.makeText(EventDetailsActivity.this, "Have not implemented deregister yet", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

@@ -50,7 +50,7 @@ public class Event implements Parcelable {
         this.signedUpUsers = signedUpUsers;
     }
 
-    public Event (String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime,String eventLocation, String eventPoster){
+    public Event (String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime, String eventLocation, String eventPoster){
         this.eventId = eventId;
         this.eventName = eventName;
         this.eventMaxAttendees = eventMaxAttendees;
