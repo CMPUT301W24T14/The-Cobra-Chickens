@@ -1,21 +1,20 @@
 package com.example.eventplanner;
 
-import java.util.Date;
-
-public class Notification {
+public class MyNotification {
     private String title;
     private String message;
-    private Date date;
+
+    // Default constructor
+    public MyNotification() {
+        // Default initialization if needed
+    }
 
     // Constructor for all fields
-    public Notification(String title, String message, Date date) {
+    public MyNotification(String title, String message) {
         this.title = title;
         this.message = message;
-        this.date = date;
     }
-    public Notification(){
 
-    }
     // Getters and setters
     public String getTitle() {
         return title;
@@ -31,13 +30,5 @@ public class Notification {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 }
