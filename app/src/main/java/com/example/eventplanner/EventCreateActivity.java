@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -89,7 +90,7 @@ public class EventCreateActivity extends AppCompatActivity {
     private String time_am_pm;
     private String event_poster;
     private String event_location;
-    private TextInputEditText editTextEventName, editTextMaxAttendees, editTextEventLocation;
+    private TextInputEditText editTextEventName, editTextEventDescription, editTextMaxAttendees, editTextEventLocation;
     private DocumentReference key;
 
     @Override
@@ -103,6 +104,7 @@ public class EventCreateActivity extends AppCompatActivity {
         backButton = findViewById(R.id.button_back);
 
         editTextEventName = findViewById(R.id.event_name);
+        editTextEventDescription = findViewById(R.id.event_description);
         editTextMaxAttendees = findViewById(R.id.event_max_attendees);
         editTextEventLocation = findViewById(R.id.event_location);
 
@@ -182,13 +184,15 @@ public class EventCreateActivity extends AppCompatActivity {
                     return;
                 }
 
-                String event_name, guests, location;
+                String event_name, description, guests, location;
                 event_name = String.valueOf(editTextEventName.getText());
+                description = String.valueOf(editTextEventDescription.getText());
                 guests = String.valueOf(editTextMaxAttendees.getText());
                 location = String.valueOf(editTextEventLocation.getText());
                 // Create a map of items to be put into the database
                 Map<String, Object> doc_event = new HashMap<>();
                 doc_event.put("eventName", event_name);
+                doc_event.put("eventDescription", description);
                 doc_event.put("eventMaxAttendees", guests);
                 doc_event.put("eventDate", date_year+"/"+date_month+"/"+date_day);
                 doc_event.put("eventTime", time_hour+":"+time_minute+" "+time_am_pm);
@@ -223,9 +227,17 @@ public class EventCreateActivity extends AppCompatActivity {
 
                                     }
                                 });
+                        // activity is finished only after the event is successfully added to the database
+                        finish();
+                    }
+
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // activity is finished if the event was not added to the database successfully
+                        finish();
                     }
                 });
-                finish();
             }
         });
     }

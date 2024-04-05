@@ -1,5 +1,6 @@
 package com.example.eventplanner;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -16,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -37,6 +41,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
     private ArrayList<Event> organizeEventsList; // ArrayList that holds all events that the user is organizing
     private Button createEventButton; // Button that takes you to CreateEventActivity
     private EventRecyclerAdapterUpdated organizeEventsRecyclerAdapter; // EventRecyclerAdapter for organizeEventsRecyclerView
+    private CollectionReference eventsRef;
 
     /**
      * Creates the view for OrganizeEventsFragment, which is contained within HomeFragmentUpdated
@@ -84,9 +89,19 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
             }
         });
 
-        getOrganizingEvents();
-
         return view;
+    }
+
+    /**
+     * Displays the events a user is organizing.
+     * This method is invoked once when this fragment is created, and every time the user returns
+     * to it after leaving it (either to another fragment or a different activity).
+     * Ensures that the UI is refreshed whenever the fragment becomes visible again.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        getOrganizingEvents();
     }
 
     /**
@@ -126,11 +141,13 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
 
     /**
      * Adds all events from user's organizing Array in the database to organizeEventsList
-     * TODO: Display list of attendees that are signed up for the event*
      * @param eventIds  The ArrayList of eventIds that are being organized by the user
      * @param organizingEventsRecyclerAdapter The Adapter for organizeEventsRecyclerView
      */
     private void loadEventDocs(ArrayList<String> eventIds, EventRecyclerAdapterUpdated organizingEventsRecyclerAdapter) {
+
+        // clear list first to ensure no event duplication in the RecyclerView
+        organizeEventsList.clear();
 
         for (String eventId : eventIds) { // for every eventId in user's organizing Array
             db.collection("events")
@@ -143,6 +160,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                             // retrieve all event information associated with the event
                             String eventId = documentSnapshot.getId();
                             String eventName = documentSnapshot.getString("eventName");
+                            String eventDescription = documentSnapshot.getString("eventDescription");
                             String eventMaxAttendees = documentSnapshot.getString("eventMaxAttendees");
                             String eventDate = documentSnapshot.getString("eventDate");
                             String eventTime = documentSnapshot.getString("eventTime");
@@ -157,7 +175,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                             ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
                             // create Event object with retrieved event information and add it to organizeEventsList
-                            organizeEventsList.add(new Event(eventId, eventName, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
+                            organizeEventsList.add(new Event(eventId, eventName, eventDescription, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
 
                             // tell organizeEventsRecyclerView that the dataset that organizingEventsRecyclerAdapter is responsible for has changed
                             organizingEventsRecyclerAdapter.notifyDataSetChanged();
