@@ -82,16 +82,19 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
         myEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), myEventsList, this);
         myEventsRecyclerView.setAdapter(myEventsRecyclerAdapter);
 
-        getMyEvents();
-
-        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-        sharedViewModel.isEventUpdated().observe(getViewLifecycleOwner(), isUpdated -> {
-            if (isUpdated) {
-                getMyEvents();
-            }
-        });
-
         return view;
+    }
+
+    /**
+     * Displays the events a user has signed up for.
+     * This method is invoked once when this fragment is created, and every time the user returns
+     * to it after leaving it (either to another fragment or a different activity).
+     * Ensures that the UI is refreshed whenever the fragment becomes visible again.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        getMyEvents();
     }
 
     /**
@@ -99,6 +102,9 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
      * with them.
      */
     private void getMyEvents() {
+
+        // clear list first to ensure no event duplication in the RecyclerView
+        myEventsList.clear();
 
         // read specific document for userId given
         db.collection("users")

@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -226,9 +227,17 @@ public class EventCreateActivity extends AppCompatActivity {
 
                                     }
                                 });
+                        // activity is finished only after the event is successfully added to the database
+                        finish();
+                    }
+
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // activity is finished if the event was not added to the database successfully
+                        finish();
                     }
                 });
-                finish();
             }
         });
     }
