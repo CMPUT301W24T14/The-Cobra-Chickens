@@ -26,10 +26,10 @@ public class Event implements Parcelable {
     private ArrayList<String> signedUpUsers;
 
     public Event(String eventId,
-                 String eventName, String eventDescription, String eventMaxAttendees, String eventDate, String eventTime,String eventLocation, String eventPoster,
+                 String eventName, String eventDescription, String eventMaxAttendees, String eventDate, String eventTime, String eventLocation, String eventPoster,
                  String checkInCode, String promoCode,
                  ArrayList<String> eventAnnouncements,
-                 ArrayList<String> signedUpUsers, ArrayList<String> checkedInUsers) {
+                 ArrayList<String> checkedInUsers, ArrayList<String> signedUpUsers) {
 
         this.eventId = eventId;
 
@@ -45,9 +45,9 @@ public class Event implements Parcelable {
         this.promoCode = promoCode;
 
         this.eventAnnouncements = eventAnnouncements;
-        this.signedUpUsers = signedUpUsers;
-        this.checkedInUsers = checkedInUsers;
 
+        this.checkedInUsers = checkedInUsers;
+        this.signedUpUsers = signedUpUsers;
     }
 
     public Event (String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime,String eventLocation, String eventPoster){
@@ -74,8 +74,10 @@ public class Event implements Parcelable {
         promoCode = in.readString();
 
         eventAnnouncements = in.createStringArrayList();
-        signedUpUsers = in.createStringArrayList();
+
         checkedInUsers = in.createStringArrayList();
+        signedUpUsers = in.createStringArrayList();
+
     }
 
     public String getCheckInCode() {
@@ -214,7 +216,8 @@ public class Event implements Parcelable {
         dest.writeString(promoCode);
 
         dest.writeStringList(eventAnnouncements);
-        dest.writeStringList(signedUpUsers);
+
         dest.writeStringList(checkedInUsers);
+        dest.writeStringList(signedUpUsers);
     }
 }
