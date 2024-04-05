@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 public class Event implements Parcelable {
 
@@ -24,13 +23,13 @@ public class Event implements Parcelable {
     private String promoCode;
     private ArrayList<String> eventAnnouncements;
     private ArrayList<String> checkedInUsers;
-    private HashMap<String, Integer> signedUpUsers;
+    private ArrayList<String> signedUpUsers;
 
     public Event(String eventId,
                  String eventName, String eventDescription, String eventMaxAttendees, String eventDate, String eventTime, String eventLocation, String eventPoster,
                  String checkInCode, String promoCode,
                  ArrayList<String> eventAnnouncements,
-                 ArrayList<String> checkedInUsers, HashMap<String, Integer> signedUpUsers) {
+                 ArrayList<String> checkedInUsers, ArrayList<String> signedUpUsers) {
 
         this.eventId = eventId;
 
@@ -77,16 +76,8 @@ public class Event implements Parcelable {
         eventAnnouncements = in.createStringArrayList();
 
         checkedInUsers = in.createStringArrayList();
-        signedUpUsers = new HashMap<>();
+        signedUpUsers = in.createStringArrayList();
 
-
-        // This block of code is responsible for reading the data of the HashMap from the Parcel.
-        int size = in.readInt(); // Read size of HashMap
-        for (int i = 0; i < size; i++) {
-            String key = in.readString();
-            int value = in.readInt();
-            signedUpUsers.put(key, value);
-        }
     }
 
     public String getCheckInCode() {
@@ -153,11 +144,11 @@ public class Event implements Parcelable {
         this.eventMaxAttendees = eventMaxAttendees;
     }
 
-    public HashMap<String, Integer> getSignedUpUsers() {
+    public ArrayList<String> getSignedUpUsers() {
         return signedUpUsers;
     }
 
-    public void setSignedUpUsers(HashMap<String, Integer> signedUpUsers) {
+    public void setSignedUpUsers(ArrayList<String> signedUpUsers) {
         this.signedUpUsers = signedUpUsers;
     }
 
@@ -227,11 +218,6 @@ public class Event implements Parcelable {
         dest.writeStringList(eventAnnouncements);
 
         dest.writeStringList(checkedInUsers);
-        // Write size of HashMap
-        dest.writeInt(signedUpUsers.size());
-        for (HashMap.Entry<String, Integer> entry : signedUpUsers.entrySet()) {
-            dest.writeString(entry.getKey());
-            dest.writeInt(entry.getValue());
-        }
+        dest.writeStringList(signedUpUsers);
     }
 }
