@@ -81,8 +81,6 @@ public class ScanFragment extends Fragment {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         eventId[0] = document.getId();
 
-                                        Log.d("HASH MAP TESTING", "got here 3");
-
                                         // Retrieve the checkedInUsers array from the document
                                         ArrayList<Map<String, String>> checkedInUsersFromDB = (ArrayList<Map<String, String>>) document.get("checkedInUsers");
 
@@ -90,7 +88,6 @@ public class ScanFragment extends Fragment {
                                         if (checkedInUsersFromDB != null) {
                                             for (Map<String, String> map : checkedInUsersFromDB) {
                                                 if (map.containsKey(userId)) {
-                                                    Log.d("HASH MAP TESTING", "got here 1");
                                                     HashMap<String, String> oldMap = new HashMap<>();
 
 
@@ -109,19 +106,9 @@ public class ScanFragment extends Fragment {
                                                     // add new
                                                     db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(myMap));
                                                 }
-
-//                                                else {
-//                                                    Log.d("HASH MAP TESTING", "got here 2");
-//                                                    HashMap<String, String> myMap2 = new HashMap<>();
-//                                                    myMap2.put(userId, "1");
-//                                                    db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(myMap2));
-//                                                }
                                             }
                                         }
                                     }
-
-
-
 
 
                                     Log.d("EVENT ID", eventId[0]);
