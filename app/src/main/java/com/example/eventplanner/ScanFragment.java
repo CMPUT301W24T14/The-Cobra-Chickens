@@ -38,6 +38,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.journeyapps.barcodescanner.CompoundBarcodeView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -77,14 +80,57 @@ public class ScanFragment extends Fragment {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         eventId[0] = document.getId();
+
+                                        Log.d("HASH MAP TESTING", "got here 3");
+
+                                        // Retrieve the checkedInUsers array from the document
+                                        ArrayList<Map<String, String>> checkedInUsersFromDB = (ArrayList<Map<String, String>>) document.get("checkedInUsers");
+
+                                        // Check if userId exists in checkedInUsers array
+                                        if (checkedInUsersFromDB != null) {
+                                            for (Map<String, String> map : checkedInUsersFromDB) {
+                                                if (map.containsKey(userId)) {
+                                                    Log.d("HASH MAP TESTING", "got here 1");
+                                                    HashMap<String, String> oldMap = new HashMap<>();
+
+
+                                                    int numberOfCheckins = Integer.parseInt(map.get(userId));
+
+                                                    oldMap.put(userId, String.valueOf(numberOfCheckins));
+
+                                                    numberOfCheckins += 1;
+
+                                                    HashMap<String, String> myMap = new HashMap<>();
+                                                    myMap.put(userId, String.valueOf(numberOfCheckins));
+
+                                                    // remove old
+                                                    db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayRemove(oldMap));
+
+                                                    // add new
+                                                    db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(myMap));
+                                                }
+
+//                                                else {
+//                                                    Log.d("HASH MAP TESTING", "got here 2");
+//                                                    HashMap<String, String> myMap2 = new HashMap<>();
+//                                                    myMap2.put(userId, "1");
+//                                                    db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(myMap2));
+//                                                }
+                                            }
+                                        }
                                     }
+
+
+
+
+
                                     Log.d("EVENT ID", eventId[0]);
                                     db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
                                         if (documentSnapshot.exists() && eventId[0] != null) {
                                             db.collection("events").document(eventId[0]).update("signedUpUsers", FieldValue.arrayUnion(userId));
                                             db.collection("users").document(userId).update("myEvents", FieldValue.arrayUnion(eventId[0]));
 
-                                            db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(userId));
+                                            //db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(userId));
                                             db.collection("users").document(userId).update("checkedInto", FieldValue.arrayUnion(eventId[0]));
 
                                             sharedViewModel.setEventUpdated(true);

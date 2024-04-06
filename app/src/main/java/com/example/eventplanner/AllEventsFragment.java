@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * AllEventsFragment is a Fragment that handles showing a user all events that are on the application.
@@ -173,7 +174,12 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
                                 String promoCode = doc.getString("promoCode");
 
                                 ArrayList<String> eventAnnouncements = (ArrayList<String>) doc.get("eventAnnouncements");
-                                ArrayList<String> checkedInUsers = (ArrayList<String>) doc.get("checkedInUsers");
+
+                                ArrayList<Map<String, String>> checkedInUsersFromDB = (ArrayList<Map<String, String>>) doc.get("checkedInUsers");
+
+                                assert checkedInUsersFromDB != null;
+                                ArrayList<CheckedInUser> checkedInUsers = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
+
                                 ArrayList<String> signedUpUsers = (ArrayList<String>) doc.get("signedUpUsers");
 
                                 // create the Event object with retrieved event information and add it to allEventsList
@@ -185,6 +191,23 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
                         }
                     }
                 });
+    }
+
+    private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(ArrayList<Map<String, String>> checkedInUsersFromDB) {
+
+        ArrayList<CheckedInUser> checkedInUsers = new ArrayList<>();
+
+        for (Map<String, String> map : checkedInUsersFromDB) {
+
+            for (Map.Entry <String, String> userInfo : map.entrySet()) {
+
+                String userId = userInfo.getKey();
+                String numberOfCheckins = userInfo.getValue();
+                checkedInUsers.add(new CheckedInUser(userId, numberOfCheckins));
+            }
+        }
+
+        return checkedInUsers;
     }
 
     /**

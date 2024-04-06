@@ -21,6 +21,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * MyEventsFragment is a Fragment that handles showing a user all events that they have signed up
@@ -188,7 +189,12 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
                             String promoCode = documentSnapshot.getString("promoCode");
 
                             ArrayList<String> eventAnnouncements = (ArrayList<String>) documentSnapshot.get("eventAnnouncements");
-                            ArrayList<String> checkedInUsers = (ArrayList<String>) documentSnapshot.get("checkedInUsers");
+
+                            ArrayList<Map<String, String>> checkedInUsersFromDB = (ArrayList<Map<String, String>>) documentSnapshot.get("checkedInUsers");
+
+                            assert checkedInUsersFromDB != null;
+                            ArrayList<CheckedInUser> checkedInUsers = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
+
                             ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
                             // create Event object with retrieved event information and add it to myEventsList
@@ -201,6 +207,23 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
 
         }
     }
+
+    private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(ArrayList<Map<String, String>> checkedInUsersFromDB) {
+
+        ArrayList<CheckedInUser> checkedInUsers = new ArrayList<>();
+
+        for (Map<String, String> map : checkedInUsersFromDB) {
+            for (Map.Entry <String, String> userInfo : map.entrySet()) {
+                String userId = userInfo.getKey();
+                String numberOfCheckins = userInfo.getValue();
+
+                checkedInUsers.add(new CheckedInUser(userId, numberOfCheckins));
+            }
+        }
+
+        return checkedInUsers;
+    }
+
 
     /**
      * Handles clicks on Event items in myEventsRecyclerView.

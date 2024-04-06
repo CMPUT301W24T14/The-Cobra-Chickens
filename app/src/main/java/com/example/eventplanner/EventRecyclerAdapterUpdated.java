@@ -106,12 +106,14 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
                     .into(holder.eventPoster);
         }
 
-        ArrayList<String> checkedInUsers = event.getCheckedInUsers();
+        ArrayList<CheckedInUser> checkedInUsers = event.getCheckedInUsers();
 
         // display that the user has checked in if they are in the event's checkedInUsers list
         if (checkedInUsers != null) {
-            for (String userId : checkedInUsers) {
-                if (checkedInUsers.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            for (CheckedInUser user : checkedInUsers) {
+                String userId = user.getUserId();
+
+                if (userId != null && userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     holder.checkInStatus.setVisibility(View.VISIBLE);
                 }
             }

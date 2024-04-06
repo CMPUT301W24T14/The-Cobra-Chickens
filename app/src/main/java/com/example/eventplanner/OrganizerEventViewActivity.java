@@ -339,13 +339,31 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                         // get all events in user's organizing ArrayList and put them in another ArrayList of eventIds
-                        ArrayList<String> checkedInUserIds = (ArrayList<String>) documentSnapshot.get("checkedInUsers");
+                        ArrayList<Map<String, String>> checkedInUsersFromDB = (ArrayList<Map<String, String>>) documentSnapshot.get("checkedInUsers");
+
+                        assert checkedInUsersFromDB != null;
+                        ArrayList<String> checkedInUserIds = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
 
                         if (checkedInUserIds != null) {
                             loadCheckedInUserDocs(checkedInUserIds, checkedInUserRecyclerAdapter);
                         }
                     }
                 });
+    }
+
+    private ArrayList<String> convertCheckedInUsersMapToArrayList(ArrayList<Map<String, String>> checkedInUsersFromDB) {
+
+        ArrayList<String> checkedInUserIds = new ArrayList<>();
+
+        for (Map<String, String> map : checkedInUsersFromDB) {
+            for (Map.Entry <String, String> userInfo : map.entrySet()) {
+                String userId = userInfo.getKey();
+
+                checkedInUserIds.add(userId);
+            }
+        }
+
+        return checkedInUserIds;
     }
 
     private String generateRandomCode(int codeLength) {
