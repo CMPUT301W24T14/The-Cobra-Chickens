@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,6 +58,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Activity for creating events.
@@ -89,7 +91,7 @@ public class EventCreateActivity extends AppCompatActivity {
     private String time_am_pm;
     private String event_poster;
     private String event_location;
-    private TextInputEditText editTextEventName, editTextMaxAttendees, editTextEventLocation;
+    private TextInputEditText editTextEventName, editTextEventDescription, editTextMaxAttendees, editTextEventLocation;
     private DocumentReference key;
 
     @Override
@@ -103,6 +105,7 @@ public class EventCreateActivity extends AppCompatActivity {
         backButton = findViewById(R.id.button_back);
 
         editTextEventName = findViewById(R.id.event_name);
+        editTextEventDescription = findViewById(R.id.event_description);
         editTextMaxAttendees = findViewById(R.id.event_max_attendees);
         editTextEventLocation = findViewById(R.id.event_location);
 
@@ -168,9 +171,15 @@ public class EventCreateActivity extends AppCompatActivity {
         });
 
         // Check for click on event creation button, and handle backend logic.
+        // Check for click on event creation button, and handle backend logic.
         eventCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Ensure an image is selected before creating the event
+                if (imageUri == null) {
+                    Toast.makeText(EventCreateActivity.this, "Please select an image for the event poster", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 /// Null checks for date and time.
                 if (date_day == null || date_month == null || date_year == null) {
@@ -182,52 +191,83 @@ public class EventCreateActivity extends AppCompatActivity {
                     return;
                 }
 
-                String event_name, guests, location;
+                String event_name, description, guests, location;
                 event_name = String.valueOf(editTextEventName.getText());
+                description = String.valueOf(editTextEventDescription.getText());
                 guests = String.valueOf(editTextMaxAttendees.getText());
                 location = String.valueOf(editTextEventLocation.getText());
-                // Create a map of items to be put into the database
-                Map<String, Object> doc_event = new HashMap<>();
-                doc_event.put("eventName", event_name);
-                doc_event.put("eventMaxAttendees", guests);
-                doc_event.put("eventDate", date_year+"/"+date_month+"/"+date_day);
-                doc_event.put("eventTime", time_hour+":"+time_minute+" "+time_am_pm);
-                doc_event.put("eventLocation", location);
-                doc_event.put("eventOrganizer", event_creator);
-                doc_event.put("eventPoster", "test value");
 
-                doc_event.put("checkInCode", "");
-                doc_event.put("promoCode", "");
-
-                doc_event.put("eventAnnouncements", new ArrayList<>());
-                doc_event.put("signedUpUsers", new ArrayList<>());
-                doc_event.put("checkedInUsers", new ArrayList<>());
-
-
-                //DocumentReference key;
-                key = db.collection("events").document();
-                key.set(doc_event).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-
-                        Log.d("TESTING", "added this event id:" + (key.getId()));
-
-                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        DocumentReference userRef = db.collection("users").document(userId);
-
-                        userRef.update("Organizing", FieldValue.arrayUnion(key.getId()))
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        Log.d("TESTING", "SUCCESS added  " + (key.getId()));
-
-                                    }
-                                });
-                    }
-                });
-                finish();
+                // Upload the image to Firebase Storage
+                uploadImageAndCreateEvent(event_name, description, guests, location);
             }
         });
+    }
+
+    // Function to upload image to Firebase Storage and create the event
+    private void uploadImageAndCreateEvent(String eventName, String description, String guests, String location) {
+        // Generate a unique filename using UUID
+        String filename = UUID.randomUUID().toString();
+
+        // Create a reference to the location in Firebase Storage where the image will be uploaded
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + filename);
+
+        // Upload image to Firebase Storage
+        storageRef.putFile(imageUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    // Image uploaded successfully
+                    storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        // Get the download URL
+                        String imageUrl = uri.toString();
+
+                        // Code to store imageUrl in Firestore under "Event" item
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        Map<String, Object> eventData = new HashMap<>();
+                        eventData.put("eventName", eventName);
+                        eventData.put("eventDescription", description);
+                        eventData.put("eventMaxAttendees", guests);
+                        eventData.put("eventDate", date_year+"/"+date_month+"/"+date_day);
+                        eventData.put("eventTime", time_hour+":"+time_minute+" "+time_am_pm);
+                        eventData.put("eventLocation", location);
+                        eventData.put("eventOrganizer", event_creator);
+                        eventData.put("eventPoster", imageUrl); // Set the event poster URL
+                        eventData.put("checkInCode", "");
+                        eventData.put("promoCode", "");
+                        eventData.put("eventAnnouncements", new ArrayList<>());
+                        eventData.put("signedUpUsers", new ArrayList<>());
+                        eventData.put("checkedInUsers", new ArrayList<>());
+
+                        // Add the event data to Firestore
+                        db.collection("events")
+                                .add(eventData)
+                                .addOnSuccessListener(documentReference -> {
+                                    // Event added successfully
+                                    Log.d(TAG, "Event added with ID: " + documentReference.getId());
+                                    // Add the event ID to the organizer's list of events
+                                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                    DocumentReference userRef = db.collection("users").document(userId);
+                                    userRef.update("Organizing", FieldValue.arrayUnion(documentReference.getId()))
+                                            .addOnSuccessListener(aVoid -> {
+                                                Log.d(TAG, "Event ID added to user's list of organizing events");
+                                                // Finish the activity
+                                                finish();
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                // Handle errors
+                                                Log.e(TAG, "Error updating user document", e);
+                                                // Finish the activity
+                                                finish();
+                                            });
+                                })
+                                .addOnFailureListener(e -> {
+                                    // Handle errors
+                                    Log.e(TAG, "Error adding event", e);
+                                });
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    // Handle errors
+                    Log.e(TAG, "Error uploading image", e);
+                });
     }
 
     // Function for opening the gallery on user device.

@@ -1,16 +1,16 @@
 package com.example.eventplanner;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,14 +19,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * AllEventsFragment is a Fragment that handles showing a user all events that are on the application.
@@ -40,6 +36,7 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
     private RecyclerView allEventsRecyclerView; // RecyclerView list of all events
     private ArrayList<Event> allEventsList; // ArrayList that holds all events
     private EventRecyclerAdapterUpdated allEventsRecyclerAdapter; // EventRecyclerAdapter for allEventsRecyclerView
+    private SearchView allEventsSearchBar;
 
     /**
      * Creates the view for AllEventsFragment, which is contained within HomeFragmentUpdated.
@@ -79,9 +76,63 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
         allEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), allEventsList, this);
         allEventsRecyclerView.setAdapter(allEventsRecyclerAdapter);
 
-        displayAllEvents();
+        // initialize search bar
+        allEventsSearchBar = view.findViewById(R.id.all_events_search_view);
+        allEventsSearchBar.clearFocus(); // do this so cursor doesn't start in the search bar in lower APIs
+
+        // listen for when the user enters something in the search bar and filter
+        allEventsSearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String searchInput) {
+
+                filterRecyclerView(searchInput);
+                return true;
+            }
+        });
 
         return view;
+    }
+
+    /**
+     * Displays all events shown in the database.
+     * This method is invoked once when this fragment is created, and every time the user returns
+     * to it after leaving it (either to another fragment or a different activity).
+     * Ensures that the UI is refreshed whenever the fragment becomes visible again.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        displayAllEvents();
+    }
+
+    /**
+     * Sets the event RecyclerAdapter to display events from a filtered list based on if an event's
+     * name or location contains the string in searchInput.
+     * @param searchInput The String the user inputs into the search bar and queries
+     */
+    private void filterRecyclerView(String searchInput) {
+
+        ArrayList<Event> filteredEvents = new ArrayList<>();
+
+        String lowerCaseSearchInput = searchInput.toLowerCase();
+
+        for (Event event : allEventsList) {
+            // if the event name or location contains the string the user input
+            if (event.getEventName().toLowerCase().contains(lowerCaseSearchInput)
+                    || event.getEventLocation().toLowerCase().contains(lowerCaseSearchInput)) {
+                filteredEvents.add(event);
+            }
+        }
+
+        if (filteredEvents.isEmpty()) {
+            Toast.makeText(getContext(), "No matches found", Toast.LENGTH_SHORT).show();
+        }
+
+        allEventsRecyclerAdapter.setFilteredList(filteredEvents);
     }
 
     /**
@@ -89,6 +140,9 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
      * with them.
      */
     private void displayAllEvents() {
+
+        // clear list first to ensure no event duplication in the RecyclerView
+        allEventsList.clear();
 
         // retrieve documents from events collection in the database
         eventsCollectionReference
@@ -108,6 +162,7 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
                                 // retrieve all event information associated with the event
                                 String eventId = doc.getId();
                                 String eventName = doc.getString("eventName");
+                                String eventDescription = doc.getString("eventDescription");
                                 String eventMaxAttendees = doc.getString("eventMaxAttendees");
                                 String eventDate = doc.getString("eventDate");
                                 String eventTime = doc.getString("eventTime");
@@ -122,7 +177,7 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
                                 ArrayList<String> signedUpUsers = (ArrayList<String>) doc.get("signedUpUsers");
 
                                 // create the Event object with retrieved event information and add it to allEventsList
-                                allEventsList.add(new Event(eventId, eventName, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
+                                allEventsList.add(new Event(eventId, eventName, eventDescription, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
                             }
 
                             // tell allEventsRecyclerView that the dataset that allEventsRecyclerAdapter is responsible for has changed
@@ -147,6 +202,9 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
 
         // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
         intent.putExtra("event", allEventsList.get(position));
+
+        // pass fragment name to EventDetailsActivity so the sign up / deregister button can be set accordingly
+        intent.putExtra("fragment name", getClass().getSimpleName());
 
         // start the EventDetailsActivity
         startActivity(intent);

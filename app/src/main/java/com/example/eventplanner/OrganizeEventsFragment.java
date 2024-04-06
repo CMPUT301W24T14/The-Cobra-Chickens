@@ -2,29 +2,26 @@ package com.example.eventplanner;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * OrganizeEventsFragment is a Fragment that handles showing a user all events that they are
@@ -37,6 +34,8 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
     private ArrayList<Event> organizeEventsList; // ArrayList that holds all events that the user is organizing
     private Button createEventButton; // Button that takes you to CreateEventActivity
     private EventRecyclerAdapterUpdated organizeEventsRecyclerAdapter; // EventRecyclerAdapter for organizeEventsRecyclerView
+    private CollectionReference eventsRef;
+    private SearchView organizeEventsSearchBar;
 
     /**
      * Creates the view for OrganizeEventsFragment, which is contained within HomeFragmentUpdated
@@ -84,9 +83,65 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
             }
         });
 
-        getOrganizingEvents();
+        // initialize search bar
+        organizeEventsSearchBar = view.findViewById(R.id.organize_events_search_view);
+        organizeEventsSearchBar.clearFocus(); // do this so cursor doesn't start in the search bar in lower APIs
+
+        // listen for when the user enters something in the search bar and filter
+        organizeEventsSearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String searchInput) {
+
+                filterRecyclerView(searchInput);
+                return true;
+            }
+        });
 
         return view;
+    }
+
+    /**
+     * Displays the events a user is organizing.
+     * This method is invoked once when this fragment is created, and every time the user returns
+     * to it after leaving it (either to another fragment or a different activity).
+     * Ensures that the UI is refreshed whenever the fragment becomes visible again.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        getOrganizingEvents();
+    }
+
+    /**
+     * Sets the event RecyclerAdapter to display events from a filtered list based on if an event's
+     * name or location contains the string in searchInput.
+     * @param searchInput The String the user inputs into the search bar and queries
+     */
+    private void filterRecyclerView(String searchInput) {
+
+        ArrayList<Event> filteredEvents = new ArrayList<>();
+
+        String lowerCaseSearchInput = searchInput.toLowerCase();
+
+        for (Event event : organizeEventsList) {
+            // if the event name or location contains the string the user inputted
+            if (event.getEventName().toLowerCase().contains(lowerCaseSearchInput)
+                    || event.getEventLocation().toLowerCase().contains(lowerCaseSearchInput)) {
+                filteredEvents.add(event);
+            }
+        }
+
+        // if no event names or locations contain the string the user inputted
+        if (filteredEvents.isEmpty()) {
+            Toast.makeText(getContext(), "No matches found", Toast.LENGTH_SHORT).show();
+        }
+
+        // display the filtered list
+        organizeEventsRecyclerAdapter.setFilteredList(filteredEvents);
     }
 
     /**
@@ -126,11 +181,13 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
 
     /**
      * Adds all events from user's organizing Array in the database to organizeEventsList
-     * TODO: Display list of attendees that are signed up for the event*
-     * @param eventIds  The ArrayList of eventIds that are being organized by the user
+     * @param eventIds The ArrayList of eventIds that are being organized by the user
      * @param organizingEventsRecyclerAdapter The Adapter for organizeEventsRecyclerView
      */
     private void loadEventDocs(ArrayList<String> eventIds, EventRecyclerAdapterUpdated organizingEventsRecyclerAdapter) {
+
+        // clear list first to ensure no event duplication in the RecyclerView
+        organizeEventsList.clear();
 
         for (String eventId : eventIds) { // for every eventId in user's organizing Array
             db.collection("events")
@@ -143,6 +200,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                             // retrieve all event information associated with the event
                             String eventId = documentSnapshot.getId();
                             String eventName = documentSnapshot.getString("eventName");
+                            String eventDescription = documentSnapshot.getString("eventDescription");
                             String eventMaxAttendees = documentSnapshot.getString("eventMaxAttendees");
                             String eventDate = documentSnapshot.getString("eventDate");
                             String eventTime = documentSnapshot.getString("eventTime");
@@ -157,7 +215,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                             ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
                             // create Event object with retrieved event information and add it to organizeEventsList
-                            organizeEventsList.add(new Event(eventId, eventName, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
+                            organizeEventsList.add(new Event(eventId, eventName, eventDescription, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
 
                             // tell organizeEventsRecyclerView that the dataset that organizingEventsRecyclerAdapter is responsible for has changed
                             organizingEventsRecyclerAdapter.notifyDataSetChanged();

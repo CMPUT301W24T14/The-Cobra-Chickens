@@ -13,6 +13,7 @@ public class Event implements Parcelable {
 
     private String eventId;
     private String eventName;
+    private String eventDescription;
     private String eventMaxAttendees;
     private String eventDate;
     private String eventTime;
@@ -24,13 +25,16 @@ public class Event implements Parcelable {
     private ArrayList<String> checkedInUsers;
     private ArrayList<String> signedUpUsers;
 
-    public Event(String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime,String eventLocation, String eventPoster,
+    public Event(String eventId,
+                 String eventName, String eventDescription, String eventMaxAttendees, String eventDate, String eventTime, String eventLocation, String eventPoster,
                  String checkInCode, String promoCode,
                  ArrayList<String> eventAnnouncements,
-                 ArrayList<String> signedUpUsers, ArrayList<String> checkedInUsers) {
+                 ArrayList<String> checkedInUsers, ArrayList<String> signedUpUsers) {
 
         this.eventId = eventId;
+
         this.eventName = eventName;
+        this.eventDescription = eventDescription;
         this.eventMaxAttendees = eventMaxAttendees;
         this.eventDate = eventDate;
         this.eventTime = eventTime;
@@ -41,12 +45,12 @@ public class Event implements Parcelable {
         this.promoCode = promoCode;
 
         this.eventAnnouncements = eventAnnouncements;
-        this.signedUpUsers = signedUpUsers;
-        this.checkedInUsers = checkedInUsers;
 
+        this.checkedInUsers = checkedInUsers;
+        this.signedUpUsers = signedUpUsers;
     }
 
-    public Event (String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime,String eventLocation, String eventPoster){
+    public Event (String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime, String eventLocation, String eventPoster){
         this.eventId = eventId;
         this.eventName = eventName;
         this.eventMaxAttendees = eventMaxAttendees;
@@ -59,6 +63,7 @@ public class Event implements Parcelable {
     protected Event(Parcel in) {
         eventId = in.readString();
         eventName = in.readString();
+        eventDescription = in.readString();
         eventMaxAttendees = in.readString();
         eventDate = in.readString();
         eventTime = in.readString();
@@ -69,8 +74,10 @@ public class Event implements Parcelable {
         promoCode = in.readString();
 
         eventAnnouncements = in.createStringArrayList();
-        signedUpUsers = in.createStringArrayList();
+
         checkedInUsers = in.createStringArrayList();
+        signedUpUsers = in.createStringArrayList();
+
     }
 
     public String getCheckInCode() {
@@ -169,6 +176,14 @@ public class Event implements Parcelable {
         this.eventLocation = eventLocation;
     }
 
+    public String getEventDescription() {
+        return eventDescription;
+    }
+
+    public void setEventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
+    }
+
     public static final Creator<Event> CREATOR = new Creator<Event>() {
         @Override
         public Event createFromParcel(Parcel in) {
@@ -190,6 +205,7 @@ public class Event implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(eventId);
         dest.writeString(eventName);
+        dest.writeString(eventDescription);
         dest.writeString(eventMaxAttendees);
         dest.writeString(eventDate);
         dest.writeString(eventTime);
@@ -200,7 +216,8 @@ public class Event implements Parcelable {
         dest.writeString(promoCode);
 
         dest.writeStringList(eventAnnouncements);
-        dest.writeStringList(signedUpUsers);
+
         dest.writeStringList(checkedInUsers);
+        dest.writeStringList(signedUpUsers);
     }
 }
