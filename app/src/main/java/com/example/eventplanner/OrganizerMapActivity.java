@@ -14,13 +14,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.ArrayList;
 
-public class OrganizerMapActivity extends AppCompatActivity {
+public class OrganizerMapActivity extends AppCompatActivity implements OnMapReadyCallback {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView eventMap;
     @Override
@@ -40,10 +48,22 @@ public class OrganizerMapActivity extends AppCompatActivity {
         String[] permissions = {android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         requestPermissionsIfNecessary(permissions);
 
+        eventMap = findViewById(R.id.organizer_map);
+        eventMap.getMapAsync(this);
+        //SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        //        .findFragmentById(R.id.map_fragment);
+        //mapFragment.getMapAsync(this);
         //GeoPoint startPoint = new GeoPoint(53.5461, -113.4937);
 
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        LatLng edmonton = new LatLng(53.5461, -113.4937);
+        googleMap.addMarker(new MarkerOptions()
+                .position(edmonton)
+                .title("Marker in Sydney"));
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

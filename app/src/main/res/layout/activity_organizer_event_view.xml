@@ -15,118 +15,175 @@
         android:drawableLeft="@drawable/round_arrow_back_24"
         android:background="@android:color/transparent"/>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_margin="10dp">
-
-        <ImageView
-            android:id="@+id/poster2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/p"
-            android:layout_gravity="center"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="20sp"
-            android:text="Event Name"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:id="@+id/event_name2"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Event Date"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:id="@+id/event_date2"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Event Time"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:id="@+id/event_time2"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Event Location"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:id="@+id/event_location2"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Description"
-            android:textStyle="bold"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/event_description2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="This event does not have a description."
-            android:textStyle="italic"
-            />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Announcements"
-            android:textStyle="bold"
-            android:textSize="18sp"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/announcements_recyclerView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="5dp"
-            android:paddingVertical="5dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Signed-up users:            Checked-in users:"
-            android:textStyle="bold"
-            android:textSize="18sp"/>
+        tools:context=".OrganizerEventViewActivity">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:layout_margin="10dp">
+
+            <ImageView
+                android:id="@+id/poster2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/p"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20sp"
+                android:text="Event Name"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:id="@+id/event_name2"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Event Date"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:id="@+id/event_date2"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Event Time"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:id="@+id/event_time2"/>
+
+            <ImageView
+                android:id="@+id/checkInQR"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/generateCheckInQR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Generate Checkin QR" />
+
+                <Button
+                    android:id="@+id/shareCheckInQR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Share" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/promoQR"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/generatePromoQR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Generate Promo QR" />
+
+                <Button
+                    android:id="@+id/sharePromoQR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Share" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Event Location"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:id="@+id/event_location2"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textStyle="bold"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/event_description2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This event does not have a description."
+                android:textStyle="italic"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Announcements"
+                android:textStyle="bold"
+                android:textSize="18sp"/>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/signedUp_recyclerView"
-                android:layout_width="190dp"
+                android:id="@+id/announcements_recyclerView2"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="5dp"
-                android:paddingVertical="5dp"
-                android:background="#E4F3E6"/>
+                android:paddingVertical="5dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/checkedIn_recyclerView"
-                android:layout_width="200dp"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="5dp"
-                android:paddingVertical="5dp"
-                android:background="#D9DAE3"/>
+                android:text="Signed-up users:            Checked-in users:"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/signedUp_recyclerView"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:background="#E4F3E6"
+                    android:paddingHorizontal="5dp"
+                    android:paddingVertical="5dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/checkedIn_recyclerView"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:background="#D9DAE3"
+                    android:paddingHorizontal="5dp"
+                    android:paddingVertical="5dp" />
+
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/button_organizer_map"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Attendee Sign-in Map" />
+
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/button_organizer_map"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Attendee Sign-in Map" />
-
-    </LinearLayout>
-
+    </ScrollView>
 
 </LinearLayout>

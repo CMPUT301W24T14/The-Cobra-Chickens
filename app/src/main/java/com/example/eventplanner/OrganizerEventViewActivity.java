@@ -315,6 +315,17 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
         getSignedUpUsers();
         getCheckedInUsers();
+
+
+        Button mapButton = findViewById(R.id.button_organizer_map);
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(OrganizerEventViewActivity.this, OrganizerMapActivity.class);
+                //myIntent.putExtra("key", value); //Optional parameters
+                OrganizerEventViewActivity.this.startActivity(myIntent);
+            }
+        });
     }
 
     private void getSignedUpUsers() {
