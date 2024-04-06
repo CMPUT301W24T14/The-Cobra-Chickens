@@ -176,7 +176,7 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
 
                                 ArrayList<String> eventAnnouncements = (ArrayList<String>) doc.get("eventAnnouncements");
 
-                                HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) doc.get("checkedInUsersTest");
+                                HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) doc.get("checkedInUsers");
 
                                 assert checkedInUsersFromDB != null;
                                 ArrayList<CheckedInUser> checkedInUsers = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);

@@ -82,7 +82,7 @@ public class ScanFragment extends Fragment {
                                         eventId[0] = document.getId();
 
                                         // Retrieve the checkedInUsers array from the document
-                                        HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) document.get("checkedInUsersTest");
+                                        HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) document.get("checkedInUsers");
 
                                         // Check if userId exists in checkedInUsers array
                                         if (checkedInUsersFromDB != null) {
@@ -103,7 +103,7 @@ public class ScanFragment extends Fragment {
 
                                                         newMap.put(userId, String.valueOf(numberOfCheckins));
 
-                                                        db.collection("events").document(eventId[0]).update("checkedInUsersTest", newMap);
+                                                        db.collection("events").document(eventId[0]).update("checkedInUsers", newMap);
 
                                                     }
                                                 }
@@ -115,7 +115,7 @@ public class ScanFragment extends Fragment {
                                                 HashMap<String, String> map = new HashMap<>();
                                                 map.put(userId, "1");
 
-                                                db.collection("events").document(eventId[0]).update("checkedInUsersTest", map);
+                                                db.collection("events").document(eventId[0]).update("checkedInUsers", map);
 
                                                 }
                                             }
