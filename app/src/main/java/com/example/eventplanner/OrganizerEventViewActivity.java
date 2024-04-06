@@ -1,21 +1,16 @@
 package com.example.eventplanner;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -24,21 +19,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.WriterException;
 
-import org.checkerframework.checker.units.qual.A;
-import org.w3c.dom.Text;
-
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,12 +36,12 @@ import java.util.Random;
  */
 public class OrganizerEventViewActivity extends AppCompatActivity {
 
-    private Button generateCheckinQR;
-    private Button generatePromoQR;
-    private Button shareCheckInQR;
-    private Button sharePromoQR;
-    private ImageView checkinQR;
-    private ImageView promoQR;
+    private Button generateCheckinQRButton;
+    private Button generatePromoQRButton;
+    private Button shareCheckInQRButton;
+    private Button sharePromoQRButton;
+    private ImageView checkinQRImageView;
+    private ImageView promoQRImageView;
 
     private QRCodeGenerator generator;
 
@@ -71,25 +57,25 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
     private UserRecyclerAdapter checkedInUserRecyclerAdapter;
     private AnnouncementsRecyclerAdapter announcementsRecyclerAdapter;
     private RecyclerView announcementsRecyclerView;
-    private RecyclerView signedUpRecyclerView;
+    private RecyclerView guestListRecyclerView;
     private RecyclerView checkedInRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_organizer_event_view);
+        setContentView(R.layout.activity_organizer_view_updated);
 
         db = FirebaseFirestore.getInstance();
 
-        TextView eventNameTextView = findViewById(R.id.event_name2);
-        TextView eventDateTextView = findViewById(R.id.event_date2);
-        TextView eventTimeTextView = findViewById(R.id.event_time2);
-        TextView eventLocationTextView = findViewById(R.id.event_location2);
-        TextView eventDescriptionTextView = findViewById(R.id.event_description2);
+        TextView eventNameTextView = findViewById(R.id.tv_event_name);
+        TextView eventDateTextView = findViewById(R.id.tv_event_date);
+        TextView eventTimeTextView = findViewById(R.id.tv_event_time);
+        TextView eventLocationTextView = findViewById(R.id.tv_event_location);
+        TextView eventDescriptionTextView = findViewById(R.id.tv_event_description);
 
-        announcementsRecyclerView = findViewById(R.id.announcements_recyclerView2);
-        signedUpRecyclerView = findViewById(R.id.signedUp_recyclerView);
-        checkedInRecyclerView = findViewById(R.id.checkedIn_recyclerView);
+        announcementsRecyclerView = findViewById(R.id.rv_announcements);
+        guestListRecyclerView = findViewById(R.id.rv_guest_list);
+//        checkedInRecyclerView = findViewById(R.id.checkedIn_recyclerView);
 
         announcementsList = new ArrayList<>();
         signedUpList = new ArrayList<>();
@@ -97,16 +83,16 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
         generator = new QRCodeGenerator();
 
-        generateCheckinQR = findViewById(R.id.generateCheckInQR);
-        generatePromoQR = findViewById(R.id.generatePromoQR);
+        generateCheckinQRButton = findViewById(R.id.generateCheckInQR);
+        generatePromoQRButton = findViewById(R.id.generatePromoQR);
 
-        shareCheckInQR = findViewById(R.id.shareCheckInQR);
-        sharePromoQR = findViewById(R.id.sharePromoQR);
+        shareCheckInQRButton = findViewById(R.id.shareCheckInQR);
+        sharePromoQRButton = findViewById(R.id.sharePromoQR);
 
-        checkinQR = findViewById(R.id.checkInQR);
-        promoQR = findViewById(R.id.promoQR);
+        checkinQRImageView = findViewById(R.id.checkInQR);
+        promoQRImageView = findViewById(R.id.promoQR);
 
-        ImageView poster = findViewById(R.id.poster2);
+        ImageView poster = findViewById(R.id.iv_poster);
 
         bundle = getIntent().getExtras();
 
@@ -144,7 +130,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                 announcementsRecyclerView.setAdapter(announcementsRecyclerAdapter);
 
                 if (!Objects.equals(currEvent.getCheckInCode(), "")) {
-                    generateCheckinQR.setText("Change Checkin QR");
+                    generateCheckinQRButton.setText("Change Checkin QR");
                     Bitmap qrCode = null; // Replace with your method to generate a QR code
 
                     try {
@@ -154,7 +140,8 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     }
 
                     // Set the generated QR code as the image for the checkinQR ImageView.
-                    checkinQR.setImageBitmap(qrCode);
+                    checkinQRImageView.setImageBitmap(qrCode);
+                    checkinQRImageView.setVisibility(View.VISIBLE);
                 }
 
                 if (!Objects.equals(currEvent.getPromoCode(), "")) {
@@ -167,10 +154,11 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     }
 
                     // Set the generated QR code as the image for the checkinQR ImageView.
-                    promoQR.setImageBitmap(qrCode);
+                    promoQRImageView.setImageBitmap(qrCode);
+                    promoQRImageView.setVisibility(View.VISIBLE);
                 }
 
-                generateCheckinQR.setOnClickListener(new View.OnClickListener() {
+                generateCheckinQRButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //Generate a new QR code. You'll need to replace "qrCodeData" with the actual data you want to encode in the QR code.
@@ -185,11 +173,12 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         }
 
                         // Set the generated QR code as the image for the checkinQR ImageView.
-                        checkinQR.setImageBitmap(qrCode);
+                        checkinQRImageView.setImageBitmap(qrCode);
+                        checkinQRImageView.setVisibility(View.VISIBLE);
                     }
                 });
 
-                generatePromoQR.setOnClickListener(new View.OnClickListener() {
+                generatePromoQRButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         // Generate a new QR code. You'll need to replace "qrCodeData" with the actual data you want to encode in the QR code.
@@ -204,28 +193,29 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         }
 
                         // Set the generated QR code as the image for the checkinQR ImageView.
-                        promoQR.setImageBitmap(qrCode);
+                        promoQRImageView.setImageBitmap(qrCode);
+                        promoQRImageView.setVisibility(View.VISIBLE);
                     }
                 });
 
             }
 
             signedUserRecyclerAdapter = new UserRecyclerAdapter(this, signedUpList, recyclerViewInterface);
-            signedUpRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            signedUpRecyclerView.setAdapter(signedUserRecyclerAdapter);
+            guestListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            guestListRecyclerView.setAdapter(signedUserRecyclerAdapter);
 
-            checkedInUserRecyclerAdapter = new UserRecyclerAdapter(this, checkedInList, recyclerViewInterface);
-            checkedInRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            checkedInRecyclerView.setAdapter(checkedInUserRecyclerAdapter);
+//            checkedInUserRecyclerAdapter = new UserRecyclerAdapter(this, checkedInList, recyclerViewInterface);
+//            checkedInRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//            checkedInRecyclerView.setAdapter(checkedInUserRecyclerAdapter);
 
 
         }
 
-        shareCheckInQR.setOnClickListener(new View.OnClickListener() {
+        shareCheckInQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Convert the image to a bitmap
-                Bitmap bitmap = ((BitmapDrawable) checkinQR.getDrawable()).getBitmap();
+                Bitmap bitmap = ((BitmapDrawable) checkinQRImageView.getDrawable()).getBitmap();
 
                 // Convert the Bitmap to a byte array
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -240,11 +230,11 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
             }
         });
 
-        sharePromoQR.setOnClickListener(new View.OnClickListener() {
+        sharePromoQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Convert the image to a bitmap
-                Bitmap bitmap = ((BitmapDrawable) promoQR.getDrawable()).getBitmap();
+                Bitmap bitmap = ((BitmapDrawable) promoQRImageView.getDrawable()).getBitmap();
 
                 // Convert the Bitmap to a byte array
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -259,7 +249,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
             }
         });
 
-        checkinQR.setOnClickListener(new View.OnClickListener() {
+        checkinQRImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Create a Dialog
@@ -269,7 +259,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
                 // Get the ImageView from the dialog layout and set the QR code to it
                 ImageView dialogQrCode = dialog.findViewById(R.id.dialogQrCode);
-                dialogQrCode.setImageDrawable(checkinQR.getDrawable());
+                dialogQrCode.setImageDrawable(checkinQRImageView.getDrawable());
 
                 // Set the ImageView size to a larger value
                 ViewGroup.LayoutParams layoutParams = dialogQrCode.getLayoutParams();
@@ -282,7 +272,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
             }
         });
 
-        promoQR.setOnClickListener(new View.OnClickListener() {
+        promoQRImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Create a Dialog
@@ -292,7 +282,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
                 // Get the ImageView from the dialog layout and set the QR code to it
                 ImageView dialogQrCode = dialog.findViewById(R.id.dialogQrCode);
-                dialogQrCode.setImageDrawable(promoQR.getDrawable());
+                dialogQrCode.setImageDrawable(promoQRImageView.getDrawable());
 
                 // Set the ImageView size to a larger value
                 ViewGroup.LayoutParams layoutParams = dialogQrCode.getLayoutParams();
@@ -306,7 +296,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         });
 
         getSignedUpUsers();
-        getCheckedInUsers();
+//        getCheckedInUsers();
 
     }
 
@@ -339,13 +329,30 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                         // get all events in user's organizing ArrayList and put them in another ArrayList of eventIds
-                        ArrayList<String> checkedInUserIds = (ArrayList<String>) documentSnapshot.get("checkedInUsers");
+                        HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsersTest");
+
+                        assert checkedInUsersFromDB != null;
+                        ArrayList<CheckedInUser> checkedInUserIds = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
 
                         if (checkedInUserIds != null) {
                             loadCheckedInUserDocs(checkedInUserIds, checkedInUserRecyclerAdapter);
                         }
                     }
                 });
+    }
+
+    private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(HashMap<String, String> checkedInUsersFromDB) {
+
+        ArrayList<CheckedInUser> checkedInUsers = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
+
+            String userId = entry.getKey();
+            String numberOfCheckins = entry.getValue();
+            checkedInUsers.add(new CheckedInUser(userId, numberOfCheckins));
+        }
+
+        return checkedInUsers;
     }
 
     private String generateRandomCode(int codeLength) {
@@ -392,11 +399,11 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         }
     }
 
-    private void loadCheckedInUserDocs(ArrayList<String> userIds, UserRecyclerAdapter userRecyclerAdapter) {
+    private void loadCheckedInUserDocs(ArrayList<CheckedInUser> checkedInUsers, UserRecyclerAdapter userRecyclerAdapter) {
 
-        for (String userId : userIds) { // for every eventId in user's organizing Array
+        for (CheckedInUser user : checkedInUsers) { // for every eventId in user's organizing Array
             db.collection("users")
-                    .document(userId)
+                    .document(user.getUserId())
                     .get()
                     .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
