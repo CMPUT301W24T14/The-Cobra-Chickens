@@ -90,7 +90,7 @@ public class ScanFragment extends Fragment {
                                             sharedViewModel.setEventUpdated(true);
 
                                             builder.setTitle("Success!");
-                                            builder.setMessage("You have successfully signed up for the event!");
+                                            builder.setMessage("You have successfully checked in to the event!");
                                         } else {
                                             builder.setTitle("Failure!");
                                             if (eventId[0] == null) {
@@ -226,13 +226,5 @@ public class ScanFragment extends Fragment {
     public void onPause() {
         super.onPause();
         barcodeView.pause();
-    }
-
-    public void changeFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getParentFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
     }
 }
