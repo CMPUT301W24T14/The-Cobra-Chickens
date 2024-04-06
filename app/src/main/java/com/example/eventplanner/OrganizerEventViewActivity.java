@@ -339,10 +339,10 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                         // get all events in user's organizing ArrayList and put them in another ArrayList of eventIds
-                        ArrayList<Map<String, String>> checkedInUsersFromDB = (ArrayList<Map<String, String>>) documentSnapshot.get("checkedInUsers");
+                        HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsersTest");
 
                         assert checkedInUsersFromDB != null;
-                        ArrayList<String> checkedInUserIds = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
+                        ArrayList<CheckedInUser> checkedInUserIds = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
 
                         if (checkedInUserIds != null) {
                             loadCheckedInUserDocs(checkedInUserIds, checkedInUserRecyclerAdapter);
@@ -351,19 +351,18 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                 });
     }
 
-    private ArrayList<String> convertCheckedInUsersMapToArrayList(ArrayList<Map<String, String>> checkedInUsersFromDB) {
+    private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(HashMap<String, String> checkedInUsersFromDB) {
 
-        ArrayList<String> checkedInUserIds = new ArrayList<>();
+        ArrayList<CheckedInUser> checkedInUsers = new ArrayList<>();
 
-        for (Map<String, String> map : checkedInUsersFromDB) {
-            for (Map.Entry <String, String> userInfo : map.entrySet()) {
-                String userId = userInfo.getKey();
+        for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
 
-                checkedInUserIds.add(userId);
-            }
+            String userId = entry.getKey();
+            String numberOfCheckins = entry.getValue();
+            checkedInUsers.add(new CheckedInUser(userId, numberOfCheckins));
         }
 
-        return checkedInUserIds;
+        return checkedInUsers;
     }
 
     private String generateRandomCode(int codeLength) {
@@ -410,11 +409,11 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         }
     }
 
-    private void loadCheckedInUserDocs(ArrayList<String> userIds, UserRecyclerAdapter userRecyclerAdapter) {
+    private void loadCheckedInUserDocs(ArrayList<CheckedInUser> checkedInUsers, UserRecyclerAdapter userRecyclerAdapter) {
 
-        for (String userId : userIds) { // for every eventId in user's organizing Array
+        for (CheckedInUser user : checkedInUsers) { // for every eventId in user's organizing Array
             db.collection("users")
-                    .document(userId)
+                    .document(user.getUserId())
                     .get()
                     .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override

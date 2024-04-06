@@ -21,6 +21,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -190,7 +191,7 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
 
                             ArrayList<String> eventAnnouncements = (ArrayList<String>) documentSnapshot.get("eventAnnouncements");
 
-                            ArrayList<Map<String, String>> checkedInUsersFromDB = (ArrayList<Map<String, String>>) documentSnapshot.get("checkedInUsers");
+                            HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsersTest");
 
                             assert checkedInUsersFromDB != null;
                             ArrayList<CheckedInUser> checkedInUsers = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
@@ -208,17 +209,15 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
         }
     }
 
-    private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(ArrayList<Map<String, String>> checkedInUsersFromDB) {
+    private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(HashMap<String, String> checkedInUsersFromDB) {
 
         ArrayList<CheckedInUser> checkedInUsers = new ArrayList<>();
 
-        for (Map<String, String> map : checkedInUsersFromDB) {
-            for (Map.Entry <String, String> userInfo : map.entrySet()) {
-                String userId = userInfo.getKey();
-                String numberOfCheckins = userInfo.getValue();
+        for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
 
-                checkedInUsers.add(new CheckedInUser(userId, numberOfCheckins));
-            }
+            String userId = entry.getKey();
+            String numberOfCheckins = entry.getValue();
+            checkedInUsers.add(new CheckedInUser(userId, numberOfCheckins));
         }
 
         return checkedInUsers;

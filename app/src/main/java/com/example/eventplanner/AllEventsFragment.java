@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -175,7 +176,7 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
 
                                 ArrayList<String> eventAnnouncements = (ArrayList<String>) doc.get("eventAnnouncements");
 
-                                ArrayList<Map<String, String>> checkedInUsersFromDB = (ArrayList<Map<String, String>>) doc.get("checkedInUsers");
+                                HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) doc.get("checkedInUsersTest");
 
                                 assert checkedInUsersFromDB != null;
                                 ArrayList<CheckedInUser> checkedInUsers = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
@@ -193,18 +194,15 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
                 });
     }
 
-    private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(ArrayList<Map<String, String>> checkedInUsersFromDB) {
+    private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(HashMap<String, String> checkedInUsersFromDB) {
 
         ArrayList<CheckedInUser> checkedInUsers = new ArrayList<>();
 
-        for (Map<String, String> map : checkedInUsersFromDB) {
+        for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
 
-            for (Map.Entry <String, String> userInfo : map.entrySet()) {
-
-                String userId = userInfo.getKey();
-                String numberOfCheckins = userInfo.getValue();
-                checkedInUsers.add(new CheckedInUser(userId, numberOfCheckins));
-            }
+            String userId = entry.getKey();
+            String numberOfCheckins = entry.getValue();
+            checkedInUsers.add(new CheckedInUser(userId, numberOfCheckins));
         }
 
         return checkedInUsers;

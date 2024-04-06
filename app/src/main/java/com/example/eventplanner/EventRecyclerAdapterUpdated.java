@@ -100,6 +100,8 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
 
         Event event = events.get(position);
 
+        Log.d("TESTING8", event.getEventName());
+
         if (holder.eventPoster != null && !event.getEventPoster().isEmpty()) {
             Glide.with(context)
                     .load(event.getEventPoster())
@@ -111,9 +113,14 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
         // display that the user has checked in if they are in the event's checkedInUsers list
         if (checkedInUsers != null) {
             for (CheckedInUser user : checkedInUsers) {
+
                 String userId = user.getUserId();
 
+                Log.d("TESTING8", "user id in list: " + userId);
+                Log.d("TESTING8", "device user id: " + FirebaseAuth.getInstance().getCurrentUser().getUid());
+
                 if (userId != null && userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    Log.d("TESTING8", "setting " + event.getEventName());
                     holder.checkInStatus.setVisibility(View.VISIBLE);
                 }
             }
@@ -170,16 +177,5 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
                 }
             });
         }
-    }
-
-    // currently not in use, may be used later for faster updates of the RecyclerView
-    public void updateEventListItems(ArrayList<Event> events2){
-
-        final EventDiffCallback diffCallback = new EventDiffCallback(this.events, events2);
-        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
-
-        this.events.clear();
-        this.events.addAll(events2);
-        diffResult.dispatchUpdatesTo(this);
     }
 }

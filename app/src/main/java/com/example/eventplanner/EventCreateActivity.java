@@ -234,7 +234,10 @@ public class EventCreateActivity extends AppCompatActivity {
                         eventData.put("promoCode", "");
                         eventData.put("eventAnnouncements", new ArrayList<>());
                         eventData.put("signedUpUsers", new ArrayList<>());
+
                         eventData.put("checkedInUsers", new ArrayList<>());
+
+                        eventData.put("checkedInUsersTest", new HashMap<>());
 
                         // Add the event data to Firestore
                         db.collection("events")
