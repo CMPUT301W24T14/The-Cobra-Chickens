@@ -1,3 +1,7 @@
+/**
+ * Adapter class for populating notifications in a RecyclerView.
+ * This adapter binds notification data to the views displayed in the RecyclerView.
+ */
 package com.example.eventplanner;
 
 import android.content.Context;
@@ -15,7 +19,11 @@ public class NotificationsRecyclerAdapter extends RecyclerView.Adapter<Notificat
 
     private Context context;
     private ArrayList<MyNotification> notifications;
-
+    /**
+     * Constructor for the NotificationsRecyclerAdapter.
+     * @param context The context in which the adapter is created.
+     * @param notifications The list of notifications to be displayed.
+     */
     public NotificationsRecyclerAdapter(Context context, ArrayList<MyNotification> notifications) {
         this.notifications = notifications;
         this.context = context;
@@ -53,7 +61,9 @@ public class NotificationsRecyclerAdapter extends RecyclerView.Adapter<Notificat
         TextView notificationTitleTextView;
         TextView notificationMessageTextView;
         TextView notificationDateTextView;
-
+        /**
+         * ViewHolder class to hold the views for each notification item in the RecyclerView.
+         */
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             notificationTitleTextView = itemView.findViewById(R.id.notification_title);

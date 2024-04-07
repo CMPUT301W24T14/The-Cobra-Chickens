@@ -1,3 +1,6 @@
+/**
+ * A Fragment for scanning QR codes.
+ */
 package com.example.eventplanner;
 
 import android.Manifest;
@@ -46,7 +49,14 @@ public class ScanFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private SharedViewModel sharedViewModel;
-
+    /**
+     * Called to have the fragment instantiate its user interface view.
+     *
+     * @param inflater           The LayoutInflater object that can be used to inflate
+     * @param container          This is the parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState This fragment is being re-constructed from a previous saved state as given here.
+     * @return Return the View for the fragment's UI, or null.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -215,19 +225,27 @@ public class ScanFragment extends Fragment {
 
         return view;
     }
-
+    /**
+     * Called when the fragment is visible to the user and actively running.
+     */
     @Override
     public void onResume() {
         super.onResume();
         barcodeView.resume();
     }
-
+    /**
+     * Called when the Fragment is no longer resumed.
+     */
     @Override
     public void onPause() {
         super.onPause();
         barcodeView.pause();
     }
-
+    /**
+     * Method to change the current fragment to another fragment.
+     *
+     * @param fragment The fragment to replace the current one.
+     */
     public void changeFragment(Fragment fragment) {
         FragmentManager fragmentManager = getParentFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

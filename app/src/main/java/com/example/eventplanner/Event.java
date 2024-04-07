@@ -1,3 +1,8 @@
+/**
+ * The Event class represents an event in the event planner application.
+ * It implements the Parcelable interface to allow for passing instances of this class between activities.
+ * An event contains various attributes such as ID, name, description, date, time, location, etc.
+ */
 package com.example.eventplanner;
 
 import android.os.Parcel;
@@ -24,7 +29,23 @@ public class Event implements Parcelable {
     private ArrayList<String> eventAnnouncements;
     private ArrayList<String> checkedInUsers;
     private ArrayList<String> signedUpUsers;
-
+    /**
+     * Constructs an Event object with all attributes.
+     *
+     * @param eventId The unique ID of the event
+     * @param eventName The name of the event
+     * @param eventDescription The description of the event
+     * @param eventMaxAttendees The maximum number of attendees for the event
+     * @param eventDate The date of the event
+     * @param eventTime The time of the event
+     * @param eventLocation The location of the event
+     * @param eventPoster The poster URL of the event
+     * @param checkInCode The check-in code for the event
+     * @param promoCode The promotional code for the event
+     * @param eventAnnouncements The list of announcements for the event
+     * @param checkedInUsers The list of users checked in to the event
+     * @param signedUpUsers The list of users signed up for the event
+     */
     public Event(String eventId,
                  String eventName, String eventDescription, String eventMaxAttendees, String eventDate, String eventTime, String eventLocation, String eventPoster,
                  String checkInCode, String promoCode,
@@ -49,7 +70,17 @@ public class Event implements Parcelable {
         this.checkedInUsers = checkedInUsers;
         this.signedUpUsers = signedUpUsers;
     }
-
+    /**
+     * Constructs a simplified Event object with essential attributes.
+     *
+     * @param eventId The unique ID of the event
+     * @param eventName The name of the event
+     * @param eventMaxAttendees The maximum number of attendees for the event
+     * @param eventDate The date of the event
+     * @param eventTime The time of the event
+     * @param eventLocation The location of the event
+     * @param eventPoster The poster URL of the event
+     */
     public Event (String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime, String eventLocation, String eventPoster){
         this.eventId = eventId;
         this.eventName = eventName;
@@ -79,111 +110,222 @@ public class Event implements Parcelable {
         signedUpUsers = in.createStringArrayList();
 
     }
-
+    /**
+     * Gets the check-in code for the event.
+     *
+     * @return The check-in code
+     */
     public String getCheckInCode() {
         return checkInCode;
     }
-
+    /**
+     * Sets the check-in code for the event.
+     *
+     * @param checkInCode The check-in code to set
+     */
     public void setCheckInCode(String checkInCode) {
         this.checkInCode = checkInCode;
     }
-
+    /**
+     * Gets the promotional code for the event.
+     *
+     * @return The promotional code
+     */
     public String getPromoCode() {
         return promoCode;
     }
-
+    /**
+     * Sets the promotional code for the event.
+     *
+     * @param promoCode The promotional code to set
+     */
     public void setPromoCode(String promoCode) {
         this.promoCode = promoCode;
     }
-
+    /**
+     * Gets the ID of the event.
+     *
+     * @return The event ID
+     */
     public String getEventId() {
         return eventId;
     }
-
+    /**
+     * Gets the poster URL of the event.
+     *
+     * @return The event poster URL
+     */
     public String getEventPoster() {
         return eventPoster;
     }
-
+    /**
+     * Sets the poster URL of the event.
+     *
+     * @param eventPoster The event poster URL to set
+     */
     public void setEventPoster(String eventPoster) {
         this.eventPoster = eventPoster;
     }
-
+    /**
+     * Sets the ID of the event.
+     *
+     * @param eventId The event ID to set
+     */
     public void setEventId(String eventId) {
         this.eventId = eventId;
     }
-
+    /**
+     * Gets the date of the event.
+     *
+     * @return The event date
+     */
     public String getEventDate() {
         return eventDate;
     }
-
+    /**
+     * Sets the date of the event.
+     *
+     * @param eventDate The event date to set
+     */
     public void setEventDate(String eventDate) {
         this.eventDate = eventDate;
     }
-
+    /**
+     * Gets the time of the event.
+     *
+     * @return The event time
+     */
     public String getEventTime() {
         return eventTime;
     }
-
+    /**
+     * Sets the time of the event.
+     *
+     * @param eventTime The event time to set
+     */
     public void setEventTime(String eventTime) {
         this.eventTime = eventTime;
     }
-
+    /**
+     * Gets the list of users checked in to the event.
+     *
+     * @return The list of checked-in users
+     */
     public ArrayList<String> getCheckedInUsers() {
         return checkedInUsers;
     }
-
+    /**
+     * Sets the list of users checked in to the event.
+     *
+     * @param checkedInUsers The list of checked-in users to set
+     */
     public void setCheckedInUsers(ArrayList<String> checkedInUsers) {
         this.checkedInUsers = checkedInUsers;
     }
+    /**
+     * Gets the maximum number of attendees for the event.
+     *
+     * @return The maximum number of attendees
+     */
 
     public String getEventMaxAttendees() {
         return eventMaxAttendees;
     }
-
+    /**
+     * Sets the maximum number of attendees for the event.
+     *
+     * @param eventMaxAttendees The maximum number of attendees to set
+     */
     public void setEventMaxAttendees(String eventMaxAttendees) {
         this.eventMaxAttendees = eventMaxAttendees;
     }
-
+    /**
+     * Gets the list of users signed up for the event.
+     *
+     * @return The list of signed-up users
+     */
     public ArrayList<String> getSignedUpUsers() {
         return signedUpUsers;
     }
-
+    /**
+     * Sets the list of users signed up for the event.
+     *
+     * @param signedUpUsers The list of signed-up users to set
+     */
     public void setSignedUpUsers(ArrayList<String> signedUpUsers) {
         this.signedUpUsers = signedUpUsers;
     }
-
+    /**
+     * Gets the list of announcements for the event.
+     *
+     * @return The list of announcements
+     */
     public ArrayList<String> getEventAnnouncements() {
         return eventAnnouncements;
     }
-
+    /**
+     * Sets the list of announcements for the event.
+     *
+     * @param eventAnnouncements The list of announcements to set
+     */
     public void setEventAnnouncements(ArrayList<String> eventAnnouncements) {
         this.eventAnnouncements = eventAnnouncements;
     }
-
+    /**
+     * Gets the name of the event.
+     *
+     * @return The event name
+     */
     public String getEventName() {
         return eventName;
     }
-
+    /**
+     * Sets the name of the event.
+     *
+     * @param eventName The event name to set
+     */
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
-
+    /**
+     * Gets the location of the event.
+     *
+     * @return The event location
+     */
     public String getEventLocation() {
         return eventLocation;
     }
-
+    /**
+     * Sets the location of the event.
+     *
+     * @param eventLocation The event location to set
+     */
     public void setEventLocation(String eventLocation) {
         this.eventLocation = eventLocation;
     }
-
+    /**
+     * Gets the description of the event.
+     *
+     * @return The event description
+     */
     public String getEventDescription() {
         return eventDescription;
     }
-
+    /**
+     * Sets the description of the event.
+     *
+     * @param eventDescription The event description to set
+     */
     public void setEventDescription(String eventDescription) {
         this.eventDescription = eventDescription;
     }
 
+    /**
+     * Required method for Parcelable implementation.
+     *
+     * @param in The Parcel object
+     * @return The Event object created from the Parcel
+     */
     public static final Creator<Event> CREATOR = new Creator<Event>() {
         @Override
         public Event createFromParcel(Parcel in) {
@@ -200,7 +342,12 @@ public class Event implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
+    /**
+     * Writes the Event object's data to a Parcel.
+     *
+     * @param dest The destination Parcel
+     * @param flags Additional flags about how the object should be written
+     */
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(eventId);

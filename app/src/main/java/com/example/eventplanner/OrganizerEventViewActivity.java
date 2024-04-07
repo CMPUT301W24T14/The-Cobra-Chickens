@@ -73,7 +73,12 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
     private RecyclerView announcementsRecyclerView;
     private RecyclerView signedUpRecyclerView;
     private RecyclerView checkedInRecyclerView;
-
+    /**
+     * Initializes the activity and sets up the user interface.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     *                           Note: Otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

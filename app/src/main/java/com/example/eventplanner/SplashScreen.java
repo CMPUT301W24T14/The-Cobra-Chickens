@@ -1,3 +1,7 @@
+/**
+ * SplashScreen Activity serves as the initial screen when the app is launched.
+ * It handles user authentication and initialization of user data.
+ */
 package com.example.eventplanner;
 
 import androidx.annotation.NonNull;

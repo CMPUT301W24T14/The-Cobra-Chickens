@@ -1,3 +1,8 @@
+/**
+ * Adapter class for displaying user profiles in a RecyclerView.
+ * This adapter populates the RecyclerView with user profile information and handles profile deletion.
+ * The profiles are displayed with name, contact information, homepage, and profile picture.
+ */
 // WsCube Tech, 2022, Youtube, Recycler View in Android Studio Explained with Example | Android Recycler View Tutorial, https://www.youtube.com/watch?v=FEqF1_jDV-A
 // WsCube Tech, 2022, Youtube, How to Add, Delete, and Update Items in Android RecyclerView | Android Studio Tutorial #26, https://www.youtube.com/watch?v=AUow1zsO6mg
 // OpenAI, 2024, ChatGPT
@@ -32,10 +37,21 @@ public class profilesRecyclerAdapter extends RecyclerView.Adapter<profilesRecycl
 
     private Context context;
     private ArrayList<User> profilesList;
+    /**
+     * Constructor for ProfilesRecyclerAdapter.
+     * @param context The context in which the adapter is created.
+     * @param profilesList The list of user profiles to be displayed.
+     */
     profilesRecyclerAdapter(Context context, ArrayList<User> profilesList){
         this.context = context;
         this.profilesList = profilesList;
     }
+    /**
+     * Called when RecyclerView needs a new ViewHolder of the given type to represent an item.
+     * @param parent The ViewGroup into which the new View will be added after it is bound to an adapter position.
+     * @param viewType The view type of the new View.
+     * @return A new ViewHolder that holds a View of the given view type.
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -43,7 +59,11 @@ public class profilesRecyclerAdapter extends RecyclerView.Adapter<profilesRecycl
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }
-
+    /**
+     * Called by RecyclerView to display the data at the specified position.
+     * @param holder The ViewHolder which should be updated to represent the contents of the item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         String showName = "Name:"+profilesList.get(position).getName();
@@ -74,9 +94,6 @@ public class profilesRecyclerAdapter extends RecyclerView.Adapter<profilesRecycl
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-//                                profilesList.remove(position);
-//                                deleteProfileFromDatabase(position);
-//                                notifyItemRemoved(position);
                                 int newPosition = holder.getAdapterPosition(); // Use getAdapterPosition to get the current item position
                                 deleteProfileFromDatabase(newPosition); // Assuming there's an 'id' field and a method to delete the profile from the database
                                 profilesList.remove(newPosition);
@@ -96,18 +113,28 @@ public class profilesRecyclerAdapter extends RecyclerView.Adapter<profilesRecycl
 
 
     }
-
+    /**
+     * Returns the total number of items in the data set held by the adapter.
+     * @return The total number of items in this adapter.
+     */
     @Override
     public int getItemCount() {
         return profilesList.size();
     }
 
+    /**
+     * ViewHolder class for holding the views for each item in the RecyclerView.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder{
         private TextView name;
         private TextView contact;
         private TextView homepage;
         private ImageView proPic;
         LinearLayout row;
+        /**
+         * Constructor for ViewHolder.
+         * @param itemView The view for each item in the RecyclerView.
+         */
         public ViewHolder(View itemView){
             super(itemView);
             name = itemView.findViewById(R.id.name);
@@ -118,7 +145,10 @@ public class profilesRecyclerAdapter extends RecyclerView.Adapter<profilesRecycl
 
         }
     }
-
+    /**
+     * Deletes a user profile from the Firestore database.
+     * @param position The position of the profile in the RecyclerView.
+     */
     private void deleteProfileFromDatabase(int position) {
         FirebaseFirestore db =  FirebaseFirestore.getInstance();
         // Get the user ID from the list

@@ -1,3 +1,6 @@
+/**
+ * Activity to display details of an event.
+ */
 // OpenAI, 2024, ChatGPT
 package com.example.eventplanner;
 
@@ -40,7 +43,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
-
+        // Initialize UI elements
         eventNameTextView = findViewById(R.id.event_name);
         eventDateTextView = findViewById(R.id.event_date);
         eventTimeTextView = findViewById(R.id.event_time);
@@ -74,7 +77,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 eventLocationTextView.setText("Location: " + event.getEventLocation());
 
                 eventDescriptionTextView.setText(event.getEventDescription());
-
+                // Load event poster if available
                 if (event.getEventPoster() != null && !event.getEventPoster().isEmpty()) {
                     Glide.with(this)
                             .load(event.getEventPoster())
@@ -82,7 +85,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 } else {
                     poster.setVisibility(View.GONE);
                 }
-
+                // Populate announcements if available
                 if (event.getEventAnnouncements() != null && !event.getEventAnnouncements().isEmpty()) {
                     announcements = event.getEventAnnouncements();
                 }
@@ -165,6 +168,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
 
     }
+    /**
+     * Shows a confirmation dialog for signing up for the event.
+     */
     private void showSignUpConfirmation() {
 
         AlertDialog.Builder confirmDialog = new AlertDialog.Builder(this);
@@ -191,7 +197,9 @@ public class EventDetailsActivity extends AppCompatActivity {
                 });
         confirmDialog.create().show();
     }
-
+    /**
+     * Signs up the current user for the event.
+     */
     private void signUserUp() {
 
         Event event = bundle.getParcelable("event");

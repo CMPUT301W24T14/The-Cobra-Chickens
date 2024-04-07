@@ -1,6 +1,7 @@
-// WsCube Tech, 2022, Youtube, Recycler View in Android Studio Explained with Example | Android Recycler View Tutorial, https://www.youtube.com/watch?v=FEqF1_jDV-A
-// WsCube Tech, 2022, Youtube, How to Add, Delete, and Update Items in Android RecyclerView | Android Studio Tutorial #26, https://www.youtube.com/watch?v=AUow1zsO6mg
-// OpenAI, 2024, ChatGPT
+/**
+ * Adapter class for populating events in a RecyclerView.
+ * This adapter binds event data to the views displayed in the RecyclerView.
+ */
 package com.example.eventplanner;
 // WsCube Tech, 2022, Youtube, Recycler View in Android Studio Explained with Example | Android Recycler View Tutorial, https://www.youtube.com/watch?v=FEqF1_jDV-A
 // WsCube Tech, 2022, Youtube, How to Add, Delete, and Update Items in Android RecyclerView | Android Studio Tutorial #26, https://www.youtube.com/watch?v=AUow1zsO6mg
@@ -27,6 +28,11 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
 
     private Context context;
     private ArrayList<Event> eventsList;
+    /**
+     * Constructor for the EventsRecyclerAdapter.
+     * @param context The context in which the adapter is created.
+     * @param eventsList The list of events to be displayed.
+     */
     EventsRecyclerAdapter(Context context, ArrayList<Event> eventsList){
         this.context = context;
         this.eventsList = eventsList;
@@ -65,9 +71,12 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     public int getItemCount() {
         return eventsList.size();
     }
-
+    /**
+     * ViewHolder class to hold the views for each event item in the RecyclerView.
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView eventName, eventDate;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 

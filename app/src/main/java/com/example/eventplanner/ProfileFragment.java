@@ -171,23 +171,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        // location button now only displays on or off based on the geolocation switch, not clickable
-//        location.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                usersRef = db.collection("users");
-//
-//                if(user.getGeolocationTrackingEnabled()){
-//                    location.setText("OFF");
-//                    usersRef.document(userId).update("Location", false);
-//                    user.setGeolocationTrackingEnabled(false);
-//                } else {
-//                    location.setText("ON");
-//                    usersRef.document(userId).update("Location", true);
-//                    user.setGeolocationTrackingEnabled(true);
-//                }
-//            }
-//        });
+
 
         editPic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,13 +190,6 @@ public class ProfileFragment extends Fragment {
         });
 
 
-//        adminLogin.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getContext(), AdminActivity.class);
-//                startActivity(intent);
-//            }
-//        });
 
         // handle location stuff
         usersRef = db.collection("users");
