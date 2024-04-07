@@ -130,6 +130,13 @@
                 android:text="This event does not have a description."
                 android:textStyle="italic"
                 />
+        <TextView
+            android:id="@+id/tv_event_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This event does not have a description."
+            android:textStyle="italic"
+            />
 
             <TextView
                 android:layout_width="match_parent"
@@ -148,20 +155,14 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Signed-up users:            Checked-in users:"
+                android:text="Guest List:"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/signedUp_recyclerView"
-                    android:layout_width="190dp"
-                    android:layout_height="wrap_content"
-                    android:background="#E4F3E6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp"
                     android:paddingHorizontal="5dp"
                     android:paddingVertical="5dp" />
 

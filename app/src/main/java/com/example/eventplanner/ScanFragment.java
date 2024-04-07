@@ -38,6 +38,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.journeyapps.barcodescanner.CompoundBarcodeView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -77,20 +80,62 @@ public class ScanFragment extends Fragment {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         eventId[0] = document.getId();
-                                    }
+
+                                        // Retrieve the checkedInUsers array from the document
+                                        HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) document.get("checkedInUsers");
+
+                                        // Check if userId exists in checkedInUsers array
+                                        if (checkedInUsersFromDB != null) {
+                                            if (checkedInUsersFromDB.containsKey(userId)) { // if the user has already checked in once
+
+                                                for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
+                                                    if (Objects.equals(entry.getKey(), userId)) {
+
+                                                        // HashMap<String, String> oldMap = new HashMap<>();
+
+                                                        int numberOfCheckins = Integer.parseInt(entry.getValue());
+
+                                                        // oldMap.put(userId, String.valueOf(numberOfCheckins));
+
+                                                        numberOfCheckins += 1;
+
+                                                        HashMap<String, String> newMap = new HashMap<>();
+
+                                                        newMap.put(userId, String.valueOf(numberOfCheckins));
+
+                                                        db.collection("events").document(eventId[0]).update("checkedInUsers", newMap);
+
+                                                    }
+                                                }
+                                            }
+
+                                            else {
+                                                // the user is checking in for the first time
+
+                                                HashMap<String, String> map = new HashMap<>();
+                                                map.put(userId, "1");
+
+                                                db.collection("events").document(eventId[0]).update("checkedInUsers", map);
+
+                                                }
+                                            }
+                                        }
+
+
                                     Log.d("EVENT ID", eventId[0]);
                                     db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
                                         if (documentSnapshot.exists() && eventId[0] != null) {
                                             db.collection("events").document(eventId[0]).update("signedUpUsers", FieldValue.arrayUnion(userId));
                                             db.collection("users").document(userId).update("myEvents", FieldValue.arrayUnion(eventId[0]));
 
-                                            db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(userId));
+                                            //db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(userId));
                                             db.collection("users").document(userId).update("checkedInto", FieldValue.arrayUnion(eventId[0]));
 
                                             sharedViewModel.setEventUpdated(true);
 
                                             builder.setTitle("Success!");
-                                            builder.setMessage("You have successfully signed up for the event!");
+                                            builder.setMessage("You have successfully checked into the event!");
+//                                            builder.setMessage("You have successfully signed up for the event!");
                                         } else {
                                             builder.setTitle("Failure!");
                                             if (eventId[0] == null) {

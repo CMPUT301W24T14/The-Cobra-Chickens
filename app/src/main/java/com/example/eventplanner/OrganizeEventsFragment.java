@@ -22,6 +22,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * OrganizeEventsFragment is a Fragment that handles showing a user all events that they are
@@ -211,7 +213,12 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                             String promoCode = documentSnapshot.getString("promoCode");
 
                             ArrayList<String> eventAnnouncements = (ArrayList<String>) documentSnapshot.get("eventAnnouncements");
-                            ArrayList<String> checkedInUsers = (ArrayList<String>) documentSnapshot.get("checkedInUsers");
+
+                            HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsers");
+
+                            assert checkedInUsersFromDB != null;
+                            ArrayList<CheckedInUser> checkedInUsers = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
+
                             ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
                             // create Event object with retrieved event information and add it to organizeEventsList
@@ -223,6 +230,20 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                     });
 
         }
+    }
+
+    private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(HashMap<String, String> checkedInUsersFromDB) {
+
+        ArrayList<CheckedInUser> checkedInUsers = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
+
+            String userId = entry.getKey();
+            String numberOfCheckins = entry.getValue();
+            checkedInUsers.add(new CheckedInUser(userId, numberOfCheckins));
+        }
+
+        return checkedInUsers;
     }
 
     /**
