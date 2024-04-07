@@ -192,19 +192,21 @@ public class EventCreateActivity extends AppCompatActivity {
                 }
 
                 String event_name, description, guests, location;
+                Boolean geolocation;
                 event_name = String.valueOf(editTextEventName.getText());
                 description = String.valueOf(editTextEventDescription.getText());
                 guests = String.valueOf(editTextMaxAttendees.getText());
                 location = String.valueOf(editTextEventLocation.getText());
+                geolocation = findViewById(R.id.organizer_switch_locationtracking).isActivated();
 
                 // Upload the image to Firebase Storage
-                uploadImageAndCreateEvent(event_name, description, guests, location);
+                uploadImageAndCreateEvent(event_name, description, guests, location, geolocation);
             }
         });
     }
 
     // Function to upload image to Firebase Storage and create the event
-    private void uploadImageAndCreateEvent(String eventName, String description, String guests, String location) {
+    private void uploadImageAndCreateEvent(String eventName, String description, String guests, String location, Boolean geolocation) {
         // Generate a unique filename using UUID
         String filename = UUID.randomUUID().toString();
 
@@ -234,6 +236,7 @@ public class EventCreateActivity extends AppCompatActivity {
                         eventData.put("promoCode", "");
                         eventData.put("eventAnnouncements", new ArrayList<>());
                         eventData.put("signedUpUsers", new ArrayList<>());
+                        eventData.put("geolocationTracking", geolocation);
 
                         eventData.put("checkedInUsers", new HashMap<>());
 

@@ -1,6 +1,8 @@
 package com.example.eventplanner;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,6 +15,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Rect;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +29,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.zxing.WriterException;
 
 import org.w3c.dom.Text;
@@ -67,6 +77,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
     private RecyclerView guestListRecyclerView;
     private RecyclerView checkedInRecyclerView;
     private Button addAnnouncementsButton;
+    private Boolean geolocationTracking = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +127,19 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
         if (bundle != null && bundle.containsKey("event")) {
             currEvent = bundle.getParcelable("event");
+
+            db.collection("events")
+                    .get()
+                            .addOnCompleteListener(task -> {
+                               if (task.isSuccessful()) {
+                                   for (QueryDocumentSnapshot document : task.getResult()) {
+                                       if (Objects.equals(currEvent.getEventId(), document.getId())){
+                                            geolocationTracking = (Boolean) document.get("geolocationTracking");
+                                       }
+                                   }
+                               }
+                            });
+
             if (currEvent != null) {
 
                 String attendeeCount = String.valueOf(currEvent.getCheckedInUsers().size());
@@ -327,6 +351,20 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         getSignedUpUsers();
 //        getCheckedInUsers();
 
+        Button mapButton = findViewById(R.id.button_organizer_map);
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (geolocationTracking){
+                    Intent myIntent = new Intent(OrganizerEventViewActivity.this, OrganizerMapActivity.class);
+                    //myIntent.putExtra("key", value); //Optional parameters
+                    OrganizerEventViewActivity.this.startActivity(myIntent);
+                } else {
+                    Toast.makeText(OrganizerEventViewActivity.this, "Geolocation tracking is disabled for this event.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
     }
 
     private void showAddAnnouncementDialog() {
