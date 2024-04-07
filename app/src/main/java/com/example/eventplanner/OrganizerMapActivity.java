@@ -27,9 +27,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
 
 public class OrganizerMapActivity extends AppCompatActivity implements OnMapReadyCallback {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
@@ -37,6 +42,7 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
     private GoogleMap googleMap;
     private Boolean isActive = true;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
+    private Event event = null;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -56,6 +62,15 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
         }
+        Intent intent = getIntent();
+        if (intent != null) {
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null) {
+                this.event = bundle.getParcelable("event");
+            }
+        }
+
+
         eventMap = findViewById(R.id.organizer_map);
 
         if (isActive) {
@@ -84,10 +99,28 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
                 return;
             }
             googleMap.setMyLocationEnabled(true);
+            if (event != null) {
+                db.collection("events")
+                        .document(event.getEventId())
+                .get()
+                .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Map<String, Object> data = task.getResult().getData();
+                            Map<String, GeoPoint> geopoints = (Map<String, GeoPoint>) data.get("checkedInGeopoints");
+                            if (geopoints != null) {
+                                for (Map.Entry<String, GeoPoint> entry : geopoints.entrySet()) {
+                                    GeoPoint geopoint = entry.getValue();
+                                    LatLng latlng = new LatLng(geopoint.getLatitude(), geopoint.getLongitude());
+                                    googleMap.addMarker(new MarkerOptions()
+                                            .position(latlng)
+                                            .title("Checked-in Attendee"));
+                                }
+                            }
+                        }
+                });
+            }
+
             LatLng edmonton = new LatLng(53.5461, -113.4937);
-            googleMap.addMarker(new MarkerOptions()
-                    .position(edmonton)
-                    .title("Marker in Edmonton"));
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(edmonton, 9));
             //eventMap.onResume();
         }
