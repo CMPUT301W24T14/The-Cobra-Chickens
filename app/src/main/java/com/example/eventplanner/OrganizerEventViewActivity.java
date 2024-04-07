@@ -1,6 +1,8 @@
 package com.example.eventplanner;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,6 +13,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Rect;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -298,6 +307,16 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         getSignedUpUsers();
 //        getCheckedInUsers();
 
+
+        Button mapButton = findViewById(R.id.button_organizer_map);
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(OrganizerEventViewActivity.this, OrganizerMapActivity.class);
+                //myIntent.putExtra("key", value); //Optional parameters
+                OrganizerEventViewActivity.this.startActivity(myIntent);
+            }
+        });
     }
 
     private void getSignedUpUsers() {

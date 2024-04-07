@@ -159,15 +159,24 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
+        <Button
+            android:id="@+id/button_organizer_map"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:layout_marginHorizontal="17dp"
+            android:text="Attendee Check-in Map"
+            app:layout_constraintTop_toBottomOf="@+id/tv_event_description"/>
+
         <ImageView
             android:id="@+id/checkInQR"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_event_description"
-            android:visibility="gone"/>
+            app:layout_constraintTop_toBottomOf="@+id/button_organizer_map" />
 
         <LinearLayout
 
@@ -191,8 +200,8 @@
                 android:id="@+id/shareCheckInQR"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@drawable/baseline_ios_share_24"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:background="@drawable/baseline_ios_share_24" />
 
         </LinearLayout>
 
@@ -202,8 +211,8 @@
             android:layout_height="100dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            app:layout_constraintStart_toStartOf="parent"
             android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/check_in_options" />
 
         <LinearLayout
@@ -272,7 +281,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_guest_list"
             android:layout_width="wrap_content"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:background="@android:color/transparent"
             android:paddingHorizontal="5dp"
@@ -280,15 +289,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_guest_list" />
 
+
         <Button
             android:id="@+id/button_delete_event"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             android:backgroundTint="@android:color/transparent"
             android:text="Delete Event"
             android:textColor="@color/notificationTitleColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rv_guest_list" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
