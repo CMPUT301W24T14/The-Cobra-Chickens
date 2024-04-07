@@ -76,7 +76,7 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
                 .position(edmonton)
                 .title("Marker in Edmonton"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(edmonton, 9));
-        eventMap.onResume();
+        //eventMap.onResume();
     }
 
     @Override
