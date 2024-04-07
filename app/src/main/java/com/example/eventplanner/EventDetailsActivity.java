@@ -99,19 +99,13 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-
-
-
-
-
-
         signUpOrDeregisterButton = findViewById(R.id.button_signup_or_deregister);
 
         Event event = bundle.getParcelable("event");
         if (event != null) {
 
             ArrayList<String> signedUpUsers = event.getSignedUpUsers();
-            ArrayList<String> checkedInUsers = event.getCheckedInUsers();
+            ArrayList<CheckedInUser> checkedInUsers = event.getCheckedInUsers();
 
             boolean alreadySignedUp = false;
             boolean alreadyCheckedIn = false;
@@ -125,8 +119,10 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
 
             if (checkedInUsers != null) {
-                for (String userId : checkedInUsers) {
-                    if (checkedInUsers.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                for (CheckedInUser user : checkedInUsers) {
+                    String userId = user.getUserId();
+
+                    if (userId != null && userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                         alreadyCheckedIn = true;
                     }
                 }
