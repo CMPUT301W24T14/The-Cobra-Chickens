@@ -39,6 +39,8 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
     private ArrayList<Event> allEventsList; // ArrayList that holds all events
     private EventRecyclerAdapterUpdated allEventsRecyclerAdapter; // EventRecyclerAdapter for allEventsRecyclerView
     private SearchView allEventsSearchBar;
+    private Boolean isListFiltered = false;
+    private ArrayList<Event> filteredEvents;
 
     /**
      * Creates the view for AllEventsFragment, which is contained within HomeFragmentUpdated.
@@ -118,7 +120,7 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
      */
     private void filterRecyclerView(String searchInput) {
 
-        ArrayList<Event> filteredEvents = new ArrayList<>();
+        filteredEvents = new ArrayList<>();
 
         String lowerCaseSearchInput = searchInput.toLowerCase();
 
@@ -135,6 +137,9 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
         }
 
         allEventsRecyclerAdapter.setFilteredList(filteredEvents);
+        allEventsRecyclerAdapter.notifyDataSetChanged();
+
+        isListFiltered = true;
     }
 
     /**
@@ -221,8 +226,13 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
         // set up a new intent to jump from the current activity to EventDetailsActivity
         Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
 
-        // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
-        intent.putExtra("event", allEventsList.get(position));
+        if (!isListFiltered) { // if user clicks on an event normally
+            // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
+            intent.putExtra("event", allEventsList.get(position));
+        }
+        else { // if user clicks on an event in a filtered list
+            intent.putExtra("event", filteredEvents.get(position));
+        }
 
         // pass fragment name to EventDetailsActivity so the sign up / deregister button can be set accordingly
         intent.putExtra("fragment name", getClass().getSimpleName());
