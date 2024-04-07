@@ -1,15 +1,21 @@
 package com.example.eventplanner;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -26,10 +32,14 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.WriterException;
 
@@ -49,6 +59,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
     private Button generatePromoQRButton;
     private Button shareCheckInQRButton;
     private Button sharePromoQRButton;
+    private Button deleteEventButton;
     private ImageView checkinQRImageView;
     private ImageView promoQRImageView;
 
@@ -101,6 +112,8 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         checkinQRImageView = findViewById(R.id.checkInQR);
         promoQRImageView = findViewById(R.id.promoQR);
 
+        deleteEventButton = findViewById(R.id.button_delete_event);
+
         ImageView poster = findViewById(R.id.iv_poster);
 
         bundle = getIntent().getExtras();
@@ -116,10 +129,10 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
             if (currEvent != null) {
 
                 // Set event details to views
-                eventNameTextView.setText("Name: " + currEvent.getEventName());
-                eventDateTextView.setText("Date: " + currEvent.getEventDate());
-                eventTimeTextView.setText("Time: " + currEvent.getEventTime());
-                eventLocationTextView.setText("Location: " + currEvent.getEventLocation());
+                eventNameTextView.setText(String.format("Name: %s", currEvent.getEventName()));
+                eventDateTextView.setText(String.format("Date: %s", currEvent.getEventDate()));
+                eventTimeTextView.setText(String.format("Time: %s", currEvent.getEventTime()));
+                eventLocationTextView.setText(String.format("Location: %s", currEvent.getEventLocation()));
                 eventDescriptionTextView.setText(currEvent.getEventDescription());
 
                 if (currEvent.getEventPoster() != null && !currEvent.getEventPoster().isEmpty()) {
@@ -207,35 +220,101 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     }
                 });
 
+                deleteEventButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Confirm with the user before deleting the event
+                        new AlertDialog.Builder(v.getContext())
+                                .setTitle("Delete event")
+                                .setMessage("Are you sure you want to delete this event?")
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        db.collection("events").document(currEvent.getEventId())
+                                                .delete()
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Toast.makeText(v.getContext(), "Event deleted", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(v.getContext(), "Error deleting event", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                        db.collection("users").document(userId)
+                                                .update("reusableCodes", FieldValue.arrayUnion(currEvent.getCheckInCode()))
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("TAG", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("TAG", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        db.collection("users").document(userId)
+                                                .update("Organizing", FieldValue.arrayRemove(currEvent.getEventId()))
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("TAG", "DocumentSnapshot successfully updated!");
+                                                        finish();
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("TAG", "Error updating document", e);
+                                                        finish();
+                                                    }
+                                                });
+
+                                    }
+                                })
+                                .setNegativeButton(android.R.string.no, null)
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
+                    }
+                });
             }
 
             signedUserRecyclerAdapter = new UserRecyclerAdapter(this, signedUpList, recyclerViewInterface);
             guestListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             guestListRecyclerView.setAdapter(signedUserRecyclerAdapter);
 
-//            checkedInUserRecyclerAdapter = new UserRecyclerAdapter(this, checkedInList, recyclerViewInterface);
-//            checkedInRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//            checkedInRecyclerView.setAdapter(checkedInUserRecyclerAdapter);
-
-
+            //checkedInUserRecyclerAdapter = new UserRecyclerAdapter(this, checkedInList, recyclerViewInterface);
+            //checkedInRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            //checkedInRecyclerView.setAdapter(checkedInUserRecyclerAdapter);
         }
 
         shareCheckInQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Convert the image to a bitmap
-                Bitmap bitmap = ((BitmapDrawable) checkinQRImageView.getDrawable()).getBitmap();
+                Drawable drawable = checkinQRImageView.getDrawable();
+                if (drawable instanceof BitmapDrawable) {
+                    Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 
-                // Convert the Bitmap to a byte array
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-                String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
-                Uri imageUri = Uri.parse(path);
+                    // Convert the Bitmap to a byte array
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                    String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
+                    if (path != null) {
+                        Uri imageUri = Uri.parse(path);
 
-                Intent share = new Intent(Intent.ACTION_SEND);
-                share.setType("image/jpeg");
-                share.putExtra(Intent.EXTRA_STREAM, imageUri);
-                startActivity(Intent.createChooser(share, "Share Check in QR"));
+                        Intent share = new Intent(Intent.ACTION_SEND);
+                        share.setType("image/jpeg");
+                        share.putExtra(Intent.EXTRA_STREAM, imageUri);
+                        startActivity(Intent.createChooser(share, "Share Check in QR"));
+                    }
+                }
             }
         });
 
@@ -243,20 +322,26 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Convert the image to a bitmap
-                Bitmap bitmap = ((BitmapDrawable) promoQRImageView.getDrawable()).getBitmap();
+                Drawable drawable = promoQRImageView.getDrawable();
+                if (drawable instanceof BitmapDrawable) {
+                    Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 
-                // Convert the Bitmap to a byte array
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-                String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
-                Uri imageUri = Uri.parse(path);
+                    // Convert the Bitmap to a byte array
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                    String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
+                    if (path != null) {
+                        Uri imageUri = Uri.parse(path);
 
-                Intent share = new Intent(Intent.ACTION_SEND);
-                share.setType("image/jpeg");
-                share.putExtra(Intent.EXTRA_STREAM, imageUri);
-                startActivity(Intent.createChooser(share, "Share Promo QR"));
+                        Intent share = new Intent(Intent.ACTION_SEND);
+                        share.setType("image/jpeg");
+                        share.putExtra(Intent.EXTRA_STREAM, imageUri);
+                        startActivity(Intent.createChooser(share, "Share Promo QR"));
+                    }
+                }
             }
         });
+
 
         checkinQRImageView.setOnClickListener(new View.OnClickListener() {
             @Override
