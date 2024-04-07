@@ -241,7 +241,7 @@ public class EventCreateActivity extends AppCompatActivity {
                         eventData.put("eventAnnouncements", new ArrayList<>());
                         eventData.put("signedUpUsers", new ArrayList<>());
                         eventData.put("geolocationTracking", geolocation);
-
+                        eventData.put("checkedInGeopoints", new HashMap<>());
                         eventData.put("checkedInUsers", new HashMap<>());
 
                         // Add the event data to Firestore
