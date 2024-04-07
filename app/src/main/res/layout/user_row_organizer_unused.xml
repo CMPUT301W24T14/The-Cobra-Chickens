@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/top_bottom_border"
+    android:gravity="center_vertical"
+    android:id="@+id/user_row_organizer">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:srcCompat="@drawable/p"
+        android:id="@+id/image_user_pro_pic"
+        app:shapeAppearanceOverlay="@style/circleImageView"
+        android:scaleType="centerCrop"
+        app:strokeWidth="0dp"/>
+
+    <LinearLayout
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:layout_weight="2">
+
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="User name"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_number_checkins"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Number of checkins"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/tv_check_in_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Checked in ✓"
+            android:paddingTop="1dp"
+            android:textSize="12sp"
+            android:textColor="#17811C" />
+
+    </LinearLayout>
+
+</LinearLayout>
