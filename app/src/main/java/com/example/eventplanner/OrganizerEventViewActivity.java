@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -30,8 +31,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -40,8 +43,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.zxing.WriterException;
+
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -73,12 +80,14 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
     private Bundle bundle;
     private RecyclerViewInterface recyclerViewInterface;
     private Event currEvent;
-    private UserRecyclerAdapter signedUserRecyclerAdapter;
+    private UserRecyclerAdapter guestListRecyclerAdapter;
     private UserRecyclerAdapter checkedInUserRecyclerAdapter;
     private AnnouncementsRecyclerAdapter announcementsRecyclerAdapter;
     private RecyclerView announcementsRecyclerView;
     private RecyclerView guestListRecyclerView;
     private RecyclerView checkedInRecyclerView;
+    private Button addAnnouncementsButton;
+    private Boolean geolocationTracking = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +101,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         TextView eventTimeTextView = findViewById(R.id.tv_event_time);
         TextView eventLocationTextView = findViewById(R.id.tv_event_location);
         TextView eventDescriptionTextView = findViewById(R.id.tv_event_description);
+        TextView numberOfAttendees = findViewById(R.id.tv_number_attendees);
 
         announcementsRecyclerView = findViewById(R.id.rv_announcements);
         guestListRecyclerView = findViewById(R.id.rv_guest_list);
@@ -112,6 +122,9 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         checkinQRImageView = findViewById(R.id.checkInQR);
         promoQRImageView = findViewById(R.id.promoQR);
 
+        Button shareCheckInQRButton = findViewById(R.id.shareCheckInQR);
+        Button sharePromoQRButton = findViewById(R.id.sharePromoQR);
+
         deleteEventButton = findViewById(R.id.button_delete_event);
 
         ImageView poster = findViewById(R.id.iv_poster);
@@ -126,7 +139,23 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
         if (bundle != null && bundle.containsKey("event")) {
             currEvent = bundle.getParcelable("event");
+
+            db.collection("events")
+                    .get()
+                            .addOnCompleteListener(task -> {
+                               if (task.isSuccessful()) {
+                                   for (QueryDocumentSnapshot document : task.getResult()) {
+                                       if (Objects.equals(currEvent.getEventId(), document.getId())){
+                                            geolocationTracking = (Boolean) document.get("geolocationTracking");
+                                       }
+                                   }
+                               }
+                            });
+
             if (currEvent != null) {
+
+                String attendeeCount = String.valueOf(currEvent.getCheckedInUsers().size());
+                numberOfAttendees.setText("Number of checked-in attendees: " + attendeeCount);
 
                 // Set event details to views
                 eventNameTextView.setText(String.format("Name: %s", currEvent.getEventName()));
@@ -165,6 +194,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     // Set the generated QR code as the image for the checkinQR ImageView.
                     checkinQRImageView.setImageBitmap(qrCode);
                     checkinQRImageView.setVisibility(View.VISIBLE);
+                    shareCheckInQRButton.setVisibility(View.VISIBLE);
                 }
 
                 if (!Objects.equals(currEvent.getPromoCode(), "")) {
@@ -179,6 +209,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     // Set the generated QR code as the image for the checkinQR ImageView.
                     promoQRImageView.setImageBitmap(qrCode);
                     promoQRImageView.setVisibility(View.VISIBLE);
+                    sharePromoQRButton.setVisibility(View.VISIBLE);
                 }
 
                 generateCheckinQRButton.setOnClickListener(new View.OnClickListener() {
@@ -198,6 +229,8 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                             // Set the generated QR code as the image for the checkinQR ImageView.
                             checkinQRImageView.setImageBitmap(qrCode);
                             checkinQRImageView.setVisibility(View.VISIBLE);
+                        shareCheckInQRButton.setVisibility(View.VISIBLE);
+
                         } else {
                             String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                             db.collection("users").document(userId).get()
@@ -251,6 +284,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         // Set the generated QR code as the image for the checkinQR ImageView.
                         promoQRImageView.setImageBitmap(qrCode);
                         promoQRImageView.setVisibility(View.VISIBLE);
+                        sharePromoQRButton.setVisibility(View.VISIBLE);
                     }
                 });
 
@@ -318,9 +352,23 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                 });
             }
 
-            signedUserRecyclerAdapter = new UserRecyclerAdapter(this, signedUpList, recyclerViewInterface);
+            guestListRecyclerAdapter = new UserRecyclerAdapter(this, currEvent.getEventId(), signedUpList, recyclerViewInterface);
             guestListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            guestListRecyclerView.setAdapter(signedUserRecyclerAdapter);
+            guestListRecyclerView.setAdapter(guestListRecyclerAdapter);
+
+//            checkedInUserRecyclerAdapter = new UserRecyclerAdapter(this, checkedInList, recyclerViewInterface);
+//            checkedInRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//            checkedInRecyclerView.setAdapter(checkedInUserRecyclerAdapter);
+
+
+            addAnnouncementsButton = findViewById(R.id.add_announcement_button);
+
+            addAnnouncementsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showAddAnnouncementDialog();
+                }
+            });
 
             //checkedInUserRecyclerAdapter = new UserRecyclerAdapter(this, checkedInList, recyclerViewInterface);
             //checkedInRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -429,11 +477,46 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(OrganizerEventViewActivity.this, OrganizerMapActivity.class);
-                //myIntent.putExtra("key", value); //Optional parameters
-                OrganizerEventViewActivity.this.startActivity(myIntent);
+                if (geolocationTracking){
+                    Intent myIntent = new Intent(OrganizerEventViewActivity.this, OrganizerMapActivity.class);
+                    myIntent.putExtra("event", currEvent); //Optional parameters
+                    OrganizerEventViewActivity.this.startActivity(myIntent);
+                } else {
+                    Toast.makeText(OrganizerEventViewActivity.this, "Geolocation tracking is disabled for this event.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
+    }
+
+    private void showAddAnnouncementDialog() {
+
+        EditText newAnnouncementEditText = new EditText(this);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder
+                .setTitle("New Announcement")
+                .setView(newAnnouncementEditText)
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String editTextInput = newAnnouncementEditText.getText().toString();
+
+                        db.collection("events").document(currEvent.getEventId()).update("eventAnnouncements", FieldValue.arrayUnion(editTextInput))
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+
+                                }
+                            });
+                    }
+
+                })
+                .create()
+                .show();
+
     }
 
     private void getSignedUpUsers() {
@@ -449,7 +532,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         ArrayList<String> signedUpUserIds = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
                         if (signedUpUserIds != null) {
-                            loadSignedUpUserDocs(signedUpUserIds, signedUserRecyclerAdapter);
+                            loadSignedUpUserDocs(signedUpUserIds, guestListRecyclerAdapter);
                         }
                     }
                 });
@@ -465,7 +548,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                         // get all events in user's organizing ArrayList and put them in another ArrayList of eventIds
-                        HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsersTest");
+                        HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsers");
 
                         assert checkedInUsersFromDB != null;
                         ArrayList<CheckedInUser> checkedInUserIds = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);

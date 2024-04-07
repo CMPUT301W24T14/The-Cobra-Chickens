@@ -41,6 +41,8 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
     private EventRecyclerAdapterUpdated organizeEventsRecyclerAdapter; // EventRecyclerAdapter for organizeEventsRecyclerView
     private CollectionReference eventsRef;
     private SearchView organizeEventsSearchBar;
+    private Boolean isListFiltered = false;
+    private ArrayList<Event> filteredEvents;
 
     /**
      * Creates the view for OrganizeEventsFragment, which is contained within HomeFragmentUpdated
@@ -128,7 +130,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
      */
     private void filterRecyclerView(String searchInput) {
 
-        ArrayList<Event> filteredEvents = new ArrayList<>();
+        filteredEvents = new ArrayList<>();
 
         String lowerCaseSearchInput = searchInput.toLowerCase();
 
@@ -147,6 +149,9 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
 
         // display the filtered list
         organizeEventsRecyclerAdapter.setFilteredList(filteredEvents);
+        organizeEventsRecyclerAdapter.notifyDataSetChanged();
+
+        isListFiltered = true;
     }
 
     /**
@@ -268,10 +273,15 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
         // set up a new intent to jump from the current activity to EventDetailsActivity
         Intent intent = new Intent(getActivity(), OrganizerEventViewActivity.class);
 
-        // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
-        intent.putExtra("event", organizeEventsList.get(position));
+        if (!isListFiltered) { // if user clicks on an event normally
+            // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
+            intent.putExtra("event", organizeEventsList.get(position));
+        }
+        else { // if user clicks on an event in a filtered list
+            intent.putExtra("event", filteredEvents.get(position));
+        }
 
-        // start the EventDetailsActivity
+            // start the EventDetailsActivity
         startActivity(intent);
     }
 }
