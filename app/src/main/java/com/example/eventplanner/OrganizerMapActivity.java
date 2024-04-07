@@ -102,22 +102,22 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
             if (event != null) {
                 db.collection("events")
                         .document(event.getEventId())
-                .get()
-                .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Map<String, Object> data = task.getResult().getData();
-                            Map<String, GeoPoint> geopoints = (Map<String, GeoPoint>) data.get("checkedInGeopoints");
-                            if (geopoints != null) {
-                                for (Map.Entry<String, GeoPoint> entry : geopoints.entrySet()) {
-                                    GeoPoint geopoint = entry.getValue();
-                                    LatLng latlng = new LatLng(geopoint.getLatitude(), geopoint.getLongitude());
-                                    googleMap.addMarker(new MarkerOptions()
-                                            .position(latlng)
-                                            .title("Checked-in Attendee"));
-                                }
-                            }
-                        }
-                });
+                            .get()
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Map<String, Object> data = task.getResult().getData();
+                                        Map<String, GeoPoint> geopoints = (Map<String, GeoPoint>) data.get("checkedInGeopoints");
+                                        if (geopoints != null) {
+                                            for (Map.Entry<String, GeoPoint> entry : geopoints.entrySet()) {
+                                                GeoPoint geopoint = entry.getValue();
+                                                LatLng latlng = new LatLng(geopoint.getLatitude(), geopoint.getLongitude());
+                                                googleMap.addMarker(new MarkerOptions()
+                                                        .position(latlng)
+                                                        .title("Checked-in Attendee"));
+                                            }
+                                        }
+                                    }
+                                });
             }
 
             LatLng edmonton = new LatLng(53.5461, -113.4937);
