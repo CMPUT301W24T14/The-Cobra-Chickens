@@ -4,7 +4,6 @@
  * It handles the creation of view holders, binding data to views, and event handling.
  * Admin can delete posters by clicking on them.
  * It also interacts with Firestore to clear event posters from the database.
- *
  */
 package com.example.eventplanner;
 

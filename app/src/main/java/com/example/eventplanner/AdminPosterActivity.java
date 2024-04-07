@@ -3,10 +3,6 @@
  * This activity displays a list of posters retrieved from Firestore.
  * Admin can navigate back to the admin dashboard from this activity.
  * If no events with posters are available, it displays a toast message indicating the absence of events.
- *
- * @author OpenAI
- * @version 1.0
- * @since 2024
  */
 // OpenAI, 2024, ChatGPT
 

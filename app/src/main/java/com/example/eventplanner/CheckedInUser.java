@@ -1,3 +1,7 @@
+/**
+ The CheckedInUser class represents a user who has checked in to an event.
+ It implements the Parcelable interface to allow for passing instances of this class between components.
+ */
 package com.example.eventplanner;
 
 import android.os.Parcel;
@@ -12,7 +16,12 @@ public class CheckedInUser implements Parcelable {
 
     private String userId;
     private String numberOfCheckins;
-
+    /**
+     * Constructs a new CheckedInUser instance.
+     *
+     * @param userId           The ID of the user who checked in.
+     * @param numberOfCheckins The number of check-ins for the user.
+     */
     public CheckedInUser(String userId, String numberOfCheckins) {
         this.userId = userId;
         this.numberOfCheckins = numberOfCheckins;
@@ -22,19 +31,35 @@ public class CheckedInUser implements Parcelable {
         userId = in.readString();
         numberOfCheckins = in.readString();
     }
-
+    /**
+     * Retrieves the user ID.
+     *
+     * @return The user ID.
+     */
     public String getUserId() {
         return userId;
     }
-
+    /**
+     * Sets the user ID.
+     *
+     * @param userId The user ID to set.
+     */
     public void setUserId(String userId) {
         this.userId = userId;
     }
-
+    /**
+     * Retrieves the number of check-ins.
+     *
+     * @return The number of check-ins.
+     */
     public String getNumberOfCheckins() {
         return numberOfCheckins;
     }
-
+    /**
+     * Sets the number of check-ins.
+     *
+     * @param numberOfCheckins The number of check-ins to set.
+     */
     public void setNumberOfCheckins(String numberOfCheckins) {
         this.numberOfCheckins = numberOfCheckins;
     }
@@ -61,7 +86,11 @@ public class CheckedInUser implements Parcelable {
             return new CheckedInUser[size];
         }
     };
-
+    /**
+     * Converts the CheckedInUser instance to a map for Firebase Firestore.
+     *
+     * @return A map representation of the CheckedInUser instance.
+     */
     private Map<String, String> toMap() {
         Map<String, String> map = new HashMap<>();
         map.put(userId, numberOfCheckins);
