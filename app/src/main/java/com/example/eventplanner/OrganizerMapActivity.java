@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
@@ -34,7 +35,10 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView eventMap;
     private GoogleMap googleMap;
+    private Boolean isActive = true;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
+
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +47,7 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
         setContentView(R.layout.activity_organizer_event_map_view);
 
         Button mapButton = findViewById(R.id.back_button_organizer_map);
-        mapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+
 
         String[] permissions = {android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         requestPermissionsIfNecessary(permissions);
@@ -58,25 +57,40 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
             mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
         }
         eventMap = findViewById(R.id.organizer_map);
-        eventMap.onCreate(savedInstanceState);
 
-        eventMap.getMapAsync(this);
+        if (isActive) {
+            eventMap.onCreate(savedInstanceState);
+
+            eventMap.getMapAsync(this);
+        }
+
+
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OrganizerMapActivity.this.isActive = false;
+                eventMap.setVisibility(View.GONE);
+                finish();
+            }
+        });
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        if (isActive) {
+            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            googleMap.setMyLocationEnabled(true);
+            LatLng edmonton = new LatLng(53.5461, -113.4937);
+            googleMap.addMarker(new MarkerOptions()
+                    .position(edmonton)
+                    .title("Marker in Edmonton"));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(edmonton, 9));
+            //eventMap.onResume();
         }
-        googleMap.setMyLocationEnabled(true);
-        LatLng edmonton = new LatLng(53.5461, -113.4937);
-        googleMap.addMarker(new MarkerOptions()
-                .position(edmonton)
-                .title("Marker in Edmonton"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(edmonton, 9));
-        //eventMap.onResume();
     }
 
     @Override
@@ -95,19 +109,24 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
     @Override
     public void onResume(){
         super.onResume();
-        eventMap.onResume();
+        if (isActive) {
+            eventMap.onResume();
+        }
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        eventMap.onStart();
+        if (isActive) {
+            eventMap.onStart();
+        }
     }
 
     @Override
     public void onStop(){
         super.onStop();
         eventMap.onStop();
+
     }
 
     @Override
@@ -125,7 +144,9 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
     @Override
     public void onLowMemory(){
         super.onLowMemory();
-        eventMap.onLowMemory();
+        if (isActive) {
+            eventMap.onLowMemory();
+        }
     }
 
     @Override

@@ -29,6 +29,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
+
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
@@ -192,12 +194,14 @@ public class EventCreateActivity extends AppCompatActivity {
                 }
 
                 String event_name, description, guests, location;
-                Boolean geolocation;
                 event_name = String.valueOf(editTextEventName.getText());
                 description = String.valueOf(editTextEventDescription.getText());
                 guests = String.valueOf(editTextMaxAttendees.getText());
                 location = String.valueOf(editTextEventLocation.getText());
-                geolocation = findViewById(R.id.organizer_switch_locationtracking).isActivated();
+
+                Boolean geolocation;
+                SwitchCompat geolocation_switch = findViewById(R.id.organizer_switch_locationtracking);
+                geolocation = geolocation_switch.isChecked();
 
                 // Upload the image to Firebase Storage
                 uploadImageAndCreateEvent(event_name, description, guests, location, geolocation);
