@@ -8,13 +8,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * The RecyclerViewAdapter for displaying users contained in a list of User objects.
@@ -24,11 +26,14 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
     private ArrayList<User> users; // the list of users
     private Context context;
     private RecyclerViewInterface recyclerViewInterface;
+    private String eventId;
+    private FirebaseFirestore db;
 
-    public UserRecyclerAdapter(Context context, ArrayList<User> users, RecyclerViewInterface recyclerViewInterface) {
+    public UserRecyclerAdapter(Context context, String eventId, ArrayList<User> users, RecyclerViewInterface recyclerViewInterface) {
         this.users = users;
         this.context = context;
         this.recyclerViewInterface = recyclerViewInterface;
+        this.eventId = eventId;
     }
 
     /**
@@ -58,7 +63,30 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
         String showName = users.get(position).getName();
         String proPicUrl = users.get(position).getProfilePicture();
 
+        db = FirebaseFirestore.getInstance();
+        db.collection("events").document(eventId).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                        HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsers");
+
+                        if (checkedInUsersFromDB != null && checkedInUsersFromDB.containsKey(users.get(holder.getAdapterPosition()).getUserId())) {
+
+                            String myNum = checkedInUsersFromDB.get(users.get(holder.getAdapterPosition()).getUserId());
+
+                            holder.numberOfCheckins.setText("Check-in count: " + myNum);
+
+                            holder.numberOfCheckins.setVisibility(View.VISIBLE);
+
+                            holder.checkInStatus.setVisibility(View.VISIBLE);
+
+                        }
+                    }
+                });
+
         holder.userName.setText(showName);
+
 
         if(proPicUrl !=null && proPicUrl.equals("")){
             Glide.with(holder.itemView.getContext())
@@ -87,6 +115,8 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView userName;
         private ImageView userProfilePic;
+        private TextView numberOfCheckins;
+        private TextView checkInStatus;
 
         /**
          * Constructor of the ViewHolder.
@@ -97,8 +127,10 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
             super(itemView);
 
-            userName = itemView.findViewById(R.id.user_name);
+            userName = itemView.findViewById(R.id.tv_user_name);
             userProfilePic = itemView.findViewById(R.id.image_user_pro_pic);
+            numberOfCheckins = itemView.findViewById(R.id.tv_number_checkins);
+            checkInStatus = itemView.findViewById(R.id.tv_check_in_status);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

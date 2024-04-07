@@ -1,132 +1,191 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="10sp"
-    tools:context=".EventCreateActivity">
-
-    <LinearLayout
+    android:layout_height="match_parent"
+    tools:context=".OrganizerEventViewActivity">
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/baseline_arrow_back_black_24"
-            app:maxImageSize="45sp"
-            app:fabCustomSize="45sp"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/create_event"
-            android:textSize="30sp"
-            android:fontFamily="sans-serif-condensed-medium"
-            android:textAlignment="textStart"
-            android:paddingLeft="10sp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_margin="10sp"
         android:orientation="vertical"
-        android:layout_marginTop="10sp">
+        tools:context=".EventCreateActivity">
 
-        <com.google.android.material.textfield.TextInputLayout
+
+        <LinearLayout
+            android:id="@+id/linear_layout1111"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/event_name"
-                android:hint="@string/enter_event_name_hint"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_arrow_back_black_24"
+                app:fabCustomSize="45sp"
+                app:maxImageSize="45sp" />
+
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed-medium"
+                android:paddingLeft="10sp"
+                android:text="@string/create_event"
+                android:textAlignment="textStart"
+                android:textSize="30sp" />
+        </LinearLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
+            android:id="@+id/linearLayout4"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/event_max_attendees"
-                android:hint="@string/max_number_of_attendees_hint"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/linear_layout1111">
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="wrap_content">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/event_location"
-                android:hint="@string/enter_event_location"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/event_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/enter_event_name_hint" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/selectDateTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10sp"
-            android:textSize="18sp"
-            android:text="@string/select_date"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/event_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter Event Description" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/buttonDatePicker"
-            android:layout_width="190sp"
-            android:layout_height="wrap_content"
-            android:text="@string/example_date"
-            android:textColor="@color/black"
-            style="?android:spinnerStyle"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/selectTimeTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10sp"
-            android:textSize="18sp"
-            android:text="@string/select_time"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/event_max_attendees"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/max_number_of_attendees_hint" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/buttonTimePicker"
-            android:layout_width="190sp"
-            android:layout_height="wrap_content"
-            android:text="@string/example_time"
-            android:textColor="@color/black"
-            style="?android:spinnerStyle"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/uploadImageTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10sp"
-            android:textSize="18sp"
-            android:text="@string/select_a_poster"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/event_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/enter_event_location" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <ImageView
-            android:id="@+id/posterImageView"
-            android:layout_width="124sp"
-            android:layout_height="100sp"
-            android:src="@drawable/uploadimage"/>
-        <Button
-            android:id="@+id/btn_upload_img"
-            android:layout_width="124sp"
-            android:layout_height="36sp"
-            android:text="@string/upload_image"
-            android:textSize="12sp"/>
+            <LinearLayout
+                android:id="@+id/geolocation_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/tv_event_description">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:text="Track Check-in Geolocation"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/organizer_switch_locationtracking"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/selectDateTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10sp"
+                android:text="@string/select_date"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/buttonDatePicker"
+                style="?android:spinnerStyle"
+                android:layout_width="190sp"
+                android:layout_height="wrap_content"
+                android:text="@string/example_date"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/selectTimeTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10sp"
+                android:text="@string/select_time"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/buttonTimePicker"
+                style="?android:spinnerStyle"
+                android:layout_width="190sp"
+                android:layout_height="wrap_content"
+                android:text="@string/example_time"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/uploadImageTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10sp"
+                android:text="@string/select_a_poster"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/posterImageView"
+                android:layout_width="124sp"
+                android:layout_height="100sp"
+                android:src="@drawable/uploadimage" />
+
+            <Button
+                android:id="@+id/btn_upload_img"
+                android:layout_width="124sp"
+                android:layout_height="36sp"
+                android:text="@string/upload_image"
+                android:textSize="12sp" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/btn_create_event"
-            android:text="@string/create_event"
-            android:textSize="12sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center|bottom"
-            android:layout_marginTop="40sp"/>
+            android:layout_gravity="center"
+            android:text="@string/create_event"
+            android:textSize="12sp"
+            android:layout_marginVertical="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            app:layout_constraintTop_toBottomOf="@+id/btn_create_event"/>
 
-</LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

@@ -2,7 +2,6 @@
 package com.example.eventplanner;
 
 import android.content.DialogInterface;
-import android.health.connect.datatypes.units.Length;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -12,11 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import android.util.Log;
 import android.view.View;
@@ -28,19 +23,20 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class EventDetailsActivity extends AppCompatActivity {
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 
-    private TextView eventNameTextView, eventDateTextView, eventTimeTextView, eventOrganizerTextView;
+public class EventDetailsActivity extends AppCompatActivity {
+    private TextView eventNameTextView, eventDateTextView, eventTimeTextView, eventLocationTextView, eventDescriptionTextView, eventOrganizerTextView;
     private RecyclerView announcementsRecyclerView;
     private ArrayList<String> announcements = new ArrayList<>();;
     private ImageView poster;
-    private Button signUpButton;
+    private Button signUpOrDeregisterButton;
     private Bundle bundle;
     private FirebaseFirestore db; // the database
 
@@ -52,6 +48,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventNameTextView = findViewById(R.id.event_name);
         eventDateTextView = findViewById(R.id.event_date);
         eventTimeTextView = findViewById(R.id.event_time);
+        eventLocationTextView = findViewById(R.id.event_location);
+        eventDescriptionTextView = findViewById(R.id.event_description);
+
         announcementsRecyclerView = findViewById(R.id.announcements_recyclerView);
         poster = findViewById(R.id.poster);
 
@@ -66,7 +65,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(view -> finish());
 
         // Get event details from intent
-
         bundle = getIntent().getExtras();
 
 
@@ -74,9 +72,12 @@ public class EventDetailsActivity extends AppCompatActivity {
             Event event = bundle.getParcelable("event");
             if (event != null) {
                 // Set event details to views
-                eventNameTextView.setText("Name:" + event.getEventName());
-                eventDateTextView.setText("Date:" + event.getEventDate());
-                eventTimeTextView.setText("Time:" + event.getEventTime());
+                eventNameTextView.setText("Name: " + event.getEventName());
+                eventDateTextView.setText("Date: " + event.getEventDate());
+                eventTimeTextView.setText("Time: " + event.getEventTime());
+                eventLocationTextView.setText("Location: " + event.getEventLocation());
+
+                eventDescriptionTextView.setText(event.getEventDescription());
 
                 if (event.getEventPoster() != null && !event.getEventPoster().isEmpty()) {
                     Glide.with(this)
@@ -99,17 +100,71 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        signUpButton = findViewById(R.id.signupBtn);
+        signUpOrDeregisterButton = findViewById(R.id.button_signup_or_deregister);
 
-        signUpButton.setOnClickListener(new View.OnClickListener() {
+        Event event = bundle.getParcelable("event");
+        if (event != null) {
+
+            ArrayList<String> signedUpUsers = event.getSignedUpUsers();
+            ArrayList<CheckedInUser> checkedInUsers = event.getCheckedInUsers();
+
+            boolean alreadySignedUp = false;
+            boolean alreadyCheckedIn = false;
+
+            if (signedUpUsers != null) {
+                for (String userId : signedUpUsers) {
+                    if (signedUpUsers.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        alreadySignedUp = true;
+                    }
+                }
+            }
+
+            if (checkedInUsers != null) {
+                for (CheckedInUser user : checkedInUsers) {
+                    String userId = user.getUserId();
+
+                    if (userId != null && userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        alreadyCheckedIn = true;
+                    }
+                }
+            }
+
+            if (bundle != null && bundle.containsKey("fragment name")) {
+
+                Log.d("TESTING4", bundle.getString("fragment name"));
+                Log.d("TESTING4", String.valueOf(alreadyCheckedIn));
+                Log.d("TESTING4", String.valueOf(alreadySignedUp));
+
+                if (bundle.getString("fragment name").equals("MyEventsFragment")) {
+                    signUpOrDeregisterButton.setText("Deregister");
+                }
+
+                else if (bundle.getString("fragment name").equals("AllEventsFragment") && (!alreadySignedUp && !alreadyCheckedIn)) {
+                    signUpOrDeregisterButton.setText("Sign up");
+                }
+
+                else if (bundle.getString("fragment name").equals("AllEventsFragment") && (alreadySignedUp || alreadyCheckedIn)) {
+                    signUpOrDeregisterButton.setText("Deregister");
+                }
+            }
+        }
+
+        signUpOrDeregisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSignUpConfirmation();
+
+                if (signUpOrDeregisterButton.getText() == "Sign up") {
+
+                    showSignUpConfirmation();
+                }
+
+                else {
+                    Toast.makeText(EventDetailsActivity.this, "Have not implemented deregister yet", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
     }
-
     private void showSignUpConfirmation() {
 
         AlertDialog.Builder confirmDialog = new AlertDialog.Builder(this);
@@ -118,14 +173,24 @@ public class EventDetailsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Event event = bundle.getParcelable("event");
-                        if (event.getSignedUpUsers().size() >= Integer.valueOf(event.getEventMaxAttendees())) {
-                            Toast.makeText(EventDetailsActivity.this, "Event is full!", Toast.LENGTH_SHORT).show();
+                        int maxAttendees;
+                        try {
+                            maxAttendees = Integer.valueOf(event.getEventMaxAttendees());
+                            if (event.getSignedUpUsers().size() >= maxAttendees) {
+                                Toast.makeText(EventDetailsActivity.this, "Event is full!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
+                                signUserUp();
+                            }
+                        } catch (Exception e) {
+                            try {
+                                Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
+                                signUserUp();
+                            } catch (Exception f) {
+                                Toast.makeText(EventDetailsActivity.this, "An error occured. We are unable to register you for this event at this time.", Toast.LENGTH_SHORT).show();
+                            }
                         }
 
-                        else {
-                            Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
-                            signUserUp();
-                        }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

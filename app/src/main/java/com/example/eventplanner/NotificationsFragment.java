@@ -16,7 +16,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Represents the fragment that shows users notifications.
@@ -29,26 +28,36 @@ public class NotificationsFragment extends Fragment {
     private CollectionReference notificationsRef;
     private RecyclerView notificationsRecyclerView;
     private NotificationsRecyclerAdapter notificationsAdapter;
-    private ArrayList<Notification> notificationsList;
+
+    private ArrayList<MyNotification> notificationsList;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notifications, container, false);
 
-        // Initialize the RecyclerView
+        db = FirebaseFirestore.getInstance();
+
+        // connect notificationsRecyclerView to the actual RecyclerView widget in fragment_notifications.xml
         notificationsRecyclerView = view.findViewById(R.id.recyclerView_notifications);
-        notificationsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        notificationsList = new ArrayList<>();
+
+        // configure myEventsRecyclerView to have a vertical orientation when arranging items *
+        notificationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // initialize notificationsRecyclerAdapter and set it as the adapter for notificationsRecyclerView
+        notificationsAdapter = new NotificationsRecyclerAdapter(getContext(), notificationsList);
+        notificationsRecyclerView.setAdapter(notificationsAdapter);
 
         // Initialize Firestore and get reference to notifications collection
-        db = FirebaseFirestore.getInstance();
         notificationsRef = db.collection("events");
 
         // Fetch notifications from Firestore
         notificationsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 notificationsList = new ArrayList<>();
-                for (Notification notification : task.getResult().toObjects(Notification.class)) {
+                for (MyNotification notification : task.getResult().toObjects(MyNotification.class)) {
                     notificationsList.add(notification);
                 }
                 // Initialize the adapter with the fetched data

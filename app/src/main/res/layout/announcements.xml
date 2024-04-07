@@ -7,8 +7,8 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="#FBE200"
+        android:layout_height="match_parent"
+        app:cardBackgroundColor="#D6D6D6"
         app:cardCornerRadius="8dp"
         app:cardUseCompatPadding="true">
 
@@ -16,10 +16,15 @@
             android:id="@+id/announcement"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Announcement"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:padding="5dp"
+            android:text="Announcement content"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/announcement_date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
     </androidx.cardview.widget.CardView>
 
 </LinearLayout>
