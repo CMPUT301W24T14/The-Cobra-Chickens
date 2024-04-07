@@ -38,17 +38,20 @@
         android:text="Number of checkins"
         android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@+id/image_user_pro_pic"
-        app:layout_constraintTop_toBottomOf="@+id/tv_user_name" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_user_name"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/tv_check_in_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
         android:paddingTop="1dp"
         android:text="Checked in ✓"
         android:textColor="#17811C"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

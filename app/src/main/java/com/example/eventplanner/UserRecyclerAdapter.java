@@ -77,11 +77,16 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
                             holder.numberOfCheckins.setText("Check-in count: " + myNum);
 
+                            holder.numberOfCheckins.setVisibility(View.VISIBLE);
+
+                            holder.checkInStatus.setVisibility(View.VISIBLE);
+
                         }
                     }
                 });
 
         holder.userName.setText(showName);
+
 
         if(proPicUrl !=null && proPicUrl.equals("")){
             Glide.with(holder.itemView.getContext())
@@ -111,6 +116,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
         private TextView userName;
         private ImageView userProfilePic;
         private TextView numberOfCheckins;
+        private TextView checkInStatus;
 
         /**
          * Constructor of the ViewHolder.
@@ -124,6 +130,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
             userName = itemView.findViewById(R.id.tv_user_name);
             userProfilePic = itemView.findViewById(R.id.image_user_pro_pic);
             numberOfCheckins = itemView.findViewById(R.id.tv_number_checkins);
+            checkInStatus = itemView.findViewById(R.id.tv_check_in_status);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
