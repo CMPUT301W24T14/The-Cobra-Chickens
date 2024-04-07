@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="#FFFFFF"
-    android:layout_margin="5dp"
+    android:background="@drawable/top_bottom_border"
+
     android:gravity="center_vertical"
     android:id="@+id/user_row_organizer">
 
@@ -19,7 +19,7 @@
         app:strokeWidth="0dp"/>
 
     <LinearLayout
-        android:layout_width="229dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="10dp">
@@ -36,8 +36,8 @@
             android:id="@+id/tv_number_checkins"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="# of checkins"
-            android:textSize="16sp" />
+            android:text="Number of checkins"
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -51,8 +51,6 @@
             android:id="@+id/tv_check_in_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-
             android:text="Checked in ✓"
             android:textColor="#17811C" />
 

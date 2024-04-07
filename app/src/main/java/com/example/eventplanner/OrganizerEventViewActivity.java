@@ -24,6 +24,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.WriterException;
 
+import org.w3c.dom.Text;
+
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +55,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
     private Bundle bundle;
     private RecyclerViewInterface recyclerViewInterface;
     private Event currEvent;
-    private UserRecyclerAdapter signedUserRecyclerAdapter;
+    private UserRecyclerAdapter guestListRecyclerAdapter;
     private UserRecyclerAdapter checkedInUserRecyclerAdapter;
     private AnnouncementsRecyclerAdapter announcementsRecyclerAdapter;
     private RecyclerView announcementsRecyclerView;
@@ -72,6 +74,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         TextView eventTimeTextView = findViewById(R.id.tv_event_time);
         TextView eventLocationTextView = findViewById(R.id.tv_event_location);
         TextView eventDescriptionTextView = findViewById(R.id.tv_event_description);
+        TextView numberOfAttendees = findViewById(R.id.tv_number_attendees);
 
         announcementsRecyclerView = findViewById(R.id.rv_announcements);
         guestListRecyclerView = findViewById(R.id.rv_guest_list);
@@ -106,8 +109,11 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
             currEvent = bundle.getParcelable("event");
             if (currEvent != null) {
 
+                String attendeeCount = String.valueOf(currEvent.getCheckedInUsers().size());
+                numberOfAttendees.setText("Number of checked-in attendees: " + attendeeCount);
+
                 // Set event details to views
-                eventNameTextView.setText("Name: " + currEvent.getEventName());
+                eventNameTextView.setText(currEvent.getEventName());
                 eventDateTextView.setText("Date: " + currEvent.getEventDate());
                 eventTimeTextView.setText("Time: " + currEvent.getEventTime());
                 eventLocationTextView.setText("Location: " + currEvent.getEventLocation());
@@ -200,13 +206,14 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
             }
 
-            signedUserRecyclerAdapter = new UserRecyclerAdapter(this, signedUpList, recyclerViewInterface);
+            guestListRecyclerAdapter = new UserRecyclerAdapter(this, currEvent.getEventId(), signedUpList, recyclerViewInterface);
             guestListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            guestListRecyclerView.setAdapter(signedUserRecyclerAdapter);
+            guestListRecyclerView.setAdapter(guestListRecyclerAdapter);
 
 //            checkedInUserRecyclerAdapter = new UserRecyclerAdapter(this, checkedInList, recyclerViewInterface);
 //            checkedInRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 //            checkedInRecyclerView.setAdapter(checkedInUserRecyclerAdapter);
+
 
 
         }
@@ -313,7 +320,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         ArrayList<String> signedUpUserIds = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
                         if (signedUpUserIds != null) {
-                            loadSignedUpUserDocs(signedUpUserIds, signedUserRecyclerAdapter);
+                            loadSignedUpUserDocs(signedUpUserIds, guestListRecyclerAdapter);
                         }
                     }
                 });
@@ -329,7 +336,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                         // get all events in user's organizing ArrayList and put them in another ArrayList of eventIds
-                        HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsersTest");
+                        HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsers");
 
                         assert checkedInUsersFromDB != null;
                         ArrayList<CheckedInUser> checkedInUserIds = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);

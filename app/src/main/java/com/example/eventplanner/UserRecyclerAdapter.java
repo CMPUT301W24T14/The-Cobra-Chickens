@@ -2,6 +2,7 @@ package com.example.eventplanner;
 
 import android.content.Context;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +13,17 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * The RecyclerViewAdapter for displaying users contained in a list of User objects.
@@ -24,11 +33,14 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
     private ArrayList<User> users; // the list of users
     private Context context;
     private RecyclerViewInterface recyclerViewInterface;
+    private String eventId;
+    private FirebaseFirestore db;
 
-    public UserRecyclerAdapter(Context context, ArrayList<User> users, RecyclerViewInterface recyclerViewInterface) {
+    public UserRecyclerAdapter(Context context, String eventId, ArrayList<User> users, RecyclerViewInterface recyclerViewInterface) {
         this.users = users;
         this.context = context;
         this.recyclerViewInterface = recyclerViewInterface;
+        this.eventId = eventId;
     }
 
     /**
@@ -57,6 +69,24 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
         String showName = users.get(position).getName();
         String proPicUrl = users.get(position).getProfilePicture();
+
+        db = FirebaseFirestore.getInstance();
+        db.collection("events").document(eventId).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                        HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsers");
+
+                        if (checkedInUsersFromDB != null && checkedInUsersFromDB.containsKey(users.get(position).getUserId())) {
+
+                            String myNum = checkedInUsersFromDB.get(users.get(position).getUserId());
+
+                            holder.numberOfCheckins.setText("Check-in count: " + myNum);
+
+                        }
+                    }
+                });
 
         holder.userName.setText(showName);
 
@@ -87,6 +117,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView userName;
         private ImageView userProfilePic;
+        private TextView numberOfCheckins;
 
         /**
          * Constructor of the ViewHolder.
@@ -99,6 +130,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
             userName = itemView.findViewById(R.id.tv_user_name);
             userProfilePic = itemView.findViewById(R.id.image_user_pro_pic);
+            numberOfCheckins = itemView.findViewById(R.id.tv_number_checkins);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
