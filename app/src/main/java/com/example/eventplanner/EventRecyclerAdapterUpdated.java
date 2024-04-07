@@ -6,11 +6,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.checkerframework.checker.signature.qual.CanonicalName;
@@ -97,12 +99,28 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
         holder.eventDate.setText(events.get(position).getEventDate());
 
         Event event = events.get(position);
-        ArrayList<String> checkedInUsers = event.getCheckedInUsers();
+
+        Log.d("TESTING8", event.getEventName());
+
+        if (holder.eventPoster != null && !event.getEventPoster().isEmpty()) {
+            Glide.with(context)
+                    .load(event.getEventPoster())
+                    .into(holder.eventPoster);
+        }
+
+        ArrayList<CheckedInUser> checkedInUsers = event.getCheckedInUsers();
 
         // display that the user has checked in if they are in the event's checkedInUsers list
         if (checkedInUsers != null) {
-            for (String userId : checkedInUsers) {
-                if (checkedInUsers.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            for (CheckedInUser user : checkedInUsers) {
+
+                String userId = user.getUserId();
+
+                Log.d("TESTING8", "user id in list: " + userId);
+                Log.d("TESTING8", "device user id: " + FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                if (userId != null && userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    Log.d("TESTING8", "setting " + event.getEventName());
                     holder.checkInStatus.setVisibility(View.VISIBLE);
                 }
             }
@@ -125,6 +143,7 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
         TextView eventName;
         TextView eventDate;
         TextView eventLocation;
+        ImageView eventPoster;
         TextView checkInStatus;
 
         /**
@@ -139,6 +158,8 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
             eventName = itemView.findViewById(R.id.event_name_cardview);
             eventDate = itemView.findViewById(R.id.event_date_cardview);
             eventLocation = itemView.findViewById(R.id.event_location_cardview);
+            eventPoster = itemView.findViewById(R.id.cardView_event_poster);
+
             checkInStatus = itemView.findViewById(R.id.tv_check_in_status);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -156,16 +177,5 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
                 }
             });
         }
-    }
-
-    // currently not in use, may be used later for faster updates of the RecyclerView
-    public void updateEventListItems(ArrayList<Event> events2){
-
-        final EventDiffCallback diffCallback = new EventDiffCallback(this.events, events2);
-        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
-
-        this.events.clear();
-        this.events.addAll(events2);
-        diffResult.dispatchUpdatesTo(this);
     }
 }

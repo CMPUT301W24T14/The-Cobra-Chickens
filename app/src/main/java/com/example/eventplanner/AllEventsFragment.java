@@ -23,6 +23,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * AllEventsFragment is a Fragment that handles showing a user all events that are on the application.
@@ -173,7 +175,12 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
                                 String promoCode = doc.getString("promoCode");
 
                                 ArrayList<String> eventAnnouncements = (ArrayList<String>) doc.get("eventAnnouncements");
-                                ArrayList<String> checkedInUsers = (ArrayList<String>) doc.get("checkedInUsers");
+
+                                HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) doc.get("checkedInUsers");
+
+                                assert checkedInUsersFromDB != null;
+                                ArrayList<CheckedInUser> checkedInUsers = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
+
                                 ArrayList<String> signedUpUsers = (ArrayList<String>) doc.get("signedUpUsers");
 
                                 // create the Event object with retrieved event information and add it to allEventsList
@@ -185,6 +192,20 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
                         }
                     }
                 });
+    }
+
+    private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(HashMap<String, String> checkedInUsersFromDB) {
+
+        ArrayList<CheckedInUser> checkedInUsers = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
+
+            String userId = entry.getKey();
+            String numberOfCheckins = entry.getValue();
+            checkedInUsers.add(new CheckedInUser(userId, numberOfCheckins));
+        }
+
+        return checkedInUsers;
     }
 
     /**
@@ -202,6 +223,9 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
 
         // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
         intent.putExtra("event", allEventsList.get(position));
+
+        // pass fragment name to EventDetailsActivity so the sign up / deregister button can be set accordingly
+        intent.putExtra("fragment name", getClass().getSimpleName());
 
         // start the EventDetailsActivity
         startActivity(intent);

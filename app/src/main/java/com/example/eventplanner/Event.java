@@ -22,14 +22,14 @@ public class Event implements Parcelable {
     private String checkInCode;
     private String promoCode;
     private ArrayList<String> eventAnnouncements;
-    private ArrayList<String> checkedInUsers;
+    private ArrayList<CheckedInUser> checkedInUsers;
     private ArrayList<String> signedUpUsers;
 
     public Event(String eventId,
                  String eventName, String eventDescription, String eventMaxAttendees, String eventDate, String eventTime, String eventLocation, String eventPoster,
                  String checkInCode, String promoCode,
                  ArrayList<String> eventAnnouncements,
-                 ArrayList<String> checkedInUsers, ArrayList<String> signedUpUsers) {
+                 ArrayList<CheckedInUser> checkedInUsers, ArrayList<String> signedUpUsers) {
 
         this.eventId = eventId;
 
@@ -50,7 +50,7 @@ public class Event implements Parcelable {
         this.signedUpUsers = signedUpUsers;
     }
 
-    public Event (String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime,String eventLocation, String eventPoster){
+    public Event (String eventId, String eventName, String eventMaxAttendees, String eventDate, String eventTime, String eventLocation, String eventPoster){
         this.eventId = eventId;
         this.eventName = eventName;
         this.eventMaxAttendees = eventMaxAttendees;
@@ -75,7 +75,7 @@ public class Event implements Parcelable {
 
         eventAnnouncements = in.createStringArrayList();
 
-        checkedInUsers = in.createStringArrayList();
+        checkedInUsers = in.createTypedArrayList(CheckedInUser.CREATOR);
         signedUpUsers = in.createStringArrayList();
 
     }
@@ -128,11 +128,11 @@ public class Event implements Parcelable {
         this.eventTime = eventTime;
     }
 
-    public ArrayList<String> getCheckedInUsers() {
+    public ArrayList<CheckedInUser> getCheckedInUsers() {
         return checkedInUsers;
     }
 
-    public void setCheckedInUsers(ArrayList<String> checkedInUsers) {
+    public void setCheckedInUsers(ArrayList<CheckedInUser> checkedInUsers) {
         this.checkedInUsers = checkedInUsers;
     }
 
@@ -217,7 +217,7 @@ public class Event implements Parcelable {
 
         dest.writeStringList(eventAnnouncements);
 
-        dest.writeStringList(checkedInUsers);
+        dest.writeTypedList(checkedInUsers);
         dest.writeStringList(signedUpUsers);
     }
 }

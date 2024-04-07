@@ -29,9 +29,13 @@
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent">
 
+                <!-- https://stackoverflow.com/questions/8232608/fit-image-into-imageview-keep-aspect-ratio-and-then-resize-imageview-to-image-d -->
                 <ImageView
+                    android:id="@+id/cardView_event_poster"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
                     android:background="@drawable/gradient"/>
 
                 <TextView

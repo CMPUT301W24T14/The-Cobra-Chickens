@@ -39,6 +39,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.journeyapps.barcodescanner.CompoundBarcodeView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -80,45 +82,80 @@ public class ScanFragment extends Fragment {
                 final String[] checkInCode = new String[1];
                 final String[] promoCode = new String[1];
                 final ArrayList<String>[] eventAnnouncements = new ArrayList[]{new ArrayList<>()};
-                final ArrayList<String>[] checkedInUsers = new ArrayList[]{new ArrayList<>()};
+                final ArrayList<CheckedInUser>[] checkedInUsers = new ArrayList[]{new ArrayList<>()};
                 final ArrayList<String>[] signedUpUsers = new ArrayList[]{new ArrayList<>()};
 
                 if (Objects.equals(parts[1], "check")) {
                     db.collection("events").whereEqualTo("checkInCode", checkInCodeFromQR)
-                            .get()
-                            .addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        eventId[0] = document.getId();
-                                    }
-                                    db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
-                                        if (documentSnapshot.exists() && eventId[0] != null) {
-                                            db.collection("events").document(eventId[0]).update("signedUpUsers", FieldValue.arrayUnion(userId));
-                                            db.collection("users").document(userId).update("myEvents", FieldValue.arrayUnion(eventId[0]));
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                eventId[0] = document.getId();
+                                HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) document.get("checkedInUsers");
+                                if (checkedInUsersFromDB != null) {
+                                    if (checkedInUsersFromDB.containsKey(userId)) { // if the user has already checked in once
 
-                                            db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(userId));
-                                            db.collection("users").document(userId).update("checkedInto", FieldValue.arrayUnion(eventId[0]));
+                                        for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
+                                            if (Objects.equals(entry.getKey(), userId)) {
 
-                                            sharedViewModel.setEventUpdated(true);
+                                                // HashMap<String, String> oldMap = new HashMap<>();
 
-                                            builder.setTitle("Success!");
-                                            builder.setMessage("You have successfully checked in to the event!");
-                                        } else {
-                                            builder.setTitle("Failure!");
-                                            if (eventId[0] == null) {
-                                                builder.setMessage("Event Id is empty");
-                                            } else {
-                                                builder.setMessage("User does not exist!");
+                                                int numberOfCheckins = Integer.parseInt(entry.getValue());
+
+                                                // oldMap.put(userId, String.valueOf(numberOfCheckins));
+
+                                                numberOfCheckins += 1;
+
+                                                HashMap<String, String> newMap = new HashMap<>();
+
+                                                newMap.put(userId, String.valueOf(numberOfCheckins));
+
+                                                db.collection("events").document(eventId[0]).update("checkedInUsers", newMap);
+
                                             }
                                         }
-                                        builder.setPositiveButton("OK", (dialog, which) -> {
-                                            dialog.dismiss();
-                                            barcodeView.resume();
-                                        }).show();
-                                    });
-                                }
-                            });
+                                    }
 
+                                    else {
+                                        // the user is checking in for the first time
+
+                                        HashMap<String, String> map = new HashMap<>();
+                                        map.put(userId, "1");
+
+                                        db.collection("events").document(eventId[0]).update("checkedInUsers", map);
+
+                                    }
+                                }
+                            }
+                            }
+
+                            db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
+                                if (documentSnapshot.exists() && eventId[0] != null) {
+                                    db.collection("events").document(eventId[0]).update("signedUpUsers", FieldValue.arrayUnion(userId));
+                                    db.collection("users").document(userId).update("myEvents", FieldValue.arrayUnion(eventId[0]));
+
+                                    //db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(userId));
+                                    db.collection("users").document(userId).update("checkedInto", FieldValue.arrayUnion(eventId[0]));
+
+                                    sharedViewModel.setEventUpdated(true);
+
+                                    builder.setTitle("Success!");
+                                    builder.setMessage("You have successfully checked into the event!");
+                                } else {
+                                    builder.setTitle("Failure!");
+                                    if (eventId[0] == null) {
+                                        builder.setMessage("Event Id is empty");
+                                    } else {
+                                        builder.setMessage("User does not exist!");
+                                    }
+                                }
+                                builder.setPositiveButton("OK", (dialog, which) -> {
+                                    dialog.dismiss();
+                                    barcodeView.resume();
+                                }).show();
+                            });
+                    });
                 }
                 else if (Objects.equals(parts[1], "promo")) {
                     db.collection("events").whereEqualTo("promoCode", checkInCodeFromQR)
@@ -137,7 +174,7 @@ public class ScanFragment extends Fragment {
                                         checkInCode[0] = doc.getString("checkInCode");
                                         promoCode[0] = doc.getString("promoCode");
                                         eventAnnouncements[0] = (ArrayList<String>) doc.get("eventAnnouncements");
-                                        checkedInUsers[0] = (ArrayList<String>) doc.get("checkedInUsers");
+                                        checkedInUsers[0] = (ArrayList<CheckedInUser>) doc.get("checkedInUsers");
                                         signedUpUsers[0] = (ArrayList<String>) doc.get("signedUpUsers");
                                     }
                                     db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
@@ -146,7 +183,6 @@ public class ScanFragment extends Fragment {
                                         if (documentSnapshot.exists() && eventId[0] != null) {
                                             //Change activity to my events details
                                             Intent intent = new Intent(requireContext(), EventDetailsActivity.class);
-
                                             Event newEvent = new Event(eventId[0], eventName[0], eventDescription[0], eventMaxAttendees[0], eventDate[0], eventTime[0], eventLocation[0], eventPoster[0], checkInCode[0], promoCode[0], eventAnnouncements[0], checkedInUsers[0], signedUpUsers[0]);
                                             intent.putExtra("event", newEvent);
                                             startActivity(intent);

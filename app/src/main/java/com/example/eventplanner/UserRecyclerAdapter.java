@@ -97,7 +97,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
             super(itemView);
 
-            userName = itemView.findViewById(R.id.user_name);
+            userName = itemView.findViewById(R.id.tv_user_name);
             userProfilePic = itemView.findViewById(R.id.image_user_pro_pic);
 
             itemView.setOnClickListener(new View.OnClickListener() {
