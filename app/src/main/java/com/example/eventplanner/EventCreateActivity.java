@@ -293,6 +293,7 @@ public class EventCreateActivity extends AppCompatActivity {
 
         dialog.show();
     }
+
     // Function to open the clock to select a time.
     private void openTimeDialog() {
         TimePickerDialog dialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {

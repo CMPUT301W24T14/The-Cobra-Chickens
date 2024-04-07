@@ -163,7 +163,6 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
 
                         // get all events in user's organizing ArrayList and put them in another ArrayList of eventIds
                         ArrayList<String> eventIds = (ArrayList<String>) documentSnapshot.get("Organizing");
-
                         if (eventIds != null) {
                             loadEventDocs(eventIds, organizeEventsRecyclerAdapter);
                         }
@@ -232,7 +231,9 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                     });
 
         }
+        organizingEventsRecyclerAdapter.notifyDataSetChanged();
     }
+
 
     private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(HashMap<String, String> checkedInUsersFromDB) {
 
