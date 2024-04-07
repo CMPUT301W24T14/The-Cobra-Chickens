@@ -357,7 +357,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (geolocationTracking){
                     Intent myIntent = new Intent(OrganizerEventViewActivity.this, OrganizerMapActivity.class);
-                    //myIntent.putExtra("key", value); //Optional parameters
+                    myIntent.putExtra("event", currEvent); //Optional parameters
                     OrganizerEventViewActivity.this.startActivity(myIntent);
                 } else {
                     Toast.makeText(OrganizerEventViewActivity.this, "Geolocation tracking is disabled for this event.", Toast.LENGTH_SHORT).show();
