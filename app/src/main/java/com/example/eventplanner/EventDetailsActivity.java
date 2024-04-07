@@ -27,6 +27,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+
 public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventNameTextView, eventDateTextView, eventTimeTextView, eventLocationTextView, eventDescriptionTextView, eventOrganizerTextView;
     private RecyclerView announcementsRecyclerView;
@@ -169,14 +173,24 @@ public class EventDetailsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Event event = bundle.getParcelable("event");
-                        if (event.getSignedUpUsers().size() >= Integer.valueOf(event.getEventMaxAttendees())) {
-                            Toast.makeText(EventDetailsActivity.this, "Event is full!", Toast.LENGTH_SHORT).show();
+                        int maxAttendees;
+                        try {
+                            maxAttendees = Integer.valueOf(event.getEventMaxAttendees());
+                            if (event.getSignedUpUsers().size() >= maxAttendees) {
+                                Toast.makeText(EventDetailsActivity.this, "Event is full!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
+                                signUserUp();
+                            }
+                        } catch (Exception e) {
+                            try {
+                                Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
+                                signUserUp();
+                            } catch (Exception f) {
+                                Toast.makeText(EventDetailsActivity.this, "An error occured. We are unable to register you for this event at this time.", Toast.LENGTH_SHORT).show();
+                            }
                         }
 
-                        else {
-                            Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
-                            signUserUp();
-                        }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
