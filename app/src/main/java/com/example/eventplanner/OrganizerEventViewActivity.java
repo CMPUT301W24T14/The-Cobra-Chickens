@@ -4,23 +4,28 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.WriterException;
 
@@ -61,6 +66,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
     private RecyclerView announcementsRecyclerView;
     private RecyclerView guestListRecyclerView;
     private RecyclerView checkedInRecyclerView;
+    private Button addAnnouncementsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +100,9 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
         checkinQRImageView = findViewById(R.id.checkInQR);
         promoQRImageView = findViewById(R.id.promoQR);
+
+        Button shareCheckInQRButton = findViewById(R.id.shareCheckInQR);
+        Button sharePromoQRButton = findViewById(R.id.sharePromoQR);
 
         ImageView poster = findViewById(R.id.iv_poster);
 
@@ -148,6 +157,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     // Set the generated QR code as the image for the checkinQR ImageView.
                     checkinQRImageView.setImageBitmap(qrCode);
                     checkinQRImageView.setVisibility(View.VISIBLE);
+                    shareCheckInQRButton.setVisibility(View.VISIBLE);
                 }
 
                 if (!Objects.equals(currEvent.getPromoCode(), "")) {
@@ -162,6 +172,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     // Set the generated QR code as the image for the checkinQR ImageView.
                     promoQRImageView.setImageBitmap(qrCode);
                     promoQRImageView.setVisibility(View.VISIBLE);
+                    sharePromoQRButton.setVisibility(View.VISIBLE);
                 }
 
                 generateCheckinQRButton.setOnClickListener(new View.OnClickListener() {
@@ -181,6 +192,8 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         // Set the generated QR code as the image for the checkinQR ImageView.
                         checkinQRImageView.setImageBitmap(qrCode);
                         checkinQRImageView.setVisibility(View.VISIBLE);
+                        shareCheckInQRButton.setVisibility(View.VISIBLE);
+
                     }
                 });
 
@@ -201,6 +214,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         // Set the generated QR code as the image for the checkinQR ImageView.
                         promoQRImageView.setImageBitmap(qrCode);
                         promoQRImageView.setVisibility(View.VISIBLE);
+                        sharePromoQRButton.setVisibility(View.VISIBLE);
                     }
                 });
 
@@ -215,6 +229,14 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 //            checkedInRecyclerView.setAdapter(checkedInUserRecyclerAdapter);
 
 
+            addAnnouncementsButton = findViewById(R.id.add_announcement_button);
+
+            addAnnouncementsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showAddAnnouncementDialog();
+                }
+            });
 
         }
 
@@ -304,6 +326,36 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
         getSignedUpUsers();
 //        getCheckedInUsers();
+
+    }
+
+    private void showAddAnnouncementDialog() {
+
+        EditText newAnnouncementEditText = new EditText(this);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder
+                .setTitle("New Announcement")
+                .setView(newAnnouncementEditText)
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String editTextInput = newAnnouncementEditText.getText().toString();
+
+                        db.collection("events").document(currEvent.getEventId()).update("eventAnnouncements", FieldValue.arrayUnion(editTextInput))
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+
+                                }
+                            });
+                    }
+
+                })
+                .create()
+                .show();
 
     }
 
