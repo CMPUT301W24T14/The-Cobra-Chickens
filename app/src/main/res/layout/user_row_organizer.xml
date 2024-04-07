@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="User name"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:text="Checked in ✓"
             android:paddingTop="1dp"
-
+            android:textSize="12sp"
             android:textColor="#17811C" />
 
     </LinearLayout>
