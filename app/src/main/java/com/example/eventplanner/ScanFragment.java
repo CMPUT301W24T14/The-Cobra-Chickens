@@ -78,32 +78,6 @@ public class ScanFragment extends Fragment {
 
                 if (Objects.equals(parts[1], "check")) {
 
-                    // Get the user's current location
-                    FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-                    fusedLocationClient.getLastLocation()
-                            .addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
-                                @Override
-                                public void onSuccess(Location location) {
-                                    if (location != null) {
-                                        // Once you have the location, store it in Firestore
-                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                        String userId = auth.getCurrentUser().getUid();
-
-                                        // Create a GeoPoint object with latitude and longitude
-                                        GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-
-                                        // Create a map to store user data
-                                        HashMap<String, GeoPoint> userData = new HashMap<>();
-                                        userData.put(userId, geoPoint);
-
-                                        // Update Firestore document with user's location
-                                        db.collection("events").document(eventId[0]).update("checkinGeo", userData);
-                                    }
-                                }
-                            });
-
-
-
                     db.collection("events").whereEqualTo("checkInCode", checkInCodeFromQR)
                             .get()
                             .addOnCompleteListener(task -> {
@@ -146,6 +120,30 @@ public class ScanFragment extends Fragment {
                                                 map.put(userId, "1");
 
                                                 db.collection("events").document(eventId[0]).update("checkedInUsers", map);
+
+                                                // Get the user's current location
+                                                FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+                                                fusedLocationClient.getLastLocation()
+                                                        .addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
+                                                            @Override
+                                                            public void onSuccess(Location location) {
+                                                                if (location != null) {
+                                                                    // Once you have the location, store it in Firestore
+                                                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                                                    String userId = auth.getCurrentUser().getUid();
+
+                                                                    // Create a GeoPoint object with latitude and longitude
+                                                                    GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+
+                                                                    // Create a map to store user data
+                                                                    HashMap<String, GeoPoint> userData = new HashMap<>();
+                                                                    userData.put(userId, geoPoint);
+
+                                                                    // Update Firestore document with user's location
+                                                                    db.collection("events").document(eventId[0]).update("checkedInGeopoints", userData);
+                                                                }
+                                                            }
+                                                        });
 
                                                 }
                                             }
