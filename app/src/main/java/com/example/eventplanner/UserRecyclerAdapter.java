@@ -78,9 +78,9 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
                         HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsers");
 
-                        if (checkedInUsersFromDB != null && checkedInUsersFromDB.containsKey(users.get(position).getUserId())) {
+                        if (checkedInUsersFromDB != null && checkedInUsersFromDB.containsKey(users.get(holder.getAdapterPosition()).getUserId())) {
 
-                            String myNum = checkedInUsersFromDB.get(users.get(position).getUserId());
+                            String myNum = checkedInUsersFromDB.get(users.get(holder.getAdapterPosition()).getUserId());
 
                             holder.numberOfCheckins.setText("Check-in count: " + myNum);
 
