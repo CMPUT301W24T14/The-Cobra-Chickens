@@ -1,7 +1,3 @@
-/**
- The CheckedInUser class represents a user who has checked in to an event.
- It implements the Parcelable interface to allow for passing instances of this class between components.
- */
 package com.example.eventplanner;
 
 import android.os.Parcel;
@@ -12,6 +8,10 @@ import androidx.annotation.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ The CheckedInUser class represents a user who has checked in to an event.
+ It implements the Parcelable interface to allow for passing instances of this class between components.
+ */
 public class CheckedInUser implements Parcelable {
 
     private String userId;

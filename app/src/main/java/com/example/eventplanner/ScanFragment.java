@@ -1,6 +1,3 @@
-/**
- * A Fragment for scanning QR codes.
- */
 package com.example.eventplanner;
 
 import android.Manifest;
@@ -46,7 +43,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
-
+/**
+ * A Fragment for scanning QR codes.
+ */
 public class ScanFragment extends Fragment {
     private CompoundBarcodeView barcodeView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();

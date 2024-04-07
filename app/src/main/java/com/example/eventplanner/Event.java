@@ -1,7 +1,3 @@
-/**
- The Event class represents an event in the event planner application.
- It implements the Parcelable interface to allow for passing instances of this class between components.
- */
 package com.example.eventplanner;
 
 import android.os.Parcel;
@@ -12,7 +8,10 @@ import androidx.annotation.NonNull;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
-
+/**
+ The Event class represents an event in the event planner application.
+ It implements the Parcelable interface to allow for passing instances of this class between components.
+ */
 public class Event implements Parcelable {
 
     private String eventId;

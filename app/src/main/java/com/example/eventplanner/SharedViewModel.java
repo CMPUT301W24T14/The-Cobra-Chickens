@@ -1,12 +1,11 @@
-/**
- * A ViewModel class for sharing data between fragments.
- */
 package com.example.eventplanner;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
+/**
+ * A ViewModel class for sharing data between fragments.
+ */
 public class SharedViewModel extends ViewModel {
     private final MutableLiveData<Boolean> eventUpdated = new MutableLiveData<>();
     /**

@@ -1,8 +1,3 @@
-/**
- * The AdminActivity class represents the activity for admin functionalities in the event planner application.
- * This activity allows the admin to navigate to different sections such as events, pictures, posters, and profiles.
- * Admin can also log out from this activity.
- */
 // OpenAI, 2024, ChatGPT
 package com.example.eventplanner;
 
@@ -12,7 +7,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-
+/**
+ * The AdminActivity class represents the activity for admin functionalities in the event planner application.
+ * This activity allows the admin to navigate to different sections such as events, pictures, posters, and profiles.
+ * Admin can also log out from this activity.
+ */
 public class AdminActivity extends AppCompatActivity {
     // Declare member variables for buttons
     private Button eventsBtn;

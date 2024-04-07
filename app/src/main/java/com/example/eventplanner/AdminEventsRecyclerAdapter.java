@@ -1,10 +1,3 @@
-/**
- * The AdminEventsRecyclerAdapter class is responsible for managing the RecyclerView
- * that displays events in the admin events activity.
- * It handles the creation of view holders, binding data to views, and event handling.
- * Admin can delete events by clicking on them.
- * It also interacts with Firestore to delete events from the database.
- */
 package com.example.eventplanner;
 
 import android.app.AlertDialog;
@@ -28,7 +21,13 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-
+/**
+ * The AdminEventsRecyclerAdapter class is responsible for managing the RecyclerView
+ * that displays events in the admin events activity.
+ * It handles the creation of view holders, binding data to views, and event handling.
+ * Admin can delete events by clicking on them.
+ * It also interacts with Firestore to delete events from the database.
+ */
 public class AdminEventsRecyclerAdapter extends RecyclerView.Adapter<AdminEventsRecyclerAdapter.ViewHolder>{
     Context context;
     ArrayList<Event> eventsList;

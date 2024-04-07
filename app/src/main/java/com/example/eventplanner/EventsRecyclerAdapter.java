@@ -1,7 +1,3 @@
-/**
- * Adapter class for populating events in a RecyclerView.
- * This adapter binds event data to the views displayed in the RecyclerView.
- */
 package com.example.eventplanner;
 // WsCube Tech, 2022, Youtube, Recycler View in Android Studio Explained with Example | Android Recycler View Tutorial, https://www.youtube.com/watch?v=FEqF1_jDV-A
 // WsCube Tech, 2022, Youtube, How to Add, Delete, and Update Items in Android RecyclerView | Android Studio Tutorial #26, https://www.youtube.com/watch?v=AUow1zsO6mg
@@ -23,7 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+/**
+ * Adapter class for populating events in a RecyclerView.
+ * This adapter binds event data to the views displayed in the RecyclerView.
+ */
 public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAdapter.ViewHolder> {
 
     private Context context;

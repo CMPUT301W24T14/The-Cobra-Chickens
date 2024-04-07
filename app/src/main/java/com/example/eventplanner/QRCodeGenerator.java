@@ -1,7 +1,3 @@
-/**
- * Utility class for generating QR codes.
- * This class provides a static method to generate a QR code image with the given event ID and type.
- */
 package com.example.eventplanner;
 
 import android.graphics.Bitmap;
@@ -15,7 +11,10 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.google.zxing.common.BitMatrix;
 
 import java.util.Hashtable;
-
+/**
+ * Utility class for generating QR codes.
+ * This class provides a static method to generate a QR code image with the given event ID and type.
+ */
 public class QRCodeGenerator {
     /**
      * Generates a QR code bitmap image with the specified event ID and type.

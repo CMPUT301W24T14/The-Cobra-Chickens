@@ -1,10 +1,3 @@
-/**
- * The AdminProfilesActivity class manages the profile display for admin in the event planner application.
- * It retrieves user profiles from Firestore and displays them in a RecyclerView.
- * Admin can navigate back to the admin dashboard from this activity.
- * If no profiles are available, it displays a toast message indicating the absence of profiles.
- * It initializes views, retrieves data from Firestore, and handles navigation back to the admin dashboard.
- */
 // OpenAI, 2024, ChatGPT, creating back button, changing intent
 
 package com.example.eventplanner;
@@ -26,7 +19,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * The AdminProfilesActivity class manages the profile display for admin in the event planner application.
+ * It retrieves user profiles from Firestore and displays them in a RecyclerView.
+ * Admin can navigate back to the admin dashboard from this activity.
+ * If no profiles are available, it displays a toast message indicating the absence of profiles.
+ * It initializes views, retrieves data from Firestore, and handles navigation back to the admin dashboard.
+ */
 public class AdminProfilesActivity extends AppCompatActivity {
     // Button to navigate back to admin dashboard
     private Button back;

@@ -1,9 +1,8 @@
+package com.example.eventplanner;
 /**
  * Class representing a notification.
  * This class encapsulates the title and message of a notification.
  */
-package com.example.eventplanner;
-
 public class MyNotification {
     private String title;
     private String message;

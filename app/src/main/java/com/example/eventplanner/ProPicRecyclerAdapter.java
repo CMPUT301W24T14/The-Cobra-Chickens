@@ -1,8 +1,3 @@
-/**
- * Adapter class for displaying user profile pictures in a RecyclerView.
- * This adapter populates the RecyclerView with user profile pictures and handles profile picture deletion.
- * The profiles are displayed with the user's name and profile picture.
- */
 package com.example.eventplanner;
 
 import android.app.AlertDialog;
@@ -26,7 +21,11 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-
+/**
+ * Adapter class for displaying user profile pictures in a RecyclerView.
+ * This adapter populates the RecyclerView with user profile pictures and handles profile picture deletion.
+ * The profiles are displayed with the user's name and profile picture.
+ */
 public class ProPicRecyclerAdapter extends RecyclerView.Adapter<ProPicRecyclerAdapter.ViewHolder> {
     private Context context;
     private ArrayList<User> profilesList;

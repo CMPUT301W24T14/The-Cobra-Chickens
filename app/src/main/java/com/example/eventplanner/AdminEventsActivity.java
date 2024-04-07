@@ -1,9 +1,3 @@
-/**
- * The AdminEventsActivity class represents the activity for managing events by the admin in the event planner application.
- * This activity displays a list of events retrieved from Firestore and allows the admin to navigate back to the admin dashboard.
- * If no events are available, it displays a toast message indicating the absence of events.
- *
- */
 // OpenAI, 2024, ChatGPT
 package com.example.eventplanner;
 
@@ -23,7 +17,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-
+/**
+ * The AdminEventsActivity class represents the activity for managing events by the admin in the event planner application.
+ * This activity displays a list of events retrieved from Firestore and allows the admin to navigate back to the admin dashboard.
+ * If no events are available, it displays a toast message indicating the absence of events.
+ *
+ */
 public class AdminEventsActivity extends AppCompatActivity {
     // Button to navigate back to admin dashboard
     private Button back;

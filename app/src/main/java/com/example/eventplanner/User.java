@@ -1,7 +1,3 @@
-/**
- * User class represents a user in the application.
- * It contains user information such as name, homepage, contact information, profile picture, and various lists related to events.
- */
 // OpenAI, 2024, ChatGPT
 package com.example.eventplanner;
 
@@ -11,7 +7,10 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
-
+/**
+ * User class represents a user in the application.
+ * It contains user information such as name, homepage, contact information, profile picture, and various lists related to events.
+ */
 public class User implements Parcelable {
     private String userId;
     private String name;

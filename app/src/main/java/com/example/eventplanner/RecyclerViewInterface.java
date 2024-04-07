@@ -1,8 +1,7 @@
+package com.example.eventplanner;
 /**
  * An interface for handling item click events in a RecyclerView.
  */
-package com.example.eventplanner;
-
 public interface RecyclerViewInterface {
     /**
      * Called when an item in the RecyclerView is clicked.

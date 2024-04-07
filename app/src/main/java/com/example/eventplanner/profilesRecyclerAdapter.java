@@ -1,8 +1,3 @@
-/**
- * Adapter class for displaying user profiles in a RecyclerView.
- * This adapter populates the RecyclerView with user profile information and handles profile deletion.
- * The profiles are displayed with name, contact information, homepage, and profile picture.
- */
 // WsCube Tech, 2022, Youtube, Recycler View in Android Studio Explained with Example | Android Recycler View Tutorial, https://www.youtube.com/watch?v=FEqF1_jDV-A
 // WsCube Tech, 2022, Youtube, How to Add, Delete, and Update Items in Android RecyclerView | Android Studio Tutorial #26, https://www.youtube.com/watch?v=AUow1zsO6mg
 // OpenAI, 2024, ChatGPT
@@ -32,7 +27,11 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-
+/**
+ * Adapter class for displaying user profiles in a RecyclerView.
+ * This adapter populates the RecyclerView with user profile information and handles profile deletion.
+ * The profiles are displayed with name, contact information, homepage, and profile picture.
+ */
 public class profilesRecyclerAdapter extends RecyclerView.Adapter<profilesRecyclerAdapter.ViewHolder> {
 
     private Context context;

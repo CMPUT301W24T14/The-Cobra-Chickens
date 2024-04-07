@@ -1,10 +1,3 @@
-/**
- * The AdminProPicActivity class manages the display of user profile pictures for admin in the event planner application.
- * It retrieves user profiles from Firestore and displays the ones with profile pictures in a RecyclerView.
- * Admin can navigate back to the admin dashboard from this activity.
- * If no profiles with profile pictures are available, it displays a toast message indicating the absence of profiles.
- * It initializes views, retrieves data from Firestore, and handles navigation back to the admin dashboard.
- */
 package com.example.eventplanner;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +15,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-
+/**
+ * The AdminProPicActivity class manages the display of user profile pictures for admin in the event planner application.
+ * It retrieves user profiles from Firestore and displays the ones with profile pictures in a RecyclerView.
+ * Admin can navigate back to the admin dashboard from this activity.
+ * If no profiles with profile pictures are available, it displays a toast message indicating the absence of profiles.
+ * It initializes views, retrieves data from Firestore, and handles navigation back to the admin dashboard.
+ */
 public class AdminProPicActivity extends AppCompatActivity {
     // Button to navigate back to admin dashboard
     private Button back;

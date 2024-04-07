@@ -1,6 +1,3 @@
-/**
- * Activity to display details of an event.
- */
 // OpenAI, 2024, ChatGPT
 package com.example.eventplanner;
 
@@ -29,7 +26,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-
+/**
+ * Activity to display details of an event.
+ */
 public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventNameTextView, eventDateTextView, eventTimeTextView, eventLocationTextView, eventDescriptionTextView, eventOrganizerTextView;
     private RecyclerView announcementsRecyclerView;

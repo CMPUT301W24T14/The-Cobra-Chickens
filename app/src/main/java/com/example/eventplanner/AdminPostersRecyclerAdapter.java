@@ -1,10 +1,3 @@
-/**
- * The AdminPostersRecyclerAdapter class is responsible for managing the RecyclerView
- * that displays event posters in the admin posters activity.
- * It handles the creation of view holders, binding data to views, and event handling.
- * Admin can delete posters by clicking on them.
- * It also interacts with Firestore to clear event posters from the database.
- */
 package com.example.eventplanner;
 
 import android.app.AlertDialog;
@@ -28,7 +21,13 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-
+/**
+ * The AdminPostersRecyclerAdapter class is responsible for managing the RecyclerView
+ * that displays event posters in the admin posters activity.
+ * It handles the creation of view holders, binding data to views, and event handling.
+ * Admin can delete posters by clicking on them.
+ * It also interacts with Firestore to clear event posters from the database.
+ */
 public class AdminPostersRecyclerAdapter extends RecyclerView.Adapter<AdminPostersRecyclerAdapter.ViewHolder>{
     Context context;
     ArrayList<Event> eventsList;

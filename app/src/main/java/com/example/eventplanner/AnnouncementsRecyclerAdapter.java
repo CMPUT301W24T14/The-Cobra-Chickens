@@ -1,9 +1,3 @@
-/**
- * The AnnouncementsRecyclerAdapter class is responsible for managing the RecyclerView
- * that displays announcements in the event planner application.
- * It inflates the announcement layout, binds data to views, and determines the number of items in the RecyclerView.
- * This adapter is used to populate the RecyclerView with announcements.
- */
 // WsCube Tech, 2022, Youtube, Recycler View in Android Studio Explained with Example | Android Recycler View Tutorial, https://www.youtube.com/watch?v=FEqF1_jDV-A
 // WsCube Tech, 2022, Youtube, How to Add, Delete, and Update Items in Android RecyclerView | Android Studio Tutorial #26, https://www.youtube.com/watch?v=AUow1zsO6mg
 // OpenAI, 2024, ChatGPT
@@ -20,7 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import java.util.ArrayList;
-
+/**
+ * The AnnouncementsRecyclerAdapter class is responsible for managing the RecyclerView
+ * that displays announcements in the event planner application.
+ * It inflates the announcement layout, binds data to views, and determines the number of items in the RecyclerView.
+ * This adapter is used to populate the RecyclerView with announcements.
+ */
 public class AnnouncementsRecyclerAdapter extends RecyclerView.Adapter<AnnouncementsRecyclerAdapter.ViewHolder> {
 
     private Context context;

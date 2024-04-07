@@ -1,8 +1,3 @@
-/**
- * Service class responsible for handling Firebase Cloud Messaging (FCM) messages.
- * This service extends FirebaseMessagingService and overrides the onMessageReceived method
- * to process incoming messages and generate notifications as needed.
- */
 package com.example.eventplanner;
 
 import android.app.NotificationChannel;
@@ -16,6 +11,11 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+/**
+ * Service class responsible for handling Firebase Cloud Messaging (FCM) messages.
+ * This service extends FirebaseMessagingService and overrides the onMessageReceived method
+ * to process incoming messages and generate notifications as needed.
+ */
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";

@@ -1,7 +1,3 @@
-/**
- * Adapter class for populating notifications in a RecyclerView.
- * This adapter binds notification data to the views displayed in the RecyclerView.
- */
 package com.example.eventplanner;
 
 import android.content.Context;
@@ -14,7 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-
+/**
+ * Adapter class for populating notifications in a RecyclerView.
+ * This adapter binds notification data to the views displayed in the RecyclerView.
+ */
 public class NotificationsRecyclerAdapter extends RecyclerView.Adapter<NotificationsRecyclerAdapter.ViewHolder> {
 
     private Context context;
