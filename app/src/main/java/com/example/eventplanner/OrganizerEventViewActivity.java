@@ -26,11 +26,13 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.zxing.WriterException;
 
 import java.io.ByteArrayOutputStream;
@@ -68,6 +70,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
     private RecyclerView announcementsRecyclerView;
     private RecyclerView guestListRecyclerView;
     private RecyclerView checkedInRecyclerView;
+    private Boolean geolocationTracking = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +116,19 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
         if (bundle != null && bundle.containsKey("event")) {
             currEvent = bundle.getParcelable("event");
+
+            db.collection("events")
+                    .get()
+                            .addOnCompleteListener(task -> {
+                               if (task.isSuccessful()) {
+                                   for (QueryDocumentSnapshot document : task.getResult()) {
+                                       if (Objects.equals(currEvent.getEventId(), document.getId())){
+                                            geolocationTracking = (Boolean) document.get("geolocationTracking");
+                                       }
+                                   }
+                               }
+                            });
+
             if (currEvent != null) {
 
                 // Set event details to views
@@ -312,9 +328,14 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(OrganizerEventViewActivity.this, OrganizerMapActivity.class);
-                //myIntent.putExtra("key", value); //Optional parameters
-                OrganizerEventViewActivity.this.startActivity(myIntent);
+                if (geolocationTracking){
+                    Intent myIntent = new Intent(OrganizerEventViewActivity.this, OrganizerMapActivity.class);
+                    //myIntent.putExtra("key", value); //Optional parameters
+                    OrganizerEventViewActivity.this.startActivity(myIntent);
+                } else {
+                    Toast.makeText(OrganizerEventViewActivity.this, "Geolocation tracking is disabled for this event.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
