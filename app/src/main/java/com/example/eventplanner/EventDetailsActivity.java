@@ -72,10 +72,10 @@ public class EventDetailsActivity extends AppCompatActivity {
             Event event = bundle.getParcelable("event");
             if (event != null) {
                 // Set event details to views
-                eventNameTextView.setText(String.format("Name: %s", event.getEventName()));
-                eventDateTextView.setText(String.format("Date: %s", event.getEventDate()));
-                eventTimeTextView.setText(String.format("Time: %s", event.getEventTime()));
-                eventLocationTextView.setText(String.format("Location: %s", event.getEventLocation()));
+                eventNameTextView.setText("Name: " + event.getEventName());
+                eventDateTextView.setText("Date: " + event.getEventDate());
+                eventTimeTextView.setText("Time: " + event.getEventTime());
+                eventLocationTextView.setText("Location: " + event.getEventLocation());
 
                 eventDescriptionTextView.setText(event.getEventDescription());
 

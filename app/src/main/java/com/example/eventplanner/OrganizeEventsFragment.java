@@ -2,7 +2,6 @@ package com.example.eventplanner;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -159,6 +156,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
      * with them.
      */
     private void getOrganizingEvents() {
+
         db.collection("users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
@@ -168,6 +166,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
 
                         // get all events in user's organizing ArrayList and put them in another ArrayList of eventIds
                         ArrayList<String> eventIds = (ArrayList<String>) documentSnapshot.get("Organizing");
+
                         if (eventIds != null) {
                             loadEventDocs(eventIds, organizeEventsRecyclerAdapter);
                         }
@@ -222,7 +221,7 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
 
                             HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsers");
 
-                            //assert checkedInUsersFromDB != null;
+                            assert checkedInUsersFromDB != null;
                             ArrayList<CheckedInUser> checkedInUsers = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
 
                             ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
@@ -236,25 +235,17 @@ public class OrganizeEventsFragment extends Fragment implements RecyclerViewInte
                     });
 
         }
-        organizingEventsRecyclerAdapter.notifyDataSetChanged();
     }
-
 
     private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(HashMap<String, String> checkedInUsersFromDB) {
 
         ArrayList<CheckedInUser> checkedInUsers = new ArrayList<>();
 
-        // Check if the HashMap is null before trying to iterate over it
-        if (checkedInUsersFromDB != null) {
-            for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
+        for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
 
-                // Check if the key and value are not null before using them
-                if (entry.getKey() != null && entry.getValue() != null) {
-                    String userId = entry.getKey();
-                    String numberOfCheckins = entry.getValue();
-                    checkedInUsers.add(new CheckedInUser(userId, numberOfCheckins));
-                }
-            }
+            String userId = entry.getKey();
+            String numberOfCheckins = entry.getValue();
+            checkedInUsers.add(new CheckedInUser(userId, numberOfCheckins));
         }
 
         return checkedInUsers;

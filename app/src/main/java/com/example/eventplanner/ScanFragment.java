@@ -72,40 +72,32 @@ public class ScanFragment extends Fragment {
                 String userId = auth.getCurrentUser().getUid();
 
                 final String[] eventId = new String[1];
-                final String[] eventName = new String[1];
-                final String[] eventDescription = new String[1];
-                final String[] eventMaxAttendees = new String[1];
-                final String[] eventDate = new String[1];
-                final String[] eventTime = new String[1];
-                final String[] eventLocation = new String[1];
-                final String[] eventPoster = new String[1];
-                final String[] checkInCode = new String[1];
-                final String[] promoCode = new String[1];
-                final ArrayList<String>[] eventAnnouncements = new ArrayList[]{new ArrayList<>()};
-                final ArrayList<CheckedInUser>[] checkedInUsers = new ArrayList[]{new ArrayList<>()};
-                final ArrayList<String>[] signedUpUsers = new ArrayList[]{new ArrayList<>()};
 
                 if (Objects.equals(parts[1], "check")) {
                     db.collection("events").whereEqualTo("checkInCode", checkInCodeFromQR)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                eventId[0] = document.getId();
-                                HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) document.get("checkedInUsers");
-                                if (checkedInUsersFromDB != null) {
-                                    if (checkedInUsersFromDB.containsKey(userId)) { // if the user has already checked in once
+                            .get()
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        eventId[0] = document.getId();
 
-                                        for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
-                                            if (Objects.equals(entry.getKey(), userId)) {
+                                        // Retrieve the checkedInUsers array from the document
+                                        HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) document.get("checkedInUsers");
 
-                                                // HashMap<String, String> oldMap = new HashMap<>();
+                                        // Check if userId exists in checkedInUsers array
+                                        if (checkedInUsersFromDB != null) {
+                                            if (checkedInUsersFromDB.containsKey(userId)) { // if the user has already checked in once
 
-                                                int numberOfCheckins = Integer.parseInt(entry.getValue());
+                                                for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
+                                                    if (Objects.equals(entry.getKey(), userId)) {
 
-                                                // oldMap.put(userId, String.valueOf(numberOfCheckins));
+                                                        // HashMap<String, String> oldMap = new HashMap<>();
 
-                                                numberOfCheckins += 1;
+                                                        int numberOfCheckins = Integer.parseInt(entry.getValue());
+
+                                                        // oldMap.put(userId, String.valueOf(numberOfCheckins));
+
+                                                        numberOfCheckins += 1;
 
                                                 HashMap<String, String> newMap = new HashMap<>();
 
@@ -135,57 +127,109 @@ public class ScanFragment extends Fragment {
                                     db.collection("events").document(eventId[0]).update("signedUpUsers", FieldValue.arrayUnion(userId));
                                     db.collection("users").document(userId).update("myEvents", FieldValue.arrayUnion(eventId[0]));
 
-                                    //db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(userId));
-                                    db.collection("users").document(userId).update("checkedInto", FieldValue.arrayUnion(eventId[0]));
+                                            //db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(userId));
+                                            db.collection("users").document(userId).update("checkedInto", FieldValue.arrayUnion(eventId[0]));
 
-                                    sharedViewModel.setEventUpdated(true);
+                                            sharedViewModel.setEventUpdated(true);
 
-                                    builder.setTitle("Success!");
-                                    builder.setMessage("You have successfully checked into the event!");
-                                } else {
-                                    builder.setTitle("Failure!");
-                                    if (eventId[0] == null) {
-                                        builder.setMessage("Event Id is empty");
-                                    } else {
-                                        builder.setMessage("User does not exist!");
-                                    }
+                                            builder.setTitle("Success!");
+                                            builder.setMessage("You have successfully checked into the event!");
+//                                            builder.setMessage("You have successfully signed up for the event!");
+                                        } else {
+                                            builder.setTitle("Failure!");
+                                            if (eventId[0] == null) {
+                                                builder.setMessage("Event Id is empty");
+                                            } else {
+                                                builder.setMessage("User does not exist!");
+                                            }
+                                        }
+                                        builder.setPositiveButton("OK", (dialog, which) -> {
+                                            dialog.dismiss();
+                                            barcodeView.resume();
+                                        }).show();
+                                    });
                                 }
-                                builder.setPositiveButton("OK", (dialog, which) -> {
-                                    dialog.dismiss();
-                                    barcodeView.resume();
-                                }).show();
                             });
-                    });
+
                 }
                 else if (Objects.equals(parts[1], "promo")) {
                     db.collection("events").whereEqualTo("promoCode", checkInCodeFromQR)
                             .get()
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot doc : task.getResult()) {
-                                        eventId[0] = doc.getId();
-                                        eventName[0] = doc.getString("eventName");
-                                        eventDescription[0] = doc.getString("eventDescription");
-                                        eventMaxAttendees[0] = doc.getString("eventMaxAttendees");
-                                        eventDate[0] = doc.getString("eventDate");
-                                        eventTime[0] = doc.getString("eventTime");
-                                        eventLocation[0] = doc.getString("eventLocation");
-                                        eventPoster[0] = doc.getString("eventPoster");
-                                        checkInCode[0] = doc.getString("checkInCode");
-                                        promoCode[0] = doc.getString("promoCode");
-                                        eventAnnouncements[0] = (ArrayList<String>) doc.get("eventAnnouncements");
-                                        checkedInUsers[0] = (ArrayList<CheckedInUser>) doc.get("checkedInUsers");
-                                        signedUpUsers[0] = (ArrayList<String>) doc.get("signedUpUsers");
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        eventId[0] = document.getId();
                                     }
+                                    Log.d("EVENT ID", eventId[0]);
                                     db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
                                         Dialog dialog = new Dialog(requireContext());
+                                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                            @Override
+                                            public void onDismiss(DialogInterface dialogInterface) {
+                                                // This code will be called as soon as the dialog is no longer showing on screen
+                                                barcodeView.resume();
+                                            }
+                                        });
 
                                         if (documentSnapshot.exists() && eventId[0] != null) {
-                                            //Change activity to my events details
-                                            Intent intent = new Intent(requireContext(), EventDetailsActivity.class);
-                                            Event newEvent = new Event(eventId[0], eventName[0], eventDescription[0], eventMaxAttendees[0], eventDate[0], eventTime[0], eventLocation[0], eventPoster[0], checkInCode[0], promoCode[0], eventAnnouncements[0], checkedInUsers[0], signedUpUsers[0]);
-                                            intent.putExtra("event", newEvent);
-                                            startActivity(intent);
+
+                                            dialog.setContentView(R.layout.activity_event_details);
+
+                                            ImageView poster = dialog.findViewById(R.id.poster);
+                                            poster.setVisibility(View.GONE);
+                                            db.collection("events").document(eventId[0]).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                    if (documentSnapshot.exists()) {
+                                                        // Get the field from the document
+                                                        String eventName = documentSnapshot.getString("eventName");
+                                                        String eventTime = documentSnapshot.getString("eventTime");
+                                                        String eventDate = documentSnapshot.getString("eventDate");
+                                                        String eventLocation = documentSnapshot.getString("eventLocation");
+                                                        String eventDescription = documentSnapshot.getString("eventDescription");
+
+                                                        // Find the TextView and set the text
+
+                                                        TextView eventNameTextView = dialog.findViewById(R.id.event_name);
+                                                        TextView eventTimeTextView = dialog.findViewById(R.id.event_time);
+                                                        TextView eventDateTextView = dialog.findViewById(R.id.event_date);
+                                                        TextView eventLocationTextView = dialog.findViewById(R.id.event_location);
+                                                        TextView eventDescriptionTextView = dialog.findViewById(R.id.event_description);
+
+                                                        eventNameTextView.setText(eventName);
+                                                        eventDateTextView.setText(eventDate);
+                                                        eventTimeTextView.setText(eventTime);
+                                                        eventDescriptionTextView.setText(eventDescription);
+                                                        eventLocationTextView.setText(eventLocation);
+                                                    }
+                                                }
+                                            });
+
+                                            Button signUpButton = dialog.findViewById(R.id.button_signup_or_deregister);
+
+                                            signUpButton.setOnClickListener(v -> {
+                                                Toast.makeText(requireActivity(), "Your event is in My Events", Toast.LENGTH_SHORT).show();
+                                                db.collection("events").document(eventId[0]).update("signedUpUsers", FieldValue.arrayUnion(userId));
+                                                db.collection("users").document(userId).update("myEvents", FieldValue.arrayUnion(eventId[0]));
+                                                dialog.dismiss();
+                                            });
+
+
+                                            Window window = dialog.getWindow();
+                                            if (window != null) {
+                                                // Set the dimensions of the dialog
+                                                WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+                                                layoutParams.copyFrom(window.getAttributes());
+
+                                                // Set the width and height of the dialog to match the screen size
+                                                DisplayMetrics displayMetrics = new DisplayMetrics();
+                                                ((Activity) requireContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                                                layoutParams.width = displayMetrics.widthPixels;
+                                                layoutParams.height = (int) (displayMetrics.heightPixels * .60);
+
+                                                window.setAttributes(layoutParams);
+                                            }
+                                            dialog.show();
                                         } else {
                                             builder.setTitle("Failure!");
                                             if (eventId[0] == null) {
@@ -226,5 +270,13 @@ public class ScanFragment extends Fragment {
     public void onPause() {
         super.onPause();
         barcodeView.pause();
+    }
+
+    public void changeFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }

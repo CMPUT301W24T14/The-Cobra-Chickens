@@ -121,7 +121,6 @@ public class SplashScreen extends AppCompatActivity {
                             userMap.put("myEvents", new ArrayList<>());
                             userMap.put("Organizing", new ArrayList<>());
                             userMap.put("checkedInto", new ArrayList<>());
-                            userMap.put("reusableCodes", new ArrayList<>());
 
                             db.collection("users")
                                     .document(mAuth.getCurrentUser().getUid())

@@ -1,22 +1,17 @@
 package com.example.eventplanner;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -35,14 +30,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -66,7 +57,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
     private Button generatePromoQRButton;
     private Button shareCheckInQRButton;
     private Button sharePromoQRButton;
-    private Button deleteEventButton;
     private ImageView checkinQRImageView;
     private ImageView promoQRImageView;
 
@@ -125,8 +115,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         Button shareCheckInQRButton = findViewById(R.id.shareCheckInQR);
         Button sharePromoQRButton = findViewById(R.id.sharePromoQR);
 
-        deleteEventButton = findViewById(R.id.button_delete_event);
-
         ImageView poster = findViewById(R.id.iv_poster);
 
         bundle = getIntent().getExtras();
@@ -158,10 +146,10 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                 numberOfAttendees.setText("Number of checked-in attendees: " + attendeeCount);
 
                 // Set event details to views
-                eventNameTextView.setText(String.format("Name: %s", currEvent.getEventName()));
-                eventDateTextView.setText(String.format("Date: %s", currEvent.getEventDate()));
-                eventTimeTextView.setText(String.format("Time: %s", currEvent.getEventTime()));
-                eventLocationTextView.setText(String.format("Location: %s", currEvent.getEventLocation()));
+                eventNameTextView.setText(currEvent.getEventName());
+                eventDateTextView.setText("Date: " + currEvent.getEventDate());
+                eventTimeTextView.setText("Time: " + currEvent.getEventTime());
+                eventLocationTextView.setText("Location: " + currEvent.getEventLocation());
                 eventDescriptionTextView.setText(currEvent.getEventDescription());
 
                 if (currEvent.getEventPoster() != null && !currEvent.getEventPoster().isEmpty()) {
@@ -182,8 +170,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
                 if (!Objects.equals(currEvent.getCheckInCode(), "")) {
                     generateCheckinQRButton.setText("Change Checkin QR");
-
-                    Bitmap qrCode = null;
+                    Bitmap qrCode = null; // Replace with your method to generate a QR code
 
                     try {
                         qrCode = QRCodeGenerator.generateQRCode(currEvent.getCheckInCode(), "check", 1000, 1000);
@@ -215,54 +202,21 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                 generateCheckinQRButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (Objects.equals(currEvent.getCheckInCode(), "")) {
-                            Bitmap qrCode = null;
+                        //Generate a new QR code. You'll need to replace "qrCodeData" with the actual data you want to encode in the QR code.
+                        Bitmap qrCode = null; // Replace with your method to generate a QR code
 
-                            currEvent.setCheckInCode(generateRandomCode(25));
-                            db.collection("events").document(currEvent.getEventId()).update("checkInCode", currEvent.getCheckInCode());
-                            try {
-                                qrCode = QRCodeGenerator.generateQRCode(currEvent.getCheckInCode(), "check", 1000, 1000);
-                            } catch (WriterException e) {
-                                throw new RuntimeException(e);
-                            }
-
-                            // Set the generated QR code as the image for the checkinQR ImageView.
-                            checkinQRImageView.setImageBitmap(qrCode);
-                            checkinQRImageView.setVisibility(View.VISIBLE);
-                        shareCheckInQRButton.setVisibility(View.VISIBLE);
-
-                        } else {
-                            String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-                            db.collection("users").document(userId).get()
-                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                            if (documentSnapshot.exists()) {
-                                                ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
-
-                                                if (reusableCodes != null) {
-                                                    reusableCodes.removeIf(code -> code == null || code.equals(""));
-                                                    if (reusableCodes.size() > 15) {
-                                                        reusableCodes.subList(0, reusableCodes.size() - 15).clear();
-                                                    }
-
-                                                }
-
-                                                db.collection("users").document(userId)
-                                                        .update("reusableCodes", reusableCodes);
-
-                                                //Create a pop up shows all past codes as qr codes and allows the user to click and choose which one they want
-                                                //As well allow the user to generate a new qr
-                                            }
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w("TAG", "Error getting documents.", e);
-                                        }
-                                    });
+                        currEvent.setCheckInCode(generateRandomCode(25));
+                        db.collection("events").document(currEvent.getEventId()).update("checkInCode", currEvent.getCheckInCode());
+                        try {
+                            qrCode = QRCodeGenerator.generateQRCode(currEvent.getCheckInCode(), "check", 1000, 1000);
+                        } catch (WriterException e) {
+                            throw new RuntimeException(e);
                         }
+
+                        // Set the generated QR code as the image for the checkinQR ImageView.
+                        checkinQRImageView.setImageBitmap(qrCode);
+                        checkinQRImageView.setVisibility(View.VISIBLE);
+                        shareCheckInQRButton.setVisibility(View.VISIBLE);
 
                     }
                 });
@@ -288,68 +242,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                     }
                 });
 
-                deleteEventButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Confirm with the user before deleting the event
-                        new AlertDialog.Builder(v.getContext())
-                                .setTitle("Delete event")
-                                .setMessage("Are you sure you want to delete this event?")
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        db.collection("events").document(currEvent.getEventId())
-                                                .delete()
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Toast.makeText(v.getContext(), "Event deleted", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Toast.makeText(v.getContext(), "Error deleting event", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-                                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                                        db.collection("users").document(userId)
-                                                .update("reusableCodes", FieldValue.arrayUnion(currEvent.getCheckInCode()))
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Log.d("TAG", "DocumentSnapshot successfully updated!");
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.w("TAG", "Error updating document", e);
-                                                    }
-                                                });
-
-                                        db.collection("users").document(userId)
-                                                .update("Organizing", FieldValue.arrayRemove(currEvent.getEventId()))
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Log.d("TAG", "DocumentSnapshot successfully updated!");
-                                                        finish();
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.w("TAG", "Error updating document", e);
-                                                    }
-                                                });
-                                    }
-
-                                })
-                                .setNegativeButton(android.R.string.no, null)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
-                    }
-                });
             }
 
             guestListRecyclerAdapter = new UserRecyclerAdapter(this, currEvent.getEventId(), signedUpList, recyclerViewInterface);
@@ -370,32 +262,24 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                 }
             });
 
-            //checkedInUserRecyclerAdapter = new UserRecyclerAdapter(this, checkedInList, recyclerViewInterface);
-            //checkedInRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            //checkedInRecyclerView.setAdapter(checkedInUserRecyclerAdapter);
         }
 
         shareCheckInQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Convert the image to a bitmap
-                Drawable drawable = checkinQRImageView.getDrawable();
-                if (drawable instanceof BitmapDrawable) {
-                    Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                Bitmap bitmap = ((BitmapDrawable) checkinQRImageView.getDrawable()).getBitmap();
 
-                    // Convert the Bitmap to a byte array
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-                    String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
-                    if (path != null) {
-                        Uri imageUri = Uri.parse(path);
+                // Convert the Bitmap to a byte array
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
+                Uri imageUri = Uri.parse(path);
 
-                        Intent share = new Intent(Intent.ACTION_SEND);
-                        share.setType("image/jpeg");
-                        share.putExtra(Intent.EXTRA_STREAM, imageUri);
-                        startActivity(Intent.createChooser(share, "Share Check in QR"));
-                    }
-                }
+                Intent share = new Intent(Intent.ACTION_SEND);
+                share.setType("image/jpeg");
+                share.putExtra(Intent.EXTRA_STREAM, imageUri);
+                startActivity(Intent.createChooser(share, "Share Check in QR"));
             }
         });
 
@@ -403,26 +287,20 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Convert the image to a bitmap
-                Drawable drawable = promoQRImageView.getDrawable();
-                if (drawable instanceof BitmapDrawable) {
-                    Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                Bitmap bitmap = ((BitmapDrawable) promoQRImageView.getDrawable()).getBitmap();
 
-                    // Convert the Bitmap to a byte array
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-                    String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
-                    if (path != null) {
-                        Uri imageUri = Uri.parse(path);
+                // Convert the Bitmap to a byte array
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
+                Uri imageUri = Uri.parse(path);
 
-                        Intent share = new Intent(Intent.ACTION_SEND);
-                        share.setType("image/jpeg");
-                        share.putExtra(Intent.EXTRA_STREAM, imageUri);
-                        startActivity(Intent.createChooser(share, "Share Promo QR"));
-                    }
-                }
+                Intent share = new Intent(Intent.ACTION_SEND);
+                share.setType("image/jpeg");
+                share.putExtra(Intent.EXTRA_STREAM, imageUri);
+                startActivity(Intent.createChooser(share, "Share Promo QR"));
             }
         });
-
 
         checkinQRImageView.setOnClickListener(new View.OnClickListener() {
             @Override
