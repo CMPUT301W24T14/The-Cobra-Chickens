@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
                 if (itemId == R.id.home) {
                     selectFragment(new HomeFragment(), "home_fragment");
                 } else if (itemId == R.id.scan) {
-                    selectFragment(new ScanFragment(), "scan_fragment");
-                } else if (itemId == R.id.notifications) {
+//                    selectFragment(new ScanFragment(), "scan_fragment");
+//                } else if (itemId == R.id.notifications) {
                     selectFragment(new NotificationsFragment(), "notifications_fragment");
                 } else if (itemId == R.id.profile) {
                     selectFragment(new ProfileFragment(), "profile_fragment");
