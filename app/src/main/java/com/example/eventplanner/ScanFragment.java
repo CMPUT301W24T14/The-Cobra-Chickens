@@ -32,6 +32,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -305,11 +306,34 @@ public class ScanFragment extends Fragment {
                                             Button signUpButton = dialog.findViewById(R.id.button_signup_or_deregister);
 
                                             signUpButton.setOnClickListener(v -> {
-                                                Toast.makeText(requireActivity(), "Your event is in My Events", Toast.LENGTH_SHORT).show();
-                                                db.collection("events").document(eventId[0]).update("signedUpUsers", FieldValue.arrayUnion(userId));
-                                                db.collection("users").document(userId).update("myEvents", FieldValue.arrayUnion(eventId[0]));
-                                                dialog.dismiss();
+                                                db.collection("events").document(eventId[0]).get()
+                                                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                            @Override
+                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                if (documentSnapshot.exists()) {
+                                                                    int eventMaxAttendees = Integer.parseInt(documentSnapshot.getString("eventMaxAttendees"));
+                                                                    ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
+
+                                                                    if (signedUpUsers != null) {
+                                                                        if (signedUpUsers.size() >= eventMaxAttendees) {
+                                                                            Toast.makeText(getContext(), "Event is full!", Toast.LENGTH_SHORT).show();
+                                                                        } else {
+                                                                            Toast.makeText(getContext(), "confirmed", Toast.LENGTH_SHORT).show();
+                                                                            db.collection("events").document(eventId[0]).update("signedUpUsers", FieldValue.arrayUnion(userId));
+                                                                            db.collection("users").document(userId).update("myEvents", FieldValue.arrayUnion(eventId[0]));
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Toast.makeText(getContext(), "An error occurred. We are unable to register you for this event at this time.", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
                                             });
+
 
 
                                             Window window = dialog.getWindow();
