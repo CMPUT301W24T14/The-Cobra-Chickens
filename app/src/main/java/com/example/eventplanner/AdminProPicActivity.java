@@ -47,7 +47,7 @@ public class AdminProPicActivity extends AppCompatActivity {
                 }
             }
 
-//            // Display the users in the ListView
+            // Display the users in the ListView
             ProPicRecyclerAdapter adapter = new ProPicRecyclerAdapter(this, profilesList);
             profilesRecyclerView.setAdapter(adapter);
         }).addOnFailureListener(e -> {

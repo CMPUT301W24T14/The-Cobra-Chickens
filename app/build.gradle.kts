@@ -94,6 +94,7 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging:23.0.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.material:material:1.4.0")
+    implementation("com.google.android.gms:play-services-maps:17.0.1")
 
     testImplementation("org.mockito:mockito-core:3.11.2")
     testImplementation("org.robolectric:robolectric:4.6.1")
