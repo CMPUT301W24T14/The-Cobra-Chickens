@@ -381,17 +381,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         Log.w("TAG", "Error getting documents.", e);
-//                                        String newCode = generateRandomCode(25);
-//                                        Bitmap newQRCode;
-//                                        try {
-//                                            newQRCode = QRCodeGenerator.generateQRCode(newCode, "check", 1000, 1000);
-//                                        } catch (WriterException e1) {
-//                                            throw new RuntimeException(e1);
-//                                        }
-//
-//                                        // Set the new QR code as the image for the checkinQR ImageView.
-//                                        checkinQRImageView.setImageBitmap(newQRCode);
-//                                        checkinQRImageView.setVisibility(View.VISIBLE);
                                     }
                                 });
                     }
@@ -755,32 +744,33 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
     private void loadSignedUpUserDocs(ArrayList<String> userIds, UserRecyclerAdapter userRecyclerAdapter) {
 
         for (String userId : userIds) { // for every eventId in user's organizing Array
-            db.collection("users")
-                    .document(userId)
-                    .get()
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+            if (userId != null) {
+                db.collection("users")
+                        .document(userId)
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                            String userId = documentSnapshot.getId();
-                            String name = documentSnapshot.getString("Name");
-                            String contact = documentSnapshot.getString("Contact");
-                            String homePage = documentSnapshot.getString("Homepage");
-                            String profilePicUrl = documentSnapshot.getString("ProfilePic");
-                            boolean usrlocation = documentSnapshot.getBoolean("Location");
+                                String userId = documentSnapshot.getId();
+                                String name = documentSnapshot.getString("Name");
+                                String contact = documentSnapshot.getString("Contact");
+                                String homePage = documentSnapshot.getString("Homepage");
+                                String profilePicUrl = documentSnapshot.getString("ProfilePic");
+                                boolean usrlocation = documentSnapshot.getBoolean("Location");
 
-                            ArrayList<String> checkedInto = (ArrayList<String>) documentSnapshot.get("checkedInto");
-                            ArrayList<String> signedUpFor = (ArrayList<String>) documentSnapshot.get("myEvents");
-                            ArrayList<String> organizing = (ArrayList<String>) documentSnapshot.get("Organizing");
+                                ArrayList<String> checkedInto = (ArrayList<String>) documentSnapshot.get("checkedInto");
+                                ArrayList<String> signedUpFor = (ArrayList<String>) documentSnapshot.get("myEvents");
+                                ArrayList<String> organizing = (ArrayList<String>) documentSnapshot.get("Organizing");
 
-                            ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
+                                ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
 
-                            signedUpList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing, reusableCodes));
+                                signedUpList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing, reusableCodes));
 
-                            userRecyclerAdapter.notifyDataSetChanged();
-                        }
-                    });
-
+                                userRecyclerAdapter.notifyDataSetChanged();
+                            }
+                        });
+            }
         }
     }
 
@@ -796,32 +786,34 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
     private void loadCheckedInUserDocs(ArrayList<CheckedInUser> checkedInUsers, UserRecyclerAdapter userRecyclerAdapter) {
 
         for (CheckedInUser user : checkedInUsers) { // for every eventId in user's organizing Array
-            db.collection("users")
-                    .document(user.getUserId())
-                    .get()
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                            String userId = documentSnapshot.getId();
-                            String name = documentSnapshot.getString("Name");
-                            String contact = documentSnapshot.getString("Contact");
-                            String homePage = documentSnapshot.getString("Homepage");
-                            String profilePicUrl = documentSnapshot.getString("ProfilePic");
-                            boolean usrlocation = documentSnapshot.getBoolean("Location");
+            if (user != null) {
+                db.collection("users")
+                        .document(user.getUserId())
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                            ArrayList<String> checkedInto = (ArrayList<String>) documentSnapshot.get("checkedInto");
-                            ArrayList<String> signedUpFor = (ArrayList<String>) documentSnapshot.get("myEvents");
-                            ArrayList<String> organizing = (ArrayList<String>) documentSnapshot.get("Organizing");
+                                String userId = documentSnapshot.getId();
+                                String name = documentSnapshot.getString("Name");
+                                String contact = documentSnapshot.getString("Contact");
+                                String homePage = documentSnapshot.getString("Homepage");
+                                String profilePicUrl = documentSnapshot.getString("ProfilePic");
+                                boolean usrlocation = documentSnapshot.getBoolean("Location");
 
-                            ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
+                                ArrayList<String> checkedInto = (ArrayList<String>) documentSnapshot.get("checkedInto");
+                                ArrayList<String> signedUpFor = (ArrayList<String>) documentSnapshot.get("myEvents");
+                                ArrayList<String> organizing = (ArrayList<String>) documentSnapshot.get("Organizing");
 
-                            checkedInList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing, reusableCodes));
+                                ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
 
-                            userRecyclerAdapter.notifyDataSetChanged();
-                        }
-                    });
+                                checkedInList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing, reusableCodes));
 
+                                userRecyclerAdapter.notifyDataSetChanged();
+                            }
+                        });
+            }
         }
     }
 }
