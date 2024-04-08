@@ -62,14 +62,15 @@ public class PushnotificationFragment extends Fragment {
 
     private void subscribeToNewTopic() {
         String topicInput = binding.newTopicEdittext.getText().toString();
-        if (!topicInput.isEmpty()) {
-            pushnotificationViewModel.subscribeToNewTopic(topicInput, new TopicCallback() {
+        String formattedTopicName = topicInput.replaceAll("\\s+", "_");
+        if (!formattedTopicName.isEmpty()) {
+            pushnotificationViewModel.subscribeToNewTopic(formattedTopicName, new TopicCallback() {
                 @Override
                 public void onSubscribed() {
                     // Setting the Text View
-                    binding.textviewCurrentTopic.setText(topicInput);
+                    binding.textviewCurrentTopic.setText(formattedTopicName);
                     // Saving Topic in SharedPref
-                    SharedPreferencesHelper.setCurrentTopic(requireContext(), topicInput);
+                    SharedPreferencesHelper.setCurrentTopic(requireContext(), formattedTopicName);
                 }
             });
         } else {

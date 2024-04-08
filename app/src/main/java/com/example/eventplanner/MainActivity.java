@@ -2,6 +2,8 @@ package com.example.eventplanner;
 
 import static android.content.ContentValues.TAG;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -9,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -89,19 +92,24 @@ public class MainActivity extends AppCompatActivity {
 
         // requestPermission will show the native Android notification permission prompt.
         // NOTE: It's recommended to use a OneSignal In-App Message to prompt instead.
-        OneSignal.getNotifications().requestPermission(true, Continue.with(r -> {
-            if (r.isSuccess()) {
-                if (r.getData()) {
-                    // `requestPermission` completed successfully and the user has accepted permission
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted, so request it
+            OneSignal.getNotifications().requestPermission(true, Continue.with(r -> {
+                if (r.isSuccess()) {
+                    if (r.getData()) {
+                        // `requestPermission` completed successfully and the user has accepted permission
+                    }
+                    else {
+                        // `requestPermission` completed successfully but the user has rejected permission
+                    }
                 }
                 else {
-                    // `requestPermission` completed successfully but the user has rejected permission
+                    // `requestPermission` completed unsuccessfully, check `r.getThrowable()` for more info on the failure reason
                 }
-            }
-            else {
-                // `requestPermission` completed unsuccessfully, check `r.getThrowable()` for more info on the failure reason
-            }
-        }));
+            }));
+        } else {
+            // Permission is already granted, you can perform further actions here
+        }
     }
 
     /**
