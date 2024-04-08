@@ -25,8 +25,10 @@ import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
+import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 
@@ -37,6 +39,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Collection;
+import java.util.List;
 
 public abstract class AbstractTest {
 
@@ -61,10 +64,18 @@ public abstract class AbstractTest {
     }
 
     public void clickAllow() {
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         try {
-            UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
             // Wait for the permission dialog to appear
             UiObject allowButton = uiDevice.findObject(new UiSelector().text("Allow"));
+            if (allowButton.exists()) {
+                allowButton.click();
+            }
+        } catch (Exception ignored) {}
+
+        try {
+            // Wait for the permission dialog to appear
+            UiObject allowButton = uiDevice.findObject(new UiSelector().text("While using the app"));
             if (allowButton.exists()) {
                 allowButton.click();
             }
@@ -188,6 +199,16 @@ public abstract class AbstractTest {
         }
     }
 
+    public void clickOn(String name, int instanceNumber) {
+        // Wait for the permission dialog to appear
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        List<UiObject2> instances = uiDevice.findObjects(By.text(name));
+
+        if (instances.size() >= instanceNumber) {
+            instances.get(instanceNumber - 1).click();
+        } else assert false;
+    }
+
     public void textVisible(String text) {
         // Wait for the permission dialog to appear
         UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
@@ -246,7 +267,7 @@ public abstract class AbstractTest {
             } catch (UiObjectNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            uiDevice.pressEnter();
+            uiDevice.pressBack();
         }
     }
 
@@ -265,7 +286,7 @@ public abstract class AbstractTest {
         }
 
         // Calculate the center position below the text
-        int centerX = bounds.right + 700;
+        int centerX = uiDevice.getDisplayWidth() - 100;
         int centerY = bounds.centerY();
 
         // Click on the switch at the calculated position
@@ -317,6 +338,21 @@ public abstract class AbstractTest {
         }
     }
 
+    public void swipe() {
+        // Initialize UiDevice instance
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+
+        // Set the swipe starting and ending points
+        int startX = uiDevice.getDisplayWidth() / 2;   // middle of the screen
+        int endY = uiDevice.getDisplayHeight() / 2;  // center of the screen
+        int endX = startX;
+        int startY = uiDevice.getDisplayHeight() - 200; // a little above the bottom of the screen
+
+        // Perform the swipe gesture to scroll down
+        uiDevice.swipe(startX, startY, endX, endY, 10); // 10 steps for smooth scrolling
+
+    }
+
     public void createEvent(String eventName, String eventDescription, String numberAttendees, String eventLocation, Boolean trackGeolocation) {
         clickOn("Create Event");
         typeThisOnThat(eventName, "Enter Event Name");
@@ -324,10 +360,26 @@ public abstract class AbstractTest {
         if (numberAttendees != null) typeThisOnThat(numberAttendees, "Max Number of Attendees (Optional)");
         typeThisOnThat(eventLocation, "Enter Event Location");
         if (trackGeolocation) clickOnCheckInGeolocation();
+        swipe();
         selectDate();
         selectTime();
+        swipe();
         clickOn("Upload Image");
         addPhotoSequence();
-        clickOn("Create Event");
+        swipe();
+        onView(withId(R.id.btn_create_event)).perform(click());
+        onView(withId(R.id.btn_create_event)).perform(click());
+        onView(withId(R.id.btn_create_event)).perform(click());
+
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        UiObject text = uiDevice.findObject(new UiSelector().text("All Events"));
+        while (!text.exists()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                //throw new RuntimeException(e);
+            }
+        }
+
     }
 }
