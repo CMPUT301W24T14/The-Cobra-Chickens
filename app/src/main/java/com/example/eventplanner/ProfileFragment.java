@@ -443,13 +443,6 @@ public class ProfileFragment extends Fragment {
 
     });
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        getParentFragmentManager().beginTransaction().detach(getActivity().getSupportFragmentManager().findFragmentByTag("profile_fragment")).commit();
-        getParentFragmentManager().beginTransaction().attach(getActivity().getSupportFragmentManager().findFragmentByTag("profile_fragment")).commit();
-    }
-
     private void deleteProfilePic() {
 
         userId = user_test.getUid();
