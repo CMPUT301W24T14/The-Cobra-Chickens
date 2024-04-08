@@ -29,6 +29,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
+
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
@@ -94,11 +96,6 @@ public class EventCreateActivity extends AppCompatActivity {
     private TextInputEditText editTextEventName, editTextEventDescription, editTextMaxAttendees, editTextEventLocation;
     private DocumentReference key;
 
-    /**
-     * Initializes the activity and sets up necessary components.
-     *
-     * @param savedInstanceState A Bundle containing the activity's previously saved state, if any
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -202,22 +199,18 @@ public class EventCreateActivity extends AppCompatActivity {
                 guests = String.valueOf(editTextMaxAttendees.getText());
                 location = String.valueOf(editTextEventLocation.getText());
 
+                Boolean geolocation;
+                SwitchCompat geolocation_switch = findViewById(R.id.organizer_switch_locationtracking);
+                geolocation = geolocation_switch.isChecked();
+
                 // Upload the image to Firebase Storage
-                uploadImageAndCreateEvent(event_name, description, guests, location);
+                uploadImageAndCreateEvent(event_name, description, guests, location, geolocation);
             }
         });
     }
 
     // Function to upload image to Firebase Storage and create the event
-    /**
-     * Uploads the selected image to Firebase Storage and creates the event in Firestore.
-     *
-     * @param eventName   The name of the event
-     * @param description The description of the event
-     * @param guests      The maximum number of attendees for the event
-     * @param location    The location of the event
-     */
-    private void uploadImageAndCreateEvent(String eventName, String description, String guests, String location) {
+    private void uploadImageAndCreateEvent(String eventName, String description, String guests, String location, Boolean geolocation) {
         // Generate a unique filename using UUID
         String filename = UUID.randomUUID().toString();
 
@@ -247,7 +240,8 @@ public class EventCreateActivity extends AppCompatActivity {
                         eventData.put("promoCode", "");
                         eventData.put("eventAnnouncements", new ArrayList<>());
                         eventData.put("signedUpUsers", new ArrayList<>());
-
+                        eventData.put("geolocationTracking", geolocation);
+                        eventData.put("checkedInGeopoints", new HashMap<>());
                         eventData.put("checkedInUsers", new HashMap<>());
 
                         // Add the event data to Firestore
@@ -285,9 +279,6 @@ public class EventCreateActivity extends AppCompatActivity {
     }
 
     // Function for opening the gallery on user device.
-    /**
-     * Opens the gallery on the user's device to select an image.
-     */
     private void openGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -295,9 +286,6 @@ public class EventCreateActivity extends AppCompatActivity {
     }
 
     // Function to open the calendar to select a date.
-    /**
-     * Opens the calendar dialog to select a date for the event.
-     */
     private void openDateDialog() {
         DatePickerDialog dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             // When user confirms the date, grab those values.
@@ -312,10 +300,8 @@ public class EventCreateActivity extends AppCompatActivity {
 
         dialog.show();
     }
+
     // Function to open the clock to select a time.
-    /**
-     * Opens the clock dialog to select a time for the event.
-     */
     private void openTimeDialog() {
         TimePickerDialog dialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             // When user confirms the time, grab those values.

@@ -47,7 +47,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         // Handle the generation of your own notifications here if needed
-        sendNotification(remoteMessage.getData().get("your_custom_key"));
+        sendNotification(remoteMessage.getData().get(""));
     }
     /**
      * Schedule a long-running job.

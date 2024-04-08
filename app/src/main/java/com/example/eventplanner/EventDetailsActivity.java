@@ -26,9 +26,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-/**
- * Activity to display details of an event.
- */
+
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+
 public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventNameTextView, eventDateTextView, eventTimeTextView, eventLocationTextView, eventDescriptionTextView, eventOrganizerTextView;
     private RecyclerView announcementsRecyclerView;
@@ -42,7 +44,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
-        // Initialize UI elements
+
         eventNameTextView = findViewById(R.id.event_name);
         eventDateTextView = findViewById(R.id.event_date);
         eventTimeTextView = findViewById(R.id.event_time);
@@ -70,13 +72,13 @@ public class EventDetailsActivity extends AppCompatActivity {
             Event event = bundle.getParcelable("event");
             if (event != null) {
                 // Set event details to views
-                eventNameTextView.setText("Name: " + event.getEventName());
-                eventDateTextView.setText("Date: " + event.getEventDate());
-                eventTimeTextView.setText("Time: " + event.getEventTime());
-                eventLocationTextView.setText("Location: " + event.getEventLocation());
+                eventNameTextView.setText(String.format("Name: %s", event.getEventName()));
+                eventDateTextView.setText(String.format("Date: %s", event.getEventDate()));
+                eventTimeTextView.setText(String.format("Time: %s", event.getEventTime()));
+                eventLocationTextView.setText(String.format("Location: %s", event.getEventLocation()));
 
                 eventDescriptionTextView.setText(event.getEventDescription());
-                // Load event poster if available
+
                 if (event.getEventPoster() != null && !event.getEventPoster().isEmpty()) {
                     Glide.with(this)
                             .load(event.getEventPoster())
@@ -84,7 +86,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 } else {
                     poster.setVisibility(View.GONE);
                 }
-                // Populate announcements if available
+
                 if (event.getEventAnnouncements() != null && !event.getEventAnnouncements().isEmpty()) {
                     announcements = event.getEventAnnouncements();
                 }
@@ -163,9 +165,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
 
     }
-    /**
-     * Shows a confirmation dialog for signing up for the event.
-     */
     private void showSignUpConfirmation() {
 
         AlertDialog.Builder confirmDialog = new AlertDialog.Builder(this);
@@ -174,14 +173,24 @@ public class EventDetailsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Event event = bundle.getParcelable("event");
-                        if (event.getSignedUpUsers().size() >= Integer.valueOf(event.getEventMaxAttendees())) {
-                            Toast.makeText(EventDetailsActivity.this, "Event is full!", Toast.LENGTH_SHORT).show();
+                        int maxAttendees;
+                        try {
+                            maxAttendees = Integer.valueOf(event.getEventMaxAttendees());
+                            if (event.getSignedUpUsers().size() >= maxAttendees) {
+                                Toast.makeText(EventDetailsActivity.this, "Event is full!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
+                                signUserUp();
+                            }
+                        } catch (Exception e) {
+                            try {
+                                Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
+                                signUserUp();
+                            } catch (Exception f) {
+                                Toast.makeText(EventDetailsActivity.this, "An error occured. We are unable to register you for this event at this time.", Toast.LENGTH_SHORT).show();
+                            }
                         }
 
-                        else {
-                            Toast.makeText(EventDetailsActivity.this, "confirmed", Toast.LENGTH_SHORT).show();
-                            signUserUp();
-                        }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -192,9 +201,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 });
         confirmDialog.create().show();
     }
-    /**
-     * Signs up the current user for the event.
-     */
+
     private void signUserUp() {
 
         Event event = bundle.getParcelable("event");

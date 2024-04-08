@@ -42,11 +42,13 @@
 
         <LinearLayout
             android:id="@+id/linearLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
             android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView">
 
@@ -138,7 +140,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
                 android:text="Description"
-                android:textColor="#424242"
+                android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -149,15 +151,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="5dp"
             android:layout_marginEnd="20dp"
-            android:background="@drawable/description_border"
+            android:background="@drawable/bottom_border"
             android:padding="10dp"
-            android:text="This event does not have a descriptionnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn."
+            android:text="This event does not have a description."
             android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+        <Button
+            android:id="@+id/button_organizer_map"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:layout_marginHorizontal="17dp"
+            android:text="Attendee Check-in Map"
+            app:layout_constraintTop_toBottomOf="@+id/tv_event_description"/>
 
         <ImageView
             android:id="@+id/checkInQR"
@@ -166,8 +176,22 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_event_description"
-            android:visibility="gone"/>
+            app:layout_constraintTop_toBottomOf="@id/button_organizer_map"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/shareCheckInQR"
+            android:layout_width="30dp"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/baseline_ios_share_24"
+            android:backgroundTint="#000000"
+            app:backgroundTint="@null"
+            android:visibility="gone"
+            app:layout_constraintLeft_toRightOf="@+id/checkInQR"
+            app:layout_constraintTop_toBottomOf="@+id/button_organizer_map" />
 
         <LinearLayout
 
@@ -175,24 +199,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="15dp"
             android:orientation="horizontal"
+            android:paddingTop="5dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/checkInQR">
 
             <Button
                 android:id="@+id/generateCheckInQR"
+                android:background="@drawable/button_background"
+                android:textColor="@color/black"
+                app:backgroundTint="@null"
                 android:layout_width="225dp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
                 android:text="Generate Check-in QR Code" />
 
-            <Button
-                android:id="@+id/shareCheckInQR"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/baseline_ios_share_24"
-                android:layout_gravity="center"/>
 
         </LinearLayout>
 
@@ -206,32 +227,71 @@
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/check_in_options" />
 
+        <Button
+            android:id="@+id/sharePromoQR"
+            android:layout_width="30dp"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="40dp"
+            android:visibility="gone"
+            android:background="@drawable/baseline_ios_share_24"
+            android:backgroundTint="#000000"
+            app:backgroundTint="@null"
+            app:layout_constraintLeft_toRightOf="@+id/promoQR"
+            app:layout_constraintTop_toBottomOf="@+id/check_in_options" />
+
         <LinearLayout
 
             android:id="@+id/promo_options"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
+            android:paddingTop="5dp"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/promoQR">
 
             <Button
                 android:id="@+id/generatePromoQR"
+                android:background="@drawable/button_background"
+                android:textColor="@color/black"
+                app:backgroundTint="@null"
                 android:layout_width="225dp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
                 android:text="Generate Promo QR Code" />
 
-            <Button
-                android:id="@+id/sharePromoQR"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:background="@drawable/baseline_ios_share_24" />
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/add_announcement_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/button_background"
+            android:text="+ New announcment"
+            android:textColor="@color/black"
+            app:backgroundTint="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toBottomOf="@+id/rv_announcements" />
+
+        <Button
+            android:id="@+id/add_push_notification_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/button_background"
+            android:text="+ Push notification"
+            android:textColor="@color/black"
+            app:backgroundTint="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toBottomOf="@+id/add_announcement_button" />
 
         <TextView
             android:id="@+id/tv_announcements"
@@ -240,7 +300,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:text="Announcements"
-            android:textColor="#424242"
+            android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -248,12 +308,16 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_announcements"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:background="@android:color/transparent"
             android:paddingHorizontal="5dp"
             android:paddingVertical="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_announcements" />
 
@@ -262,23 +326,54 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:text="Guest list"
-            android:textColor="#424242"
+            android:layout_marginTop="20dp"
+            android:text="Guest list 📋"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rv_announcements" />
+            app:layout_constraintTop_toBottomOf="@+id/add_push_notification_button" />
+
+        <TextView
+            android:id="@+id/tv_number_attendees"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="Number of checked-in attendees"
+            android:textColor="#424242"
+            android:textSize="14sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_guest_list" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_guest_list"
-            android:layout_width="wrap_content"
-            android:layout_height="150dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:background="@android:color/transparent"
             android:paddingHorizontal="5dp"
             android:paddingVertical="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_guest_list" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_number_attendees" />
+
+        <Button
+            android:id="@+id/button_make_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="124dp"
+            android:layout_marginTop="8dp"
+            android:text="Make Notification"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_delete_event" />
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <Button
             android:id="@+id/button_delete_event"
