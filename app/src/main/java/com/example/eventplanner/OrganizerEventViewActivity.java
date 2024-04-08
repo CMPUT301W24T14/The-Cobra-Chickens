@@ -607,9 +607,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
             }
         });
 
-        // Hide the "Change Topic" button since the topic is fixed
-        binding.buttonChangeTopic.setVisibility(View.GONE);
-
         // Show the dialog
         alertDialog.show();
     }
