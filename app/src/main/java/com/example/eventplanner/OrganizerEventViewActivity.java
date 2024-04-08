@@ -1,9 +1,5 @@
 package com.example.eventplanner;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,6 +13,10 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -40,8 +40,10 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
     private Button generatePromoQRButton;
     private Button shareCheckInQRButton;
     private Button sharePromoQRButton;
+    private Button makeNotificationButton;
     private ImageView checkinQRImageView;
     private ImageView promoQRImageView;
+
 
     private QRCodeGenerator generator;
 
@@ -88,6 +90,9 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
         shareCheckInQRButton = findViewById(R.id.shareCheckInQR);
         sharePromoQRButton = findViewById(R.id.sharePromoQR);
+
+        makeNotificationButton = findViewById(R.id.button_make_notification);
+
 
         checkinQRImageView = findViewById(R.id.checkInQR);
         promoQRImageView = findViewById(R.id.promoQR);

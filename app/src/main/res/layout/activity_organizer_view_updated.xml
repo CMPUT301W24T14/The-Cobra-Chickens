@@ -281,6 +281,21 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_guest_list" />
 
         <Button
+            android:id="@+id/button_make_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="124dp"
+            android:layout_marginTop="8dp"
+            android:text="Make Notification"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_delete_event" />
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <Button
             android:id="@+id/button_delete_event"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

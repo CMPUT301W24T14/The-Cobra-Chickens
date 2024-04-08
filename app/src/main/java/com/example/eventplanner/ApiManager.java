@@ -1,11 +1,16 @@
 package com.example.eventplanner;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import okhttp3.ResponseBody;
+
 public class ApiManager {
     public void postNotification(PushNotification notification) {
-        retrofit2.Call<okhttp3.ResponseBody> call = RetrofitInstance.getApi().postNotification(notification);
-        call.enqueue(new retrofit2.Callback<okhttp3.ResponseBody>() {
+        Call<ResponseBody> call = RetrofitInstance.getApi().postNotification(notification);
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(retrofit2.Call<okhttp3.ResponseBody> call, retrofit2.Response<okhttp3.ResponseBody> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     System.out.println("Sending data was successful - notification recipient: " + notification.getTo());
                 } else {
@@ -14,7 +19,7 @@ public class ApiManager {
             }
 
             @Override
-            public void onFailure(retrofit2.Call<okhttp3.ResponseBody> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 System.out.println("Error occurred during the API call: " + t.getMessage());
             }
         });
