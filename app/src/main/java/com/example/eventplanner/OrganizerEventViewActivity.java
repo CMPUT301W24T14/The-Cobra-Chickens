@@ -288,7 +288,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         if (documentSnapshot.exists()) {
                                             ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
-
                                             if (reusableCodes != null) {
                                                 reusableCodes.removeIf(code -> code == null || code.equals(""));
                                                 if (reusableCodes.size() > 15) {
@@ -296,8 +295,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                                 }
                                             }
 
-                                            db.collection("users").document(userId)
-                                                    .update("reusableCodes", reusableCodes);
+                                            db.collection("users").document(userId).update("reusableCodes", reusableCodes);
 
                                             // Create a pop up shows all past codes as qr codes and allows the user to click and choose which one they want
                                             AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerEventViewActivity.this);
@@ -333,6 +331,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                                     // Set the selected QR code as the image for the checkinQR ImageView.
                                                     checkinQRImageView.setImageBitmap(qrCodes.get(which));
                                                     checkinQRImageView.setVisibility(View.VISIBLE);
+                                                    shareCheckInQRButton.setVisibility(View.VISIBLE);
                                                 }
                                             });
 
@@ -348,6 +347,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     // Generate a new QR code
                                                     String newCode = generateRandomCode(25);
+                                                    currEvent.setCheckInCode(newCode);
                                                     Bitmap newQRCode;
                                                     try {
                                                         newQRCode = QRCodeGenerator.generateQRCode(newCode, "check", 1000, 1000);
@@ -358,6 +358,8 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                                     // Set the new QR code as the image for the checkinQR ImageView.
                                                     checkinQRImageView.setImageBitmap(newQRCode);
                                                     checkinQRImageView.setVisibility(View.VISIBLE);
+                                                    shareCheckInQRButton.setVisibility(View.VISIBLE);
+                                                    db.collection("events").document(currEvent.getEventId()).update("checkInCode", currEvent.getCheckInCode());
                                                     dialog.dismiss();
                                                 }
                                             });
@@ -377,6 +379,17 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         Log.w("TAG", "Error getting documents.", e);
+//                                        String newCode = generateRandomCode(25);
+//                                        Bitmap newQRCode;
+//                                        try {
+//                                            newQRCode = QRCodeGenerator.generateQRCode(newCode, "check", 1000, 1000);
+//                                        } catch (WriterException e1) {
+//                                            throw new RuntimeException(e1);
+//                                        }
+//
+//                                        // Set the new QR code as the image for the checkinQR ImageView.
+//                                        checkinQRImageView.setImageBitmap(newQRCode);
+//                                        checkinQRImageView.setVisibility(View.VISIBLE);
                                     }
                                 });
                     }
