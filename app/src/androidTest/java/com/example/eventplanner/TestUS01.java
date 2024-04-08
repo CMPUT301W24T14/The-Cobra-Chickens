@@ -43,7 +43,7 @@ public class TestUS01 extends AbstractTest {
     // Tests for US 01.10.01
     // As an organizer, I want to see who is signed up to attend my event.
     @Test
-    public void test01_01_01_and_01_02_01_and_01_04_01_and_01_07_01_and_01_08_01() {
+    public void test01_01_01_and_01_02_01_and_01_04_01_and_01_07_01_and_01_08_01_and_01_10_01() {
         goToOrganize();
         createEvent("Testing US 01.01.01",
                 "As an organizer, I want to create a new event and generate a unique QR code for attendee check-ins.",

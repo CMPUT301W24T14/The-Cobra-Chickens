@@ -64,7 +64,7 @@ public class TestUS04 extends AbstractTest {
 
     // Tests for US 04.02.01
     // As an administrator, I want to be able to remove profiles.
-    /* Disabled test to prevent removing something important ***/
+    /* Disabled test to prevent removing something important **/
     /*@Test
     public void test04_02_01() {
         onView(withText("See Profiles")).check(matches(isDisplayed()));
@@ -81,7 +81,7 @@ public class TestUS04 extends AbstractTest {
 
     // Tests for US 04.03.01
     // As an administrator, I want to be able to remove images.
-    /* Disabled test to prevent removing something important ***/
+    /* Disabled test to prevent removing something important **/
     /*
     @Test
     public void test04_03_01() {

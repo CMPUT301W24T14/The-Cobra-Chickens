@@ -95,6 +95,10 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.material:material:1.4.0")
 
+    testImplementation("org.mockito:mockito-core:3.11.2")
+    testImplementation("org.robolectric:robolectric:4.6.1")
+    testImplementation("androidx.test:core:1.4.0")
+
 }
 secrets {
     // Optionally specify a different file name containing your secrets.
