@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+// not in use
 /**
  * Adapter class for populating notifications in a RecyclerView.
  * This adapter binds notification data to the views displayed in the RecyclerView.

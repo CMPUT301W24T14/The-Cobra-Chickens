@@ -6,6 +6,9 @@ import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
+/**
+ * Interface that represents an API for sending push notifications.
+ */
 public interface NotificationApi {
 
     String CONTENT_TYPE = "application/json";

@@ -21,6 +21,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
     private static final String CHANNEL_ID = "my_channel_id";
     private static final int NOTIFICATION_ID = 100;
+
     /**
      * Called when a message is received.
      * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.

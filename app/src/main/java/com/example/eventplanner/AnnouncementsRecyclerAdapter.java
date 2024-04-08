@@ -50,7 +50,6 @@ public class AnnouncementsRecyclerAdapter extends RecyclerView.Adapter<Announcem
     }
     /**
      * Called by RecyclerView to display the data at the specified position.
-     *
      * @param holder The ViewHolder which should be updated to represent the contents of the item at the given position
      * @param position The position of the item within the adapter's data set
      */

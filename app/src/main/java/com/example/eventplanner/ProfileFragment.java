@@ -171,8 +171,6 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-
-
         editPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -377,7 +375,10 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    // FOR TESTING PURPOSES ONLY (does it show the correct user location if the switch is on?)
+    /**
+     * Updates the latitude and longitude text views with the user's location coordinates.
+     * @param location The location object containing latitude and longitude coordinates.
+     */
     private void updateLatAndLong(Location location) {
         latitude.setText(String.valueOf(location.getLatitude()));
         longitude.setText(String.valueOf(location.getLongitude()));
@@ -420,6 +421,9 @@ public class ProfileFragment extends Fragment {
 
     });
 
+    /**
+     * Deletes the user's profile picture.
+     */
     private void deleteProfilePic() {
 
         userId = user_test.getUid();
@@ -469,6 +473,10 @@ public class ProfileFragment extends Fragment {
             }
     );
 
+    /**
+     * Uploads the image the user selected from their gallery to Firebase Storage and updates the user's profile picture URI accordingly.
+     * @param imageUri The URI of the selected image.
+     */
     private void uploadImage(Uri imageUri) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("profile_images/" + userId + ".png");
 
@@ -510,6 +518,12 @@ public class ProfileFragment extends Fragment {
         });
     }
 
+    /**
+     * Retrieves user information from Firestore database and updates the UI with the user's details.
+     * If a profile picture is available, it is loaded into the ImageView using Glide.
+     * If the user does not have a custom profile picture, a default image is loaded that was
+     * deterministically generated based on the user's ID.
+     */
     private void getUser(){
         db = FirebaseFirestore.getInstance();
         usersRef = db.collection("users");

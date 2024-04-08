@@ -199,6 +199,12 @@ public class AllEventsFragment extends Fragment implements RecyclerViewInterface
                 });
     }
 
+    /**
+     * Converts a HashMap of checked-in users from the database into an ArrayList of CheckedInUser objects.
+     * An each entry in the HashMap has key: userId, value: number of time's that user has checked in.
+     * @param checkedInUsersFromDB The HashMap with user IDs that are mapped to the respective number of check-ins.
+     * @return An ArrayList of CheckedInUser objects representing the checked-in users.
+     */
     private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(HashMap<String, String> checkedInUsersFromDB) {
 
         ArrayList<CheckedInUser> checkedInUsers = new ArrayList<>();

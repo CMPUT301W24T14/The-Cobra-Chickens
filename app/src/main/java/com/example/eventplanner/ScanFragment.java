@@ -49,6 +49,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Fragment that handles scanning QR codes.
+ * Event check-ins and the scanning of promotional QR is handled here.
+ */
 public class ScanFragment extends Fragment {
     private CompoundBarcodeView barcodeView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -58,6 +62,17 @@ public class ScanFragment extends Fragment {
     private Boolean eventRequiresGeolocation;
     private Boolean successfulCheckIn;
 
+    /**
+     * Creates the view for ScanFragment, which is contained within HomeFragmentUpdated
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to. The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     * @return The view specific to ScanFragment
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -380,6 +395,17 @@ public class ScanFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Retrieves the user's current location and updates a certain event's checkedInUsers map with
+     * the location data.
+     * If the necessary location permissions are not granted, it displays an alert dialog indicating
+     * the failure to retrieve the location.
+     * If the user's location is grabbed successfully, the checkedInUser map in Firestore updates
+     * with the userId and a GeoPoint object containing the latitude and longitude of the user.
+     * @param eventId           The event ID of the event that the user is checking in to.
+     * @param checkedInGeoPoints A HashMap containing the user IDs as keys and their GeoPoint
+     *                           locations as values.
+     */
     private void getUserLocation(String eventId, HashMap<String, GeoPoint> checkedInGeoPoints) {
 
         // Get the user's current location

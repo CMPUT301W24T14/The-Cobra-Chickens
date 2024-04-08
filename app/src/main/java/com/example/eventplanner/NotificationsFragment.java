@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
+// not in use
 /**
  * Represents the fragment that shows users notifications.
  */

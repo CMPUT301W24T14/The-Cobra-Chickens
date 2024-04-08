@@ -42,6 +42,13 @@ public class AdminPostersRecyclerAdapter extends RecyclerView.Adapter<AdminPoste
         this.eventsList = eventsList;
     }
 
+    /**
+     * Inflates the layout for each item in the RecyclerView.
+     * @param parent The ViewGroup that will is bound to a certain adapter position that will get
+     *               added.
+     * @param viewType The view type of the View that will get added.
+     * @return The ViewHolder that holds the View.
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -50,6 +57,11 @@ public class AdminPostersRecyclerAdapter extends RecyclerView.Adapter<AdminPoste
         return viewHolder;
     }
 
+    /**
+     * Displays the data in the specified position of the RecyclerView.
+     * @param holder The ViewHolder that represents the contents of the item at the given position in the list.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String showName = "Name:"+eventsList.get(position).getEventName();
@@ -87,6 +99,10 @@ public class AdminPostersRecyclerAdapter extends RecyclerView.Adapter<AdminPoste
         });
     }
 
+    /**
+     * Gets the total number of items in the data set held by the adapter.
+     * @return The total number of items in the current adapter.
+     */
     @Override
     public int getItemCount() {
         return eventsList.size();

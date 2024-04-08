@@ -36,6 +36,13 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         this.context = context;
         this.eventsList = eventsList;
     }
+
+    /**
+     * Inflates the layout for individual event items in the RecyclerView.
+     * @param parent The ViewGroup that the View gets added to after it is bound to an certain adapter position.
+     * @param viewType The type of the new View.
+     * @return A ViewHolder that holds a View..
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -44,6 +51,11 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         return viewHolder;
     }
 
+    /**
+     * Binds data to the ViewHolder.
+     * @param holder The ViewHolder that data will be bound to.
+     * @param position The position of the item in the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.eventName.setText(eventsList.get(position).getEventName());
@@ -66,10 +78,15 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
 
     }
 
+    /**
+     * Returns the total number of events in the data is the list the adapter is using.
+     * @return The total number of events in the data set.
+     */
     @Override
     public int getItemCount() {
         return eventsList.size();
     }
+
     /**
      * ViewHolder class to hold the views for each event item in the RecyclerView.
      */

@@ -100,8 +100,7 @@ public class Event implements Parcelable {
     }
     /**
      * Sets the check-in code for the event.
-     *
-     * @param checkInCode The check-in code to set.
+     * @return checkInCode The check-in code to set.
      */
     public String getCheckInCode() {
         return checkInCode;
