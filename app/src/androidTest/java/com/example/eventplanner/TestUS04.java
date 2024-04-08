@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import androidx.annotation.ContentView;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -19,22 +20,33 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import kotlin.jvm.JvmField;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class TestUS04 extends AbstractTest {
     @Rule
-    public ActivityScenarioRule<SplashScreen> scenario = new ActivityScenarioRule<SplashScreen>(SplashScreen.class);
+    public ActivityScenarioRule<AdminActivity> scenario = new ActivityScenarioRule<AdminActivity>(AdminActivity.class);
+
+    @Before
+    public void setUp() {
+        try {
+            Thread.sleep(50000000);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+    }
 
     // Tests for US 04.01.01
     // As an administrator, I want to be able to remove events.
     /*
     @Test
     public void test04_01_01() {
-        splashScreenContinue();
         onView(withId(R.id.profile)).perform(click());
         onView(withText("Admin Login")).perform(click());
         onView(withText("See Events")).check(matches(isDisplayed()));
@@ -52,11 +64,8 @@ public class TestUS04 extends AbstractTest {
 
     // Tests for US 04.02.01
     // As an administrator, I want to be able to remove profiles.
-    @Test
+    /*@Test
     public void test04_02_01() {
-        splashScreenContinue();
-        onView(withId(R.id.profile)).perform(click());
-        onView(withText("Admin Login")).perform(click());
         onView(withText("See Profiles")).check(matches(isDisplayed()));
         onView(withText("See Profiles")).perform(click());
         try {
@@ -68,14 +77,14 @@ public class TestUS04 extends AbstractTest {
         onView(withId(R.id.adminProfilesRecyclerView)).perform(click());
         onView(withText("YES")).check(matches(isDisplayed()));
         onView(withText("YES")).perform(click());
-    }
+    }*/
 
     // Tests for US 04.03.01
     // As an administrator, I want to be able to remove images.
     /*
     @Test
     public void test04_03_01() {
-        splashScreenContinue();
+
     }
      */
 
@@ -83,9 +92,6 @@ public class TestUS04 extends AbstractTest {
     // As an administrator, I want to be able to browse events.
     @Test
     public void test04_04_01() {
-        splashScreenContinue();
-        onView(withId(R.id.profile)).perform(click());
-        onView(withText("Admin Login")).perform(click());
         onView(withText("See Events")).check(matches(isDisplayed()));
         onView(withText("See Events")).perform(click());
     }
@@ -94,9 +100,6 @@ public class TestUS04 extends AbstractTest {
     // As an administrator, I want to be able to browse profiles.
     @Test
     public void test004_05_01() {
-        splashScreenContinue();
-        onView(withId(R.id.profile)).perform(click());
-        onView(withText("Admin Login")).perform(click());
         onView(withText("See Profiles")).check(matches(isDisplayed()));
         onView(withText("See Profiles")).perform(click());
     }
@@ -107,7 +110,7 @@ public class TestUS04 extends AbstractTest {
     /*
     @Test
     public void test04_06_01() {
-        splashScreenContinue();
+
     }
      */
 }

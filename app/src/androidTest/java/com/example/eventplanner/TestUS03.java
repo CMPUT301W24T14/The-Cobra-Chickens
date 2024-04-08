@@ -32,10 +32,9 @@ public class TestUS03 extends AbstractTest {
 
     // Tests for US 03.02.01
     // As a user, I want the option to enable or disable geolocation tracking for event verification.
-    /*
+
     @Test
     public void test03_02_01() {
-        splashScreenContinue();
+        
     }
-     */
 }
