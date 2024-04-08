@@ -1,6 +1,7 @@
 package com.example.eventplanner;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -19,6 +20,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.Manifest;
 import android.content.Intent;
@@ -30,6 +33,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -181,7 +185,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                 announcementsRecyclerView.setAdapter(announcementsRecyclerAdapter);
 
                 if (!Objects.equals(currEvent.getCheckInCode(), "")) {
-                    generateCheckinQRButton.setText("Change Checkin QR");
 
                     Bitmap qrCode = null;
 
@@ -215,57 +218,160 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                 generateCheckinQRButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (Objects.equals(currEvent.getCheckInCode(), "")) {
-                            Bitmap qrCode = null;
+                        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+                        db.collection("users").document(userId).get()
+                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if (documentSnapshot.exists()) {
+                                            ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
 
-                            currEvent.setCheckInCode(generateRandomCode(25));
-                            db.collection("events").document(currEvent.getEventId()).update("checkInCode", currEvent.getCheckInCode());
-                            try {
-                                qrCode = QRCodeGenerator.generateQRCode(currEvent.getCheckInCode(), "check", 1000, 1000);
-                            } catch (WriterException e) {
-                                throw new RuntimeException(e);
-                            }
+                                            if (reusableCodes != null) {
+                                                reusableCodes.removeIf(code -> code == null || code.equals(""));
+                                                if (reusableCodes.size() > 15) {
+                                                    reusableCodes.subList(0, reusableCodes.size() - 15).clear();
+                                                }
+                                            }
 
-                            // Set the generated QR code as the image for the checkinQR ImageView.
-                            checkinQRImageView.setImageBitmap(qrCode);
-                            checkinQRImageView.setVisibility(View.VISIBLE);
-                        shareCheckInQRButton.setVisibility(View.VISIBLE);
+                                            db.collection("users").document(userId)
+                                                    .update("reusableCodes", reusableCodes);
 
-                        } else {
-                            String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-                            db.collection("users").document(userId).get()
-                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                            if (documentSnapshot.exists()) {
-                                                ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
+                                            // Create a pop up shows all past codes as qr codes and allows the user to click and choose which one they want
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerEventViewActivity.this);
+                                            builder.setTitle("Reuse a QR Code");
 
-                                                if (reusableCodes != null) {
-                                                    reusableCodes.removeIf(code -> code == null || code.equals(""));
-                                                    if (reusableCodes.size() > 15) {
-                                                        reusableCodes.subList(0, reusableCodes.size() - 15).clear();
+                                            // Convert the reusableCodes into an array of Bitmaps
+                                            ArrayList<Bitmap> qrCodes = new ArrayList<>();
+                                            if (reusableCodes != null) {
+                                                for (String code : reusableCodes) {
+                                                    try {
+                                                        Bitmap qr = QRCodeGenerator.generateQRCode(code, "check", 1000, 1000);
+                                                        qrCodes.add(qr);
+                                                    } catch (WriterException e) {
+                                                        throw new RuntimeException(e);
+                                                    }
+                                                }
+                                            }
+
+                                            // Create a custom ArrayAdapter to display the QR codes
+                                            ArrayAdapter<Bitmap> arrayAdapter = new ArrayAdapter<Bitmap>(OrganizerEventViewActivity.this, android.R.layout.select_dialog_singlechoice, qrCodes) {
+                                                @NonNull
+                                                @Override
+                                                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                                                    ImageView imageView = new ImageView(OrganizerEventViewActivity.this);
+                                                    imageView.setImageBitmap(getItem(position));
+                                                    return imageView;
+                                                }
+                                            };
+
+                                            builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    // Set the selected QR code as the image for the checkinQR ImageView.
+                                                    checkinQRImageView.setImageBitmap(qrCodes.get(which));
+                                                    checkinQRImageView.setVisibility(View.VISIBLE);
+                                                }
+                                            });
+
+                                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            });
+
+                                            builder.setPositiveButton("Generate New QR", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    // Generate a new QR code
+                                                    String newCode = generateRandomCode(25);
+                                                    Bitmap newQRCode;
+                                                    try {
+                                                        newQRCode = QRCodeGenerator.generateQRCode(newCode, "check", 1000, 1000);
+                                                    } catch (WriterException e) {
+                                                        throw new RuntimeException(e);
                                                     }
 
+                                                    // Set the new QR code as the image for the checkinQR ImageView.
+                                                    checkinQRImageView.setImageBitmap(newQRCode);
+                                                    checkinQRImageView.setVisibility(View.VISIBLE);
+                                                    dialog.dismiss();
                                                 }
+                                            });
 
-                                                db.collection("users").document(userId)
-                                                        .update("reusableCodes", reusableCodes);
+                                            // Use a Handler to post the action of showing the dialog to the message queue of the UI thread
+                                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    builder.show();
+                                                }
+                                            });
 
-                                                //Create a pop up shows all past codes as qr codes and allows the user to click and choose which one they want
-                                                //As well allow the user to generate a new qr
-                                            }
                                         }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w("TAG", "Error getting documents.", e);
-                                        }
-                                    });
-                        }
-
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("TAG", "Error getting documents.", e);
+                                    }
+                                });
                     }
                 });
+
+//                generateCheckinQRButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        if (Objects.equals(currEvent.getCheckInCode(), "")) {
+//                            Bitmap qrCode = null;
+//
+//                            currEvent.setCheckInCode(generateRandomCode(25));
+//                            db.collection("events").document(currEvent.getEventId()).update("checkInCode", currEvent.getCheckInCode());
+//                            try {
+//                                qrCode = QRCodeGenerator.generateQRCode(currEvent.getCheckInCode(), "check", 1000, 1000);
+//                            } catch (WriterException e) {
+//                                throw new RuntimeException(e);
+//                            }
+//
+//                            // Set the generated QR code as the image for the checkinQR ImageView.
+//                            checkinQRImageView.setImageBitmap(qrCode);
+//                            checkinQRImageView.setVisibility(View.VISIBLE);
+//                        shareCheckInQRButton.setVisibility(View.VISIBLE);
+//
+//                        } else {
+//                            String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+//                            db.collection("users").document(userId).get()
+//                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                                        @Override
+//                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                                            if (documentSnapshot.exists()) {
+//                                                ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
+//
+//                                                if (reusableCodes != null) {
+//                                                    reusableCodes.removeIf(code -> code == null || code.equals(""));
+//                                                    if (reusableCodes.size() > 15) {
+//                                                        reusableCodes.subList(0, reusableCodes.size() - 15).clear();
+//                                                    }
+//                                                }
+//
+//                                                db.collection("users").document(userId)
+//                                                        .update("reusableCodes", reusableCodes);
+//
+//                                                //Create a pop up shows all past codes as qr codes and allows the user to click and choose which one they want
+//                                                //As well allow the user to generate a new qr
+//                                            }
+//                                        }
+//                                    })
+//                                    .addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception e) {
+//                                            Log.w("TAG", "Error getting documents.", e);
+//                                        }
+//                                    });
+//                        }
+//
+//                    }
+//                });
 
                 generatePromoQRButton.setOnClickListener(new View.OnClickListener() {
                     @Override
