@@ -10,6 +10,7 @@
                 <map>
                   <entry key="Duration" value="90" />
                   <entry key="OnePlus KB2005" value="120" />
+                  <entry key="Pixel_3a_API_34_extension_level_7_x86_64" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
               </option>
@@ -30,6 +31,19 @@
           </value>
         </entry>
         <entry key="-1438093254">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="OnePlus KB2005" value="120" />
+                  <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="-573354141">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
@@ -63,6 +77,35 @@
                   <entry key="Duration" value="90" />
                   <entry key="Medium_Phone_API_30" value="120" />
                   <entry key="Medium_Phone_API_34" value="120" />
+                  <entry key="OnePlus KB2005" value="120" />
+                  <entry key="Pixel_3a_API_34_extension_level_7_x86_64" value="120" />
+                  <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1211065320">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="OnePlus KB2005" value="120" />
+                  <entry key="Pixel_3a_API_34_extension_level_7_x86_64" value="120" />
+                  <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1742991142">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="OnePlus KB2005" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
               </option>
