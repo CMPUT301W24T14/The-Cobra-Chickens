@@ -12,31 +12,43 @@ import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import androidx.annotation.ContentView;
+import androidx.test.espresso.Espresso;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import kotlin.jvm.JvmField;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class TestUS04 extends AbstractTest {
     @Rule
-    public ActivityScenarioRule<SplashScreen> scenario = new ActivityScenarioRule<SplashScreen>(SplashScreen.class);
+    public ActivityScenarioRule<AdminActivity> scenario = new ActivityScenarioRule<AdminActivity>(AdminActivity.class);
+
+    @Before
+    public void setUp() {
+        /*try {
+            Thread.sleep(50000000);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }*/
+    }
 
     // Tests for US 04.01.01
     // As an administrator, I want to be able to remove events.
+    /* Disabled test to prevent removing something important **/
     /*
     @Test
     public void test04_01_01() {
-        splashScreenContinue();
-        onView(withId(R.id.profile)).perform(click());
-        onView(withText("Admin Login")).perform(click());
         onView(withText("See Events")).check(matches(isDisplayed()));
         onView(withText("See Events")).perform(click());
         try {
@@ -52,11 +64,9 @@ public class TestUS04 extends AbstractTest {
 
     // Tests for US 04.02.01
     // As an administrator, I want to be able to remove profiles.
-    @Test
+    /* Disabled test to prevent removing something important **/
+    /*@Test
     public void test04_02_01() {
-        splashScreenContinue();
-        onView(withId(R.id.profile)).perform(click());
-        onView(withText("Admin Login")).perform(click());
         onView(withText("See Profiles")).check(matches(isDisplayed()));
         onView(withText("See Profiles")).perform(click());
         try {
@@ -64,28 +74,46 @@ public class TestUS04 extends AbstractTest {
         } catch (InterruptedException e) {
             //throw new RuntimeException(e);
         }
-        //onView(withText("Name:Mark Zukerberg")).check(matches(isDisplayed()));
         onView(withId(R.id.adminProfilesRecyclerView)).perform(click());
         onView(withText("YES")).check(matches(isDisplayed()));
         onView(withText("YES")).perform(click());
-    }
+    }*/
 
     // Tests for US 04.03.01
     // As an administrator, I want to be able to remove images.
+    /* Disabled test to prevent removing something important **/
     /*
     @Test
     public void test04_03_01() {
-        splashScreenContinue();
-    }
-     */
+        onView(withText("See Profile Pictures")).check(matches(isDisplayed()));
+        onView(withText("See Profile Pictures")).perform(click());
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+        onView(withId(R.id.adminProPicsRecyclerView)).perform(click());
+        onView(withText("YES")).check(matches(isDisplayed()));
+        onView(withText("YES")).perform(click());
+        Espresso.pressBack();
+
+        onView(withText("See Event Posters")).check(matches(isDisplayed()));
+        onView(withText("See Event Posters")).perform(click());
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+        onView(withId(R.id.adminPostersRecyclerView)).perform(click());
+        onView(withText("YES")).check(matches(isDisplayed()));
+        onView(withText("YES")).perform(click());
+        Espresso.pressBack();
+    }*/
 
     // Tests for US 04.04.01
     // As an administrator, I want to be able to browse events.
     @Test
     public void test04_04_01() {
-        splashScreenContinue();
-        onView(withId(R.id.profile)).perform(click());
-        onView(withText("Admin Login")).perform(click());
         onView(withText("See Events")).check(matches(isDisplayed()));
         onView(withText("See Events")).perform(click());
     }
@@ -94,9 +122,6 @@ public class TestUS04 extends AbstractTest {
     // As an administrator, I want to be able to browse profiles.
     @Test
     public void test004_05_01() {
-        splashScreenContinue();
-        onView(withId(R.id.profile)).perform(click());
-        onView(withText("Admin Login")).perform(click());
         onView(withText("See Profiles")).check(matches(isDisplayed()));
         onView(withText("See Profiles")).perform(click());
     }
@@ -104,10 +129,22 @@ public class TestUS04 extends AbstractTest {
 
     // Tests for US 04.06.01
     // As an administrator, I want to be able to browse images.
-    /*
     @Test
     public void test04_06_01() {
-        splashScreenContinue();
+        clickOn("See Profile Pictures");
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+        Espresso.pressBack();
+
+        clickOn("See Event Posters");
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+        Espresso.pressBack();
     }
-     */
 }
