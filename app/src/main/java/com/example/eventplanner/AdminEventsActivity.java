@@ -17,26 +17,43 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-
+/**
+ * The AdminEventsActivity class represents the activity for managing events by the admin in the event planner application.
+ * This activity displays a list of events retrieved from Firestore and allows the admin to navigate back to the admin dashboard.
+ * If no events are available, it displays a toast message indicating the absence of events.
+ *
+ */
 public class AdminEventsActivity extends AppCompatActivity {
+    // Button to navigate back to admin dashboard
     private Button back;
-
+    // RecyclerView to display events
     RecyclerView adminEventsRecyclerView;
+    // Firestore instance
     FirebaseFirestore db;
+    // Reference to the collection of events in Firestore
     CollectionReference eventsRef;
-
+    // List to store events
     ArrayList<Event> eventsList = new ArrayList<>();
 
+    /**
+     * Called when the activity is first created. This is where we'll
+     * initialize our RecyclerView, Firestore, and fetch events data.
+     *
+     * @param savedInstanceState If the activity is being re-initialized
+     *                           after previously being shut down then this Bundle
+     *                           contains the data it most recently supplied in
+     *                           onSaveInstanceState(Bundle). Note: Otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_events);
-
+        // Initialize back button
         back = findViewById(R.id.back);
-
+        // Initialize RecyclerView
         adminEventsRecyclerView = findViewById(R.id.adminEventsRecyclerView);
         adminEventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        // Initialize Firestore
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
 
@@ -62,10 +79,11 @@ public class AdminEventsActivity extends AppCompatActivity {
             // Handle any errors
             Toast.makeText(this, "No events to show", Toast.LENGTH_SHORT).show();
         });
-
+        // Set click listener for back button
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Navigate back to AdminActivity
                 Intent intent = new Intent(AdminEventsActivity.this, AdminActivity.class);
                 startActivity(intent);
             }

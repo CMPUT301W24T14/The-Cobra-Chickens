@@ -21,16 +21,34 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-
+/**
+ * The AdminPostersRecyclerAdapter class is responsible for managing the RecyclerView
+ * that displays event posters in the admin posters activity.
+ * It handles the creation of view holders, binding data to views, and event handling.
+ * Admin can delete posters by clicking on them.
+ * It also interacts with Firestore to clear event posters from the database.
+ */
 public class AdminPostersRecyclerAdapter extends RecyclerView.Adapter<AdminPostersRecyclerAdapter.ViewHolder>{
     Context context;
     ArrayList<Event> eventsList;
-
+    /**
+     * Constructor for AdminPostersRecyclerAdapter
+     *
+     * @param context The context of the calling activity
+     * @param eventsList The list of events with posters to be displayed in the RecyclerView
+     */
     AdminPostersRecyclerAdapter(Context context,ArrayList<Event> eventsList ){
         this.context = context;
         this.eventsList = eventsList;
     }
 
+    /**
+     * Inflates the layout for each item in the RecyclerView.
+     * @param parent The ViewGroup that will is bound to a certain adapter position that will get
+     *               added.
+     * @param viewType The view type of the View that will get added.
+     * @return The ViewHolder that holds the View.
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -39,6 +57,11 @@ public class AdminPostersRecyclerAdapter extends RecyclerView.Adapter<AdminPoste
         return viewHolder;
     }
 
+    /**
+     * Displays the data in the specified position of the RecyclerView.
+     * @param holder The ViewHolder that represents the contents of the item at the given position in the list.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String showName = "Name:"+eventsList.get(position).getEventName();
@@ -58,9 +81,6 @@ public class AdminPostersRecyclerAdapter extends RecyclerView.Adapter<AdminPoste
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-//                                eventsList.remove(position);
-//                                deletePosterFromDatabase(position);
-//                                notifyItemRemoved(position);
                                 int newPosition = holder.getAdapterPosition(); // Use getAdapterPosition to get the current item position
                                 deletePosterFromDatabase(newPosition); // Assuming there's an 'id' field and a method to delete the profile from the database
                                 eventsList.remove(newPosition);
@@ -79,6 +99,10 @@ public class AdminPostersRecyclerAdapter extends RecyclerView.Adapter<AdminPoste
         });
     }
 
+    /**
+     * Gets the total number of items in the data set held by the adapter.
+     * @return The total number of items in the current adapter.
+     */
     @Override
     public int getItemCount() {
         return eventsList.size();
@@ -89,6 +113,11 @@ public class AdminPostersRecyclerAdapter extends RecyclerView.Adapter<AdminPoste
         TextView name;
 
         LinearLayout row;
+        /**
+         * Constructor for ViewHolder
+         *
+         * @param itemView The view corresponding to each item in the RecyclerView
+         */
         public ViewHolder(View itemView){
             super(itemView);
 
@@ -99,6 +128,11 @@ public class AdminPostersRecyclerAdapter extends RecyclerView.Adapter<AdminPoste
         }
     }
 
+    /**
+     * Clears an event poster from the Firestore database.
+     *
+     * @param position The position of the event poster to be cleared in the events list
+     */
     private void deletePosterFromDatabase(int position) {
         FirebaseFirestore db =  FirebaseFirestore.getInstance();
         // Get the user ID from the list

@@ -1,45 +1,42 @@
 package com.example.eventplanner;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-import static androidx.core.content.ContentProviderCompat.requireContext;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SwitchCompat;
-
-import android.content.Intent;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.ProgressBar;
-import android.widget.Toast;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -57,7 +54,6 @@ import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -148,68 +144,58 @@ public class EventCreateActivity extends AppCompatActivity {
                         }
                     }
                 });
+
         // Check for click on image upload button.
-        imageUploadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openGallery();
-            }
-        });
+        imageUploadButton.setOnClickListener(v -> openGallery());
 
         // Date button pressed -> Open date picker dialog.
-        dateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openDateDialog();
-            }
-        });
+        dateButton.setOnClickListener(v -> openDateDialog());
 
         // Time button pressed -> open time picker dialog.
-        timeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openTimeDialog();
-            }
-        });
+        timeButton.setOnClickListener(v -> openTimeDialog());
 
         // Check for click on event creation button, and handle backend logic.
-        // Check for click on event creation button, and handle backend logic.
-        eventCreateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Ensure an image is selected before creating the event
-                if (imageUri == null) {
-                    Toast.makeText(EventCreateActivity.this, "Please select an image for the event poster", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                /// Null checks for date and time.
-                if (date_day == null || date_month == null || date_year == null) {
-                    Toast.makeText(EventCreateActivity.this, "Please Enter a Valid Date!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (time_hour == null || time_minute == null) {
-                    Toast.makeText(EventCreateActivity.this, "Please Enter a Valid Time!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                String event_name, description, guests, location;
-                event_name = String.valueOf(editTextEventName.getText());
-                description = String.valueOf(editTextEventDescription.getText());
-                guests = String.valueOf(editTextMaxAttendees.getText());
-                location = String.valueOf(editTextEventLocation.getText());
-
-                Boolean geolocation;
-                SwitchCompat geolocation_switch = findViewById(R.id.organizer_switch_locationtracking);
-                geolocation = geolocation_switch.isChecked();
-
-                // Upload the image to Firebase Storage
-                uploadImageAndCreateEvent(event_name, description, guests, location, geolocation);
+        eventCreateButton.setOnClickListener(v -> {
+            // Ensure an image is selected before creating the event
+            if (imageUri == null) {
+                Toast.makeText(EventCreateActivity.this, "Please select an image for the event poster", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            // Null checks for date and time.
+            if (date_day == null || date_month == null || date_year == null) {
+                Toast.makeText(EventCreateActivity.this, "Please Enter a Valid Date!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (time_hour == null || time_minute == null) {
+                Toast.makeText(EventCreateActivity.this, "Please Enter a Valid Time!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String event_name, description, guests, location;
+            event_name = String.valueOf(editTextEventName.getText());
+            description = String.valueOf(editTextEventDescription.getText());
+            guests = String.valueOf(editTextMaxAttendees.getText());
+            location = String.valueOf(editTextEventLocation.getText());
+
+            Boolean geolocation;
+            SwitchCompat geolocation_switch = findViewById(R.id.organizer_switch_locationtracking);
+            geolocation = geolocation_switch.isChecked();
+
+            // Upload the image to Firebase Storage
+            uploadImageAndCreateEvent(event_name, description, guests, location, geolocation);
         });
     }
 
-    // Function to upload image to Firebase Storage and create the event
+    /**
+     * Function to upload image to Firebase Storage and create the event.
+     *
+     * @param eventName   The name of the event.
+     * @param description The description of the event.
+     * @param guests      The maximum number of attendees for the event.
+     * @param location    The location of the event.
+     * @param geolocation The geolocation tracking option for the event.
+     */
     private void uploadImageAndCreateEvent(String eventName, String description, String guests, String location, Boolean geolocation) {
         // Generate a unique filename using UUID
         String filename = UUID.randomUUID().toString();
@@ -278,14 +264,18 @@ public class EventCreateActivity extends AppCompatActivity {
                 });
     }
 
-    // Function for opening the gallery on user device.
+    /**
+     * Function for opening the gallery on user device.
+     */
     private void openGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryLauncher.launch(galleryIntent);
     }
 
-    // Function to open the calendar to select a date.
+    /**
+     * Function to open the calendar to select a date.
+     */
     private void openDateDialog() {
         DatePickerDialog dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             // When user confirms the date, grab those values.
@@ -301,7 +291,9 @@ public class EventCreateActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    // Function to open the clock to select a time.
+    /**
+     * Function to open the clock to select a time.
+     */
     private void openTimeDialog() {
         TimePickerDialog dialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             // When user confirms the time, grab those values.

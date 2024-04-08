@@ -21,11 +21,22 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-
+/**
+ * The AdminEventsRecyclerAdapter class is responsible for managing the RecyclerView
+ * that displays events in the admin events activity.
+ * It handles the creation of view holders, binding data to views, and event handling.
+ * Admin can delete events by clicking on them.
+ * It also interacts with Firestore to delete events from the database.
+ */
 public class AdminEventsRecyclerAdapter extends RecyclerView.Adapter<AdminEventsRecyclerAdapter.ViewHolder>{
     Context context;
     ArrayList<Event> eventsList;
-
+    /**
+     * Constructor for AdminEventsRecyclerAdapter
+     *
+     * @param context The context of the calling activity
+     * @param eventsList The list of events to be displayed in the RecyclerView
+     */
     AdminEventsRecyclerAdapter(Context context,ArrayList<Event> eventsList ){
         this.context = context;
         this.eventsList = eventsList;
@@ -69,9 +80,6 @@ public class AdminEventsRecyclerAdapter extends RecyclerView.Adapter<AdminEvents
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-//                                eventsList.remove(position);
-//                                deleteEventFromDatabase(position);
-//                                notifyItemRemoved(position);
                                 int newPosition = holder.getAdapterPosition(); // Use getAdapterPosition to get the current item position
                                 deleteEventFromDatabase(newPosition); // Assuming there's an 'id' field and a method to delete the profile from the database
                                 eventsList.remove(newPosition);
@@ -100,6 +108,11 @@ public class AdminEventsRecyclerAdapter extends RecyclerView.Adapter<AdminEvents
         ImageView poster;
 
         LinearLayout row;
+        /**
+         * Constructor for ViewHolder
+         *
+         * @param itemView The view corresponding to each item in the RecyclerView
+         */
         public ViewHolder(View itemView){
             super(itemView);
             name = itemView.findViewById(R.id.name);
@@ -112,7 +125,11 @@ public class AdminEventsRecyclerAdapter extends RecyclerView.Adapter<AdminEvents
 
         }
     }
-
+    /**
+     * Deletes an event from the Firestore database.
+     *
+     * @param position The position of the event to be deleted in the events list
+     */
     private void deleteEventFromDatabase(int position) {
         FirebaseFirestore db =  FirebaseFirestore.getInstance();
         // Get the user ID from the list

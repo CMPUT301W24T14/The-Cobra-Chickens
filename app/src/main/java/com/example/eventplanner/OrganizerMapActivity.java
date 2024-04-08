@@ -36,6 +36,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * The activity for displaying the map view of checked-in attendees to the organizer.
+ */
 public class OrganizerMapActivity extends AppCompatActivity implements OnMapReadyCallback {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView eventMap;
@@ -46,6 +49,10 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    /**
+     * The method that creates the activity after a user has clicked the button to see the map.
+     * @param savedInstanceState A Bundle that contains the data that was most recently passed to it.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -90,6 +97,10 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
         });
     }
 
+    /**
+     * Called when the map is ready to viewed and interacted with by the user.
+     * @param googleMap A non-null instance of GoogleMap associated with the MapView.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
@@ -126,6 +137,10 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
         }
     }
 
+    /**
+     * Saves the current state of the activity.
+     * @param outState Bundle in that is put in the saved state.
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -182,6 +197,12 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
         }
     }
 
+    /**
+     * Result after permissions have been requested.
+     * @param requestCode  The request code passed into requestPermissions(android.app.Activity, String[], int)
+     * @param permissions  The permissions that were requested.
+     * @param grantResults The results for whatever permissions were granted (PackageManager.PERMISSION_GRANTED or PackageManager.PERMISSION_DENIED)
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -196,6 +217,10 @@ public class OrganizerMapActivity extends AppCompatActivity implements OnMapRead
         }
     }
 
+    /**
+     * Requests permissions if the user has not already granted them.
+     * @param permissions An array of strings which are permissions to request.
+     */
     private void requestPermissionsIfNecessary(String[] permissions) {
         ArrayList<String> permissionsToRequest = new ArrayList<>();
         for (String permission : permissions) {

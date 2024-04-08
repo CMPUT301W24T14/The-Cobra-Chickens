@@ -1,4 +1,3 @@
-// OpenAI, 2024, ChatGPT
 package com.example.eventplanner;
 
 import android.content.DialogInterface;
@@ -31,6 +30,10 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
+/**
+ * This Activity displays the details of a certain event to users who are not organizing said event.
+ * Users can sign up for events here.
+ */
 public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventNameTextView, eventDateTextView, eventTimeTextView, eventLocationTextView, eventDescriptionTextView, eventOrganizerTextView;
     private RecyclerView announcementsRecyclerView;
@@ -40,6 +43,11 @@ public class EventDetailsActivity extends AppCompatActivity {
     private Bundle bundle;
     private FirebaseFirestore db; // the database
 
+    /**
+     * Initializes the activity and connects the it to the UI.
+     * Gets event details from the intent.
+     * @param savedInstanceState A Bundle that contains the activity's previous state.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,6 +173,14 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
 
     }
+
+    /**
+     * This method creates an AlertDialog prompting the confirm whether or not they want to sign
+     * up to the vent they clicked on.
+     * If the user clicks confirm, it checks that the event is not full it signs them up if it's not.
+     * It registers the user for the event by calling the signUserUp() method.
+     * A toast is displayed if sign-up was not successful.
+     */
     private void showSignUpConfirmation() {
 
         AlertDialog.Builder confirmDialog = new AlertDialog.Builder(this);
@@ -202,6 +218,11 @@ public class EventDetailsActivity extends AppCompatActivity {
         confirmDialog.create().show();
     }
 
+    /**
+     * Signs the current user up for the event by updating the database with user and event information.
+     * The user's document in Firestore is updated here to include the event ID in the "myEvents" array field.
+     * The current event's document in Firestore is also updated here to include the user's ID in the "signedUpUsers" array field.
+     */
     private void signUserUp() {
 
         Event event = bundle.getParcelable("event");

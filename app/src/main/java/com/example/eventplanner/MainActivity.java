@@ -23,7 +23,10 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.onesignal.Continue;
 import com.onesignal.OneSignal;
 
-
+/**
+ * MainActivity class responsible for managing the main UI of the application.
+ * It handles the bottom navigation bar and switches between different fragments based on user interaction.
+ */
 public class MainActivity extends AppCompatActivity {
     private ScanFragment scanFragment;
     private NotificationsFragment notificationsFragment;

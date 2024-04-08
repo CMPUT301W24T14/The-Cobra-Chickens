@@ -21,14 +21,29 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-
+/**
+ * Adapter class for displaying user profile pictures in a RecyclerView.
+ * This adapter populates the RecyclerView with user profile pictures and handles profile picture deletion.
+ * The profiles are displayed with the user's name and profile picture.
+ */
 public class ProPicRecyclerAdapter extends RecyclerView.Adapter<ProPicRecyclerAdapter.ViewHolder> {
     private Context context;
     private ArrayList<User> profilesList;
+    /**
+     * Constructor for ProPicRecyclerAdapter.
+     * @param context The context in which the adapter is created.
+     * @param profilesList The list of user profiles to be displayed.
+     */
     ProPicRecyclerAdapter(Context context, ArrayList<User> profilesList){
         this.context = context;
         this.profilesList = profilesList;
     }
+    /**
+     * Called when RecyclerView needs a new ViewHolder of the given type to represent an item.
+     * @param parent The ViewGroup into which the new View will be added after it is bound to an adapter position.
+     * @param viewType The view type of the new View.
+     * @return A new ViewHolder that holds a View of the given view type.
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -36,7 +51,11 @@ public class ProPicRecyclerAdapter extends RecyclerView.Adapter<ProPicRecyclerAd
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }
-
+    /**
+     * Called by RecyclerView to display the data at the specified position.
+     * @param holder The ViewHolder which should be updated to represent the contents of the item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String showName = "Name:"+profilesList.get(position).getName();
@@ -58,9 +77,7 @@ public class ProPicRecyclerAdapter extends RecyclerView.Adapter<ProPicRecyclerAd
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-//                                profilesList.remove(position);
-//                                deleteProfileFromDatabase(position);
-//                                notifyItemRemoved(position);
+
                                 int newPosition = holder.getAdapterPosition(); // Use getAdapterPosition to get the current item position
                                 deleteProPicFromDatabase(newPosition); // Assuming there's an 'id' field and a method to delete the profile from the database
                                 profilesList.remove(newPosition);
@@ -78,16 +95,25 @@ public class ProPicRecyclerAdapter extends RecyclerView.Adapter<ProPicRecyclerAd
             }
         });
     }
-
+    /**
+     * Returns the total number of items in the data set held by the adapter.
+     * @return The total number of items in this adapter.
+     */
     @Override
     public int getItemCount() {
         return profilesList.size();
     }
-
+    /**
+     * ViewHolder class for holding the views for each item in the RecyclerView.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder{
         private TextView name;
         private ImageView proPic;
         LinearLayout row;
+        /**
+         * Constructor for ViewHolder.
+         * @param itemView The view for each item in the RecyclerView.
+         */
         public ViewHolder(View itemView){
             super(itemView);
             name = itemView.findViewById(R.id.userName);
@@ -96,7 +122,10 @@ public class ProPicRecyclerAdapter extends RecyclerView.Adapter<ProPicRecyclerAd
 
         }
     }
-
+    /**
+     * Deletes a user's profile picture from the Firestore database.
+     * @param position The position of the profile in the RecyclerView.
+     */
     private void deleteProPicFromDatabase(int position) {
         FirebaseFirestore db =  FirebaseFirestore.getInstance();
         // Get the user ID from the list

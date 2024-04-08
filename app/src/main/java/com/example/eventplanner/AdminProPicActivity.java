@@ -15,13 +15,32 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-
+/**
+ * The AdminProPicActivity class manages the display of user profile pictures for admin in the event planner application.
+ * It retrieves user profiles from Firestore and displays the ones with profile pictures in a RecyclerView.
+ * Admin can navigate back to the admin dashboard from this activity.
+ * If no profiles with profile pictures are available, it displays a toast message indicating the absence of profiles.
+ * It initializes views, retrieves data from Firestore, and handles navigation back to the admin dashboard.
+ */
 public class AdminProPicActivity extends AppCompatActivity {
+    // Button to navigate back to admin dashboard
     private Button back;
+    // RecyclerView to display user profile pictures
     private RecyclerView profilesRecyclerView;
+    // Firestore instance
     private FirebaseFirestore db;
+    // Reference to the collection of users in Firestore
     private CollectionReference usersRef;
+    // List to store user profiles with profile pictures
     private ArrayList<User> profilesList = new ArrayList<>();
+    /**
+     * Called when the activity is first created. This is where we'll
+     * initialize our RecyclerView, Firestore, and fetch user profiles data.
+     * @param savedInstanceState If the activity is being re-initialized
+     *                           after previously being shut down then this Bundle
+     *                           contains the data it most recently supplied in
+     *                           onSaveInstanceState(Bundle). Note: Otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
