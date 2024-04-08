@@ -1,5 +1,6 @@
 package com.example.eventplanner;
 
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,7 +9,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -41,6 +41,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -67,9 +73,14 @@ import java.util.Random;
 public class OrganizerEventViewActivity extends AppCompatActivity {
     private Button generateCheckinQRButton;
     private Button generatePromoQRButton;
+
+    private Button shareCheckInQRButton;
+    private Button sharePromoQRButton;
+    private Button makeNotificationButton;
     private Button deleteEventButton;
     private ImageView checkinQRImageView;
     private ImageView promoQRImageView;
+
 
     private QRCodeGenerator generator;
 
@@ -128,6 +139,37 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         //Buttons for generating QR codes for the event
         generateCheckinQRButton = findViewById(R.id.generateCheckInQR);
         generatePromoQRButton = findViewById(R.id.generatePromoQR);
+
+
+        shareCheckInQRButton = findViewById(R.id.shareCheckInQR);
+        sharePromoQRButton = findViewById(R.id.sharePromoQR);
+
+        makeNotificationButton = findViewById(R.id.button_make_notification);
+        makeNotificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create an instance of the fragment
+                PushnotificationFragment fragmentPushNotifications = new PushnotificationFragment();
+
+                // Get the FragmentManager
+                FragmentManager fragmentManager = getSupportFragmentManager();
+
+                // Start a fragment transaction
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                // Replace the current fragment with the PushnotificationFragment
+                fragmentTransaction.replace(R.id.fragment_container, fragmentPushNotifications);
+
+                // Add the transaction to the back stack
+                fragmentTransaction.addToBackStack(null);
+
+                // Commit the transaction
+                fragmentTransaction.commit();
+            }
+        });
+
+
+
 
         //QR code image itself
         checkinQRImageView = findViewById(R.id.checkInQR);
@@ -246,7 +288,6 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         if (documentSnapshot.exists()) {
                                             ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
-
                                             if (reusableCodes != null) {
                                                 reusableCodes.removeIf(code -> code == null || code.equals(""));
                                                 if (reusableCodes.size() > 15) {
@@ -254,8 +295,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                                 }
                                             }
 
-                                            db.collection("users").document(userId)
-                                                    .update("reusableCodes", reusableCodes);
+                                            db.collection("users").document(userId).update("reusableCodes", reusableCodes);
 
                                             // Create a pop up shows all past codes as qr codes and allows the user to click and choose which one they want
                                             AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerEventViewActivity.this);
@@ -291,6 +331,9 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                                     // Set the selected QR code as the image for the checkinQR ImageView.
                                                     checkinQRImageView.setImageBitmap(qrCodes.get(which));
                                                     checkinQRImageView.setVisibility(View.VISIBLE);
+                                                    shareCheckInQRButton.setVisibility(View.VISIBLE);
+                                                    currEvent.setCheckInCode(reusableCodes.get(which));
+                                                    db.collection("events").document(currEvent.getEventId()).update("checkInCode", currEvent.getCheckInCode());
                                                 }
                                             });
 
@@ -306,6 +349,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     // Generate a new QR code
                                                     String newCode = generateRandomCode(25);
+                                                    currEvent.setCheckInCode(newCode);
                                                     Bitmap newQRCode;
                                                     try {
                                                         newQRCode = QRCodeGenerator.generateQRCode(newCode, "check", 1000, 1000);
@@ -316,6 +360,8 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                                     // Set the new QR code as the image for the checkinQR ImageView.
                                                     checkinQRImageView.setImageBitmap(newQRCode);
                                                     checkinQRImageView.setVisibility(View.VISIBLE);
+                                                    shareCheckInQRButton.setVisibility(View.VISIBLE);
+                                                    db.collection("events").document(currEvent.getEventId()).update("checkInCode", currEvent.getCheckInCode());
                                                     dialog.dismiss();
                                                 }
                                             });
@@ -335,6 +381,17 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         Log.w("TAG", "Error getting documents.", e);
+//                                        String newCode = generateRandomCode(25);
+//                                        Bitmap newQRCode;
+//                                        try {
+//                                            newQRCode = QRCodeGenerator.generateQRCode(newCode, "check", 1000, 1000);
+//                                        } catch (WriterException e1) {
+//                                            throw new RuntimeException(e1);
+//                                        }
+//
+//                                        // Set the new QR code as the image for the checkinQR ImageView.
+//                                        checkinQRImageView.setImageBitmap(newQRCode);
+//                                        checkinQRImageView.setVisibility(View.VISIBLE);
                                     }
                                 });
                     }

@@ -107,8 +107,7 @@ public class ScanFragment extends Fragment {
                                         // Check if userId exists in checkedInUsers array
                                         if (checkedInUsersFromDB != null) {
                                             // if the user has already checked in and location requirements match up
-                                            if ((checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && eventRequiresGeolocation) && (userHasGeolocationOn != null && userHasGeolocationOn))
-                                                    || (checkedInUsersFromDB.containsKey(userId) && !(eventRequiresGeolocation != null && eventRequiresGeolocation))) {
+                                            if ((checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && eventRequiresGeolocation) && (userHasGeolocationOn != null && userHasGeolocationOn))) {
 
                                                 for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
                                                     if (Objects.equals(entry.getKey(), userId)) {
@@ -128,6 +127,7 @@ public class ScanFragment extends Fragment {
                                                         db.collection("events").document(eventId[0]).update("checkedInUsers", checkedInUsersFromDB);
 
                                                         successfulCheckIn = true;
+                                                        Log.d("TESTING", "got here 1");
                                                         getUserLocation(eventId[0], checkedInGeoPoints);
 
                                                     }
@@ -146,6 +146,7 @@ public class ScanFragment extends Fragment {
                                                     barcodeView.resume();
                                                 }).show();
 
+                                                Log.d("TESTING", "got here 2");
                                                 successfulCheckIn = false;
                                             }
                                             // first time check in for event that requires location and they have it turned on
@@ -156,6 +157,7 @@ public class ScanFragment extends Fragment {
 
                                                 db.collection("events").document(eventId[0]).update("checkedInUsers", checkedInUsersFromDB);
                                                 successfulCheckIn = true;
+                                                Log.d("TESTING", "got here 3");
                                                 getUserLocation(eventId[0], checkedInGeoPoints);
 
 
@@ -163,6 +165,7 @@ public class ScanFragment extends Fragment {
                                             // first time check in for the first time that doesn't require their location
                                             else if (!checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && !eventRequiresGeolocation)) {
 
+                                                Log.d("TESTING", "got here 4");
                                                 HashMap<String, String> map = new HashMap<>();
                                                 checkedInUsersFromDB.put(userId, "1");
 
@@ -188,12 +191,25 @@ public class ScanFragment extends Fragment {
                                                         checkedInUsersFromDB.put(userId, String.valueOf(numberOfCheckins));
 
                                                         db.collection("events").document(eventId[0]).update("checkedInUsers", checkedInUsersFromDB);
-
+                                                        Log.d("TESTING", "got here 5");
                                                         successfulCheckIn = true;
 
                                                     }
                                                 }
 
+                                            }
+
+                                            else {
+                                                AlertDialog.Builder builder2 = new AlertDialog.Builder(getContext());
+
+                                                successfulCheckIn = false;
+                                                Log.d("TESTING", "got here 6");
+                                                builder.setTitle("Check-in Failed");
+                                                builder.setMessage("Your location was not found. Please try again.");
+                                                builder.setPositiveButton("OK", (dialog, which) -> {
+                                                    dialog.dismiss();
+                                                    barcodeView.resume();
+                                                }).show();;
                                             }
 
                                         }
@@ -349,7 +365,7 @@ public class ScanFragment extends Fragment {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
             successfulCheckIn = false;
-
+            Log.d("TESTING", "got here 7");
             builder.setTitle("Check-in Failed");
             builder.setMessage("Your location was not found. Please try again.");
             builder.setPositiveButton("OK", (dialog, which) -> {

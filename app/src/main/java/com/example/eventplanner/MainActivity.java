@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        String msg = "Subscribed";
+                        String msg = "FireBase Connected";
                         if (!task.isSuccessful()) {
                             msg = "Subscribe failed";
                         }
