@@ -1,18 +1,8 @@
 package com.example.eventplanner;
 
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -23,13 +13,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Rect;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -39,26 +24,24 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.eventplanner.databinding.FragmentPushNotificationsBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.zxing.WriterException;
-
-import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -143,33 +126,14 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
         shareCheckInQRButton = findViewById(R.id.shareCheckInQR);
         sharePromoQRButton = findViewById(R.id.sharePromoQR);
-
-        makeNotificationButton = findViewById(R.id.button_make_notification);
+        makeNotificationButton = findViewById(R.id.add_push_notification_button);
         makeNotificationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create an instance of the fragment
-                PushnotificationFragment fragmentPushNotifications = new PushnotificationFragment();
-
-                // Get the FragmentManager
-                FragmentManager fragmentManager = getSupportFragmentManager();
-
-                // Start a fragment transaction
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                // Replace the current fragment with the PushnotificationFragment
-                fragmentTransaction.replace(R.id.fragment_container, fragmentPushNotifications);
-
-                // Add the transaction to the back stack
-                fragmentTransaction.addToBackStack(null);
-
-                // Commit the transaction
-                fragmentTransaction.commit();
+                // Call the method to show the push notification dialog
+                showPushNotificationDialog();
             }
         });
-
-
-
 
         //QR code image itself
         checkinQRImageView = findViewById(R.id.checkInQR);
@@ -601,6 +565,56 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         });
     }
 
+    private void showPushNotificationDialog() {
+        // Inflate the dialog with custom view
+        LayoutInflater inflater = this.getLayoutInflater();
+        FragmentPushNotificationsBinding binding = FragmentPushNotificationsBinding.inflate(inflater, null, false);
+
+        // Initialize ViewModel
+        PushnotificationViewModel pushnotificationViewModel = new ViewModelProvider(this).get(PushnotificationViewModel.class);
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setView(binding.getRoot());
+
+        // Setup the dialog
+        AlertDialog alertDialog = dialogBuilder.create();
+
+        // Automatically subscribe to the event topic
+        String topic = currEvent.getEventName(); // Use event name as the topic
+        pushnotificationViewModel.subscribeToNewTopic(topic, new TopicCallback() {
+            @Override
+            public void onSubscribed() {
+                // Setting the Text View
+                binding.textviewCurrentTopic.setText(topic);
+                // Saving Topic in SharedPref (optional)
+                // SharedPreferencesHelper.setCurrentTopic(getApplicationContext(), topic);
+            }
+        });
+
+        binding.buttonSend.setOnClickListener(v -> {
+            String title = binding.titleEdittext.getText().toString();
+            String message = binding.messageEdittext.getText().toString();
+
+            if (!title.isEmpty() && !message.isEmpty() && !topic.isEmpty()) {
+                PushNotification pushNotification = new PushNotification(
+                        new NotificationData(title, message),
+                        "/topics/" + topic
+                );
+                pushnotificationViewModel.sendNewMessage(pushNotification);
+                alertDialog.dismiss(); // Close the dialog after sending the message
+            } else {
+                Toast.makeText(this, "MISSING INFORMATION", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Hide the "Change Topic" button since the topic is fixed
+        binding.buttonChangeTopic.setVisibility(View.GONE);
+
+        // Show the dialog
+        alertDialog.show();
+    }
+
+
     /**
      * This method creates and displays a dialog to add a new announcement.
      * The dialog contains an EditText for input and two buttons: "Add" and "Cancel".
@@ -625,11 +639,11 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
 
                         db.collection("events").document(currEvent.getEventId()).update("eventAnnouncements", FieldValue.arrayUnion(editTextInput))
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
+                                    @Override
+                                    public void onSuccess(Void unused) {
 
-                                }
-                            });
+                                    }
+                                });
                     }
 
                 })
