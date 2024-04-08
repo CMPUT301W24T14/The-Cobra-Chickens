@@ -53,6 +53,9 @@ public class ScanFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private SharedViewModel sharedViewModel;
+    private Boolean userHasGeolocationOn;
+    private Boolean eventRequiresGeolocation;
+    private Boolean successfulCheckIn;
 
     @Nullable
     @Override
@@ -74,6 +77,15 @@ public class ScanFragment extends Fragment {
                 String checkInCodeFromQR = parts[0];
                 String userId = auth.getCurrentUser().getUid();
 
+                db.collection("users").document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                        userHasGeolocationOn = (Boolean) documentSnapshot.get("Location");
+                    }
+                });
+
+
                 final String[] eventId = new String[1];
 
                 if (Objects.equals(parts[1], "check")) {
@@ -88,9 +100,77 @@ public class ScanFragment extends Fragment {
                                         // Retrieve the checkedInUsers array from the document
                                         HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) document.get("checkedInUsers");
 
+                                        HashMap<String, GeoPoint> checkedInGeoPoints = (HashMap<String, GeoPoint>) document.get("checkedInGeopoints");
+
+                                        eventRequiresGeolocation = (Boolean) document.get("geolocationTracking");
+
                                         // Check if userId exists in checkedInUsers array
                                         if (checkedInUsersFromDB != null) {
-                                            if (checkedInUsersFromDB.containsKey(userId)) { // if the user has already checked in once
+                                            // if the user has already checked in and location requirements match up
+                                            if ((checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && eventRequiresGeolocation) && (userHasGeolocationOn != null && userHasGeolocationOn))
+                                                    || (checkedInUsersFromDB.containsKey(userId) && !(eventRequiresGeolocation != null && eventRequiresGeolocation))) {
+
+                                                for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
+                                                    if (Objects.equals(entry.getKey(), userId)) {
+
+                                                        // HashMap<String, String> oldMap = new HashMap<>();
+
+                                                        int numberOfCheckins = Integer.parseInt(entry.getValue());
+
+                                                        // oldMap.put(userId, String.valueOf(numberOfCheckins));
+
+                                                        numberOfCheckins += 1;
+
+                                                        // HashMap<String, String> newMap = new HashMap<>();
+
+                                                        checkedInUsersFromDB.put(userId, String.valueOf(numberOfCheckins));
+
+                                                        db.collection("events").document(eventId[0]).update("checkedInUsers", checkedInUsersFromDB);
+
+                                                        successfulCheckIn = true;
+                                                        getUserLocation(eventId[0], checkedInGeoPoints);
+
+                                                    }
+                                                }
+
+                                            }
+                                            // if the user has already checked in to an event that requires their geolocation and is trying to check in again but now has their location off
+                                            // or if the user is trying to check in for the first time but has their location off
+                                            else if ((checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && eventRequiresGeolocation) && (userHasGeolocationOn != null && !userHasGeolocationOn))
+                                                    || (!checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && eventRequiresGeolocation) && (userHasGeolocationOn != null && !userHasGeolocationOn))) {
+
+                                                builder.setTitle("Check-in Failed");
+                                                builder.setMessage("This event requires geolocation tracking to be enabled in order to check in. Please enable this in your profile and/or settings.");
+                                                builder.setPositiveButton("OK", (dialog, which) -> {
+                                                    dialog.dismiss();
+                                                    barcodeView.resume();
+                                                }).show();
+
+                                                successfulCheckIn = false;
+                                            }
+                                            // first time check in for event that requires location and they have it turned on
+                                            else if ((!checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && eventRequiresGeolocation) && (userHasGeolocationOn != null && userHasGeolocationOn))) {
+
+                                                HashMap<String, String> map = new HashMap<>();
+                                                checkedInUsersFromDB.put(userId, "1");
+
+                                                db.collection("events").document(eventId[0]).update("checkedInUsers", checkedInUsersFromDB);
+                                                successfulCheckIn = true;
+                                                getUserLocation(eventId[0], checkedInGeoPoints);
+
+
+                                            }
+                                            // first time check in for the first time that doesn't require their location
+                                            else if (!checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && !eventRequiresGeolocation)) {
+
+                                                HashMap<String, String> map = new HashMap<>();
+                                                checkedInUsersFromDB.put(userId, "1");
+
+                                                db.collection("events").document(eventId[0]).update("checkedInUsers", checkedInUsersFromDB);
+                                                successfulCheckIn = true;
+                                            }
+                                            // if the user has already checked into and event and is checking in again and the event doesn't track location
+                                            else if (checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && !eventRequiresGeolocation)) {
 
                                                 for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
                                                     if (Objects.equals(entry.getKey(), userId)) {
@@ -105,83 +185,55 @@ public class ScanFragment extends Fragment {
 
                                                         HashMap<String, String> newMap = new HashMap<>();
 
-                                                        newMap.put(userId, String.valueOf(numberOfCheckins));
+                                                        checkedInUsersFromDB.put(userId, String.valueOf(numberOfCheckins));
 
-                                                        db.collection("events").document(eventId[0]).update("checkedInUsers", newMap);
+                                                        db.collection("events").document(eventId[0]).update("checkedInUsers", checkedInUsersFromDB);
+
+                                                        successfulCheckIn = true;
 
                                                     }
                                                 }
+
                                             }
 
-                                            else {
-                                                // the user is checking in for the first time
+                                        }
+                                    }
 
-                                                HashMap<String, String> map = new HashMap<>();
-                                                map.put(userId, "1");
+                                    if (successfulCheckIn) {
 
-                                                db.collection("events").document(eventId[0]).update("checkedInUsers", map);
+                                        Log.d("EVENT ID", eventId[0]);
+                                        db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
+                                            if (documentSnapshot.exists() && eventId[0] != null) {
+                                                db.collection("events").document(eventId[0]).update("signedUpUsers", FieldValue.arrayUnion(userId));
+                                                db.collection("users").document(userId).update("myEvents", FieldValue.arrayUnion(eventId[0]));
 
-                                                // Get the user's current location
-                                                FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-                                                fusedLocationClient.getLastLocation()
-                                                        .addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
-                                                            @Override
-                                                            public void onSuccess(Location location) {
-                                                                if (location != null) {
-                                                                    // Once you have the location, store it in Firestore
-                                                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                                                    String userId = auth.getCurrentUser().getUid();
+                                                //db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(userId));
+                                                db.collection("users").document(userId).update("checkedInto", FieldValue.arrayUnion(eventId[0]));
 
-                                                                    // Create a GeoPoint object with latitude and longitude
-                                                                    GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                                                sharedViewModel.setEventUpdated(true);
 
-                                                                    // Create a map to store user data
-                                                                    HashMap<String, GeoPoint> userData = new HashMap<>();
-                                                                    userData.put(userId, geoPoint);
-
-                                                                    // Update Firestore document with user's location
-                                                                    db.collection("events").document(eventId[0]).update("checkedInGeopoints", userData);
-                                                                }
-                                                            }
-                                                        });
-
+                                                builder.setTitle("Success!");
+                                                builder.setMessage("You have successfully checked into the event!");
+//                                            builder.setMessage("You have successfully signed up for the event!");
+                                            } else {
+                                                builder.setTitle("Failure!");
+                                                if (eventId[0] == null) {
+                                                    builder.setMessage("Event Id is empty");
+                                                } else {
+                                                    builder.setMessage("User does not exist!");
                                                 }
                                             }
-                                        }
+                                            builder.setPositiveButton("OK", (dialog, which) -> {
+                                                dialog.dismiss();
+                                                barcodeView.resume();
+                                            }).show();
+                                        });
 
-
-                                    Log.d("EVENT ID", eventId[0]);
-                                    db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
-                                        if (documentSnapshot.exists() && eventId[0] != null) {
-                                            db.collection("events").document(eventId[0]).update("signedUpUsers", FieldValue.arrayUnion(userId));
-                                            db.collection("users").document(userId).update("myEvents", FieldValue.arrayUnion(eventId[0]));
-
-                                            //db.collection("events").document(eventId[0]).update("checkedInUsers", FieldValue.arrayUnion(userId));
-                                            db.collection("users").document(userId).update("checkedInto", FieldValue.arrayUnion(eventId[0]));
-
-                                            sharedViewModel.setEventUpdated(true);
-
-                                            builder.setTitle("Success!");
-                                            builder.setMessage("You have successfully checked into the event!");
-//                                            builder.setMessage("You have successfully signed up for the event!");
-                                        } else {
-                                            builder.setTitle("Failure!");
-                                            if (eventId[0] == null) {
-                                                builder.setMessage("Event Id is empty");
-                                            } else {
-                                                builder.setMessage("User does not exist!");
-                                            }
-                                        }
-                                        builder.setPositiveButton("OK", (dialog, which) -> {
-                                            dialog.dismiss();
-                                            barcodeView.resume();
-                                        }).show();
-                                    });
+                                    }
                                 }
                             });
 
-                }
-                else if (Objects.equals(parts[1], "promo")) {
+                } else if (Objects.equals(parts[1], "promo")) {
                     db.collection("events").whereEqualTo("promoCode", checkInCodeFromQR)
                             .get()
                             .addOnCompleteListener(task -> {
@@ -271,8 +323,7 @@ public class ScanFragment extends Fragment {
                                     });
                                 }
                             });
-                }
-                else if (Objects.equals(parts[1], "admin")) {
+                } else if (Objects.equals(parts[1], "admin")) {
                     Intent intent = new Intent(getContext(), AdminActivity.class);
                     startActivity(intent);
                 }
@@ -287,6 +338,53 @@ public class ScanFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void getUserLocation(String eventId, HashMap<String, GeoPoint> checkedInGeoPoints) {
+
+        // Get the user's current location
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+            successfulCheckIn = false;
+
+            builder.setTitle("Check-in Failed");
+            builder.setMessage("Your location was not found. Please try again.");
+            builder.setPositiveButton("OK", (dialog, which) -> {
+                dialog.dismiss();
+                barcodeView.resume();
+            }).show();;
+        }
+        else {
+
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                // Once you have the location, store it in Firestore
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                String userId = auth.getCurrentUser().getUid();
+
+                                // Create a GeoPoint object with latitude and longitude
+                                GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+
+                                // Create a map to store user data
+                                HashMap<String, GeoPoint> userData = new HashMap<>();
+                                checkedInGeoPoints.put(userId, geoPoint);
+
+                                // Update Firestore document with user's location
+                                db.collection("events").document(eventId).update("checkedInGeopoints", checkedInGeoPoints);
+
+                                successfulCheckIn = true;
+                            }
+                        }
+                    });
+
+        }
+
     }
 
     @Override
