@@ -1,5 +1,6 @@
 import com.android.build.api.dsl.Lint
 import com.android.build.api.dsl.LintOptions
+import org.apache.tools.ant.util.JavaEnvUtils.VERSION_1_8
 
 plugins {
     id("com.android.application")
@@ -76,9 +77,13 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("com.onesignal:OneSignal:[5.0.0, 5.99.99]")
 
+    //Add dependencies for RetroFit
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.google.zxing:javase:3.4.1")
 
     implementation("com.google.android.gms:play-services-location:21.2.0")
-    implementation("com.google.firebase:firebase-messaging:<latest-version>")
+    implementation("com.google.firebase:firebase-messaging:23.0.0")
 }
