@@ -8,6 +8,7 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -22,55 +23,58 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
         if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            String title = remoteMessage.getData().get("title");
+            String message = remoteMessage.getData().get("message");
 
-            // Check if data needs to be processed by long running job
-            if (remoteMessage.getData().containsKey("urgent_task")) {
-                // If the message contains a key indicating an urgent task, handle it immediately
-                handleNow();
+            // Assuming both title and message are required to proceed
+            if (title != null && message != null) {
+                NotificationData notificationData = new NotificationData(title, message);
+                sendNotification(notificationData);
             } else {
-                // Otherwise, schedule a long-running job
-                scheduleJob();
+                Log.w(TAG, "The notification data did not contain a title and message.");
             }
         }
-
-        if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-        }
-
-        // Handle the generation of your own notifications here if needed
-        sendNotification(remoteMessage.getData().get(""));
-    }
-
-    private void scheduleJob() {
-        // Schedule long running job using WorkManager
-        // For example: WorkManager.getInstance().enqueue(myLongRunningWorkRequest);
-    }
-
-    private void handleNow() {
-        // Handle time-bound tasks here
     }
 
     // If you intend on generating your own notifications, implement this method
-    private void sendNotification(String messageBody) {
+    private void sendNotification(NotificationData notificationData) {
+        Context context = getApplicationContext();
+
         // Create a notification and set the notification content
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.rounded_notifications_24)
-                .setContentTitle("My Notification")
-                .setContentText(messageBody)
-                .setAutoCancel(true); // Dismiss the notification when clicked
+                .setContentTitle(notificationData.getTitle())
+                .setContentText(notificationData.getMessage())
+                .setAutoCancel(true); // Dismiss the notification when it's tapped
 
-        // Get the notification manager
+        // Get the NotificationManager
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Check if the Android version is greater than or equal to Oreo
+        // For Android Oreo and above, create a notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create a notification channel
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel human readable title", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel Human Readable Title", NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
         }
 
         // Show the notification
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
+
+
+    @Override
+    public void onNewToken(String token) {
+        // This method is called when a new token is generated for the device
+        // Subscribe to the event name topic
+        String eventName = SharedPreferencesHelper.getCurrentTopic(getApplicationContext());
+        String formattedeventname = eventName.replaceAll("\\s+" ,"_");
+        FirebaseMessaging.getInstance().subscribeToTopic(eventName)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Subscribed to topic: " + formattedeventname);
+                    } else {
+                        Log.e(TAG, "Failed to subscribe to topic: " + formattedeventname, task.getException());
+                    }
+                });
+    }
 }
+
