@@ -742,8 +742,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
      * @param userRecyclerAdapter The UserRecyclerAdapter to be notified of dataset changes.
      */
     private void loadSignedUpUserDocs(ArrayList<String> userIds, UserRecyclerAdapter userRecyclerAdapter) {
-
-        for (String userId : userIds) { // for every eventId in user's organizing Array
+        for (String userId : userIds) {
             if (userId != null) {
                 db.collection("users")
                         .document(userId)
@@ -751,23 +750,25 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if (documentSnapshot.exists()) {
+                                    String userId = documentSnapshot.getId();
+                                    String name = documentSnapshot.getString("Name");
+                                    String contact = documentSnapshot.getString("Contact");
+                                    String homePage = documentSnapshot.getString("Homepage");
+                                    String profilePicUrl = documentSnapshot.getString("ProfilePic");
+                                    Boolean usrlocation = documentSnapshot.getBoolean("Location");
 
-                                String userId = documentSnapshot.getId();
-                                String name = documentSnapshot.getString("Name");
-                                String contact = documentSnapshot.getString("Contact");
-                                String homePage = documentSnapshot.getString("Homepage");
-                                String profilePicUrl = documentSnapshot.getString("ProfilePic");
-                                boolean usrlocation = documentSnapshot.getBoolean("Location");
+                                    ArrayList<String> checkedInto = (ArrayList<String>) documentSnapshot.get("checkedInto");
+                                    ArrayList<String> signedUpFor = (ArrayList<String>) documentSnapshot.get("myEvents");
+                                    ArrayList<String> organizing = (ArrayList<String>) documentSnapshot.get("Organizing");
+                                    ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
 
-                                ArrayList<String> checkedInto = (ArrayList<String>) documentSnapshot.get("checkedInto");
-                                ArrayList<String> signedUpFor = (ArrayList<String>) documentSnapshot.get("myEvents");
-                                ArrayList<String> organizing = (ArrayList<String>) documentSnapshot.get("Organizing");
-
-                                ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
-
-                                signedUpList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing, reusableCodes));
-
-                                userRecyclerAdapter.notifyDataSetChanged();
+                                    // Check if any of the retrieved fields are null before using them
+                                    if (userId != null && name != null && contact != null && homePage != null && profilePicUrl != null && usrlocation != null && checkedInto != null && signedUpFor != null && organizing != null && reusableCodes != null) {
+                                        signedUpList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing, reusableCodes));
+                                        userRecyclerAdapter.notifyDataSetChanged();
+                                    }
+                                }
                             }
                         });
             }
@@ -784,9 +785,7 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
      * @param userRecyclerAdapter The UserRecyclerAdapter to be notified of dataset changes.
      */
     private void loadCheckedInUserDocs(ArrayList<CheckedInUser> checkedInUsers, UserRecyclerAdapter userRecyclerAdapter) {
-
-        for (CheckedInUser user : checkedInUsers) { // for every eventId in user's organizing Array
-
+        for (CheckedInUser user : checkedInUsers) {
             if (user != null) {
                 db.collection("users")
                         .document(user.getUserId())
@@ -794,26 +793,29 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if (documentSnapshot.exists()) {
+                                    String userId = documentSnapshot.getId();
+                                    String name = documentSnapshot.getString("Name");
+                                    String contact = documentSnapshot.getString("Contact");
+                                    String homePage = documentSnapshot.getString("Homepage");
+                                    String profilePicUrl = documentSnapshot.getString("ProfilePic");
+                                    Boolean usrlocation = documentSnapshot.getBoolean("Location");
 
-                                String userId = documentSnapshot.getId();
-                                String name = documentSnapshot.getString("Name");
-                                String contact = documentSnapshot.getString("Contact");
-                                String homePage = documentSnapshot.getString("Homepage");
-                                String profilePicUrl = documentSnapshot.getString("ProfilePic");
-                                boolean usrlocation = documentSnapshot.getBoolean("Location");
+                                    ArrayList<String> checkedInto = (ArrayList<String>) documentSnapshot.get("checkedInto");
+                                    ArrayList<String> signedUpFor = (ArrayList<String>) documentSnapshot.get("myEvents");
+                                    ArrayList<String> organizing = (ArrayList<String>) documentSnapshot.get("Organizing");
+                                    ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
 
-                                ArrayList<String> checkedInto = (ArrayList<String>) documentSnapshot.get("checkedInto");
-                                ArrayList<String> signedUpFor = (ArrayList<String>) documentSnapshot.get("myEvents");
-                                ArrayList<String> organizing = (ArrayList<String>) documentSnapshot.get("Organizing");
-
-                                ArrayList<String> reusableCodes = (ArrayList<String>) documentSnapshot.get("reusableCodes");
-
-                                checkedInList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing, reusableCodes));
-
-                                userRecyclerAdapter.notifyDataSetChanged();
+                                    // Check if any of the retrieved fields are null before using them
+                                    if (userId != null && name != null && contact != null && homePage != null && profilePicUrl != null && usrlocation != null && checkedInto != null && signedUpFor != null && organizing != null && reusableCodes != null) {
+                                        checkedInList.add(new User(userId, name, homePage, contact, profilePicUrl, usrlocation, signedUpFor, checkedInto, organizing, reusableCodes));
+                                        userRecyclerAdapter.notifyDataSetChanged();
+                                    }
+                                }
                             }
                         });
             }
         }
     }
+
 }
