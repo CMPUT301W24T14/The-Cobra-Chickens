@@ -12,21 +12,12 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-/**
- * Service class responsible for handling Firebase Cloud Messaging (FCM) messages.
- * This service extends FirebaseMessagingService and overrides the onMessageReceived method
- * to process incoming messages and generate notifications as needed.
- */
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
     private static final String CHANNEL_ID = "my_channel_id";
     private static final int NOTIFICATION_ID = 100;
 
-    /**
-     * Called when a message is received.
-     * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
-     */
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.d(TAG, "From: " + remoteMessage.getFrom());
@@ -43,35 +34,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 Log.w(TAG, "The notification data did not contain a title and message.");
             }
         }
-
-
-        if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-        }
-
-        // Handle the generation of your own notifications here if needed
-        sendNotification(remoteMessage.getData().get(""));
     }
-    /**
-     * Schedule a long-running job.
-     * This method should be called for non-urgent tasks.
-     */
-    private void scheduleJob() {
-        // Schedule long running job using WorkManager
-        // For example: WorkManager.getInstance().enqueue(myLongRunningWorkRequest);
-    }
-    /**
-     * Handle the urgent task immediately.
-     * This method should be called for urgent tasks.
-     */
-    private void handleNow() {
-        // Handle time-bound tasks here
 
-    }
-    /**
-     * Generate and display a notification.
-     * @param messageBody The body of the notification message.
-     */
     // If you intend on generating your own notifications, implement this method
     private void sendNotification(NotificationData notificationData) {
         Context context = getApplicationContext();
@@ -113,4 +77,3 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 });
     }
 }
-
