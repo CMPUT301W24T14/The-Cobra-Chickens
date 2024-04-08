@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -92,6 +94,29 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
         sharePromoQRButton = findViewById(R.id.sharePromoQR);
 
         makeNotificationButton = findViewById(R.id.button_make_notification);
+        makeNotificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create an instance of the fragment
+                PushnotificationFragment fragmentPushNotifications = new PushnotificationFragment();
+
+                // Get the FragmentManager
+                FragmentManager fragmentManager = getSupportFragmentManager();
+
+                // Start a fragment transaction
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                // Replace the current fragment with the PushnotificationFragment
+                fragmentTransaction.replace(R.id.fragment_container, fragmentPushNotifications);
+
+                // Add the transaction to the back stack
+                fragmentTransaction.addToBackStack(null);
+
+                // Commit the transaction
+                fragmentTransaction.commit();
+            }
+        });
+
 
 
         checkinQRImageView = findViewById(R.id.checkInQR);
