@@ -100,13 +100,14 @@ public class EventRecyclerAdapterUpdated extends RecyclerView.Adapter<EventRecyc
 
         Event event = events.get(position);
 
-        Log.d("TESTING8", event.getEventName());
+        //Log.d("TESTING8", event.getEventName());
 
-        if (holder.eventPoster != null && !event.getEventPoster().isEmpty()) {
+        if (holder.eventPoster != null && event.getEventPoster() != null && !event.getEventPoster().isEmpty()) {
             Glide.with(context)
                     .load(event.getEventPoster())
                     .into(holder.eventPoster);
         }
+
 
         ArrayList<CheckedInUser> checkedInUsers = event.getCheckedInUsers();
 

@@ -29,6 +29,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
+
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
@@ -197,14 +199,18 @@ public class EventCreateActivity extends AppCompatActivity {
                 guests = String.valueOf(editTextMaxAttendees.getText());
                 location = String.valueOf(editTextEventLocation.getText());
 
+                Boolean geolocation;
+                SwitchCompat geolocation_switch = findViewById(R.id.organizer_switch_locationtracking);
+                geolocation = geolocation_switch.isChecked();
+
                 // Upload the image to Firebase Storage
-                uploadImageAndCreateEvent(event_name, description, guests, location);
+                uploadImageAndCreateEvent(event_name, description, guests, location, geolocation);
             }
         });
     }
 
     // Function to upload image to Firebase Storage and create the event
-    private void uploadImageAndCreateEvent(String eventName, String description, String guests, String location) {
+    private void uploadImageAndCreateEvent(String eventName, String description, String guests, String location, Boolean geolocation) {
         // Generate a unique filename using UUID
         String filename = UUID.randomUUID().toString();
 
@@ -234,7 +240,8 @@ public class EventCreateActivity extends AppCompatActivity {
                         eventData.put("promoCode", "");
                         eventData.put("eventAnnouncements", new ArrayList<>());
                         eventData.put("signedUpUsers", new ArrayList<>());
-
+                        eventData.put("geolocationTracking", geolocation);
+                        eventData.put("checkedInGeopoints", new HashMap<>());
                         eventData.put("checkedInUsers", new HashMap<>());
 
                         // Add the event data to Firestore
@@ -293,6 +300,7 @@ public class EventCreateActivity extends AppCompatActivity {
 
         dialog.show();
     }
+
     // Function to open the clock to select a time.
     private void openTimeDialog() {
         TimePickerDialog dialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {

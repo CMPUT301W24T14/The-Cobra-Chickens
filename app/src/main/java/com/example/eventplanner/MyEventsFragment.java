@@ -39,6 +39,8 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
     private CollectionReference userRef;
     private SharedViewModel sharedViewModel;
     private SearchView myEventsSearchBar;
+    private Boolean isListFiltered = false;
+    private ArrayList<Event> filteredEvents;
 
     /**
      * Creates the view for MyEventsFragment, which is contained within HomeFragmentUpdated
@@ -115,7 +117,7 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
      */
     private void filterRecyclerView(String searchInput) {
 
-        ArrayList<Event> filteredEvents = new ArrayList<>();
+        filteredEvents = new ArrayList<>();
 
         String lowerCaseSearchInput = searchInput.toLowerCase();
 
@@ -132,6 +134,9 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
         }
 
         myEventsRecyclerAdapter.setFilteredList(filteredEvents);
+        myEventsRecyclerAdapter.notifyDataSetChanged();
+
+        isListFiltered = true;
     }
 
     /**
@@ -193,13 +198,14 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
 
                             HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsers");
 
-                            assert checkedInUsersFromDB != null;
-                            ArrayList<CheckedInUser> checkedInUsers = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
+                            if (checkedInUsersFromDB != null) {
+                                ArrayList<CheckedInUser> checkedInUsers = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
 
-                            ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
+                                ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
-                            // create Event object with retrieved event information and add it to myEventsList
-                            myEventsList.add(new Event(eventId, eventName, eventDescription, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
+                                // create Event object with retrieved event information and add it to myEventsList
+                                myEventsList.add(new Event(eventId, eventName, eventDescription, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
+                            }
 
                             // tell myEventsRecyclerView that the dataset that myEventsRecyclerAdapter is responsible for has changed
                             myEventsRecyclerAdapter.notifyDataSetChanged();
@@ -237,8 +243,13 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
         // set up a new intent to jump from the current activity to EventDetailsActivity
         Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
 
-        // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
-        intent.putExtra("event", myEventsList.get(position));
+        if (!isListFiltered) { // if user clicks on an event normally
+            // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
+            intent.putExtra("event", myEventsList.get(position));
+        }
+        else { // if user clicks on an event in a filtered list
+            intent.putExtra("event", filteredEvents.get(position));
+        }
 
         // pass fragment name to EventDetailsActivity so the sign up / deregister button can be set accordingly
         intent.putExtra("fragment name", getClass().getSimpleName());
