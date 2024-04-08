@@ -332,6 +332,8 @@ public class OrganizerEventViewActivity extends AppCompatActivity {
                                                     checkinQRImageView.setImageBitmap(qrCodes.get(which));
                                                     checkinQRImageView.setVisibility(View.VISIBLE);
                                                     shareCheckInQRButton.setVisibility(View.VISIBLE);
+                                                    currEvent.setCheckInCode(reusableCodes.get(which));
+                                                    db.collection("events").document(currEvent.getEventId()).update("checkInCode", currEvent.getCheckInCode());
                                                 }
                                             });
 
