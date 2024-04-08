@@ -82,11 +82,8 @@ public class ScanFragment extends Fragment {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                         userHasGeolocationOn = (Boolean) documentSnapshot.get("Location");
-                        Log.d("TESTING222", "grabbed user location settings");
-                        Log.d("TESTING222", "got the value: " + userHasGeolocationOn);
                     }
                 });
-
 
 
                 final String[] eventId = new String[1];
@@ -107,12 +104,9 @@ public class ScanFragment extends Fragment {
 
                                         // Check if userId exists in checkedInUsers array
                                         if (checkedInUsersFromDB != null) {
-                                            Log.d("TESTING222", "got here 0");
                                             // if the user has already checked in and location requirements match up
                                             if ((checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && eventRequiresGeolocation) && (userHasGeolocationOn != null && userHasGeolocationOn))
                                                     || (checkedInUsersFromDB.containsKey(userId) && !(eventRequiresGeolocation != null && eventRequiresGeolocation))) {
-
-                                                Log.d("TESTING222", "got here 1");
 
                                                 for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
                                                     if (Objects.equals(entry.getKey(), userId)) {
@@ -132,7 +126,6 @@ public class ScanFragment extends Fragment {
                                                         db.collection("events").document(eventId[0]).update("checkedInUsers", newMap);
 
                                                         successfulCheckIn = true;
-
                                                         getUserLocation(eventId[0]);
 
                                                     }
@@ -143,8 +136,6 @@ public class ScanFragment extends Fragment {
                                             // or if the user is trying to check in for the first time but has their location off
                                             else if ((checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && eventRequiresGeolocation) && (userHasGeolocationOn != null && !userHasGeolocationOn))
                                                     || (!checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && eventRequiresGeolocation) && (userHasGeolocationOn != null && !userHasGeolocationOn))) {
-
-                                                Log.d("TESTING222", "got here 2");
 
                                                 builder.setTitle("Check-in Failed");
                                                 builder.setMessage("This event requires geolocation tracking to be enabled in order to check in. Please enable this in your profile and/or settings.");
@@ -158,19 +149,18 @@ public class ScanFragment extends Fragment {
                                             // first time check in for event that requires location and they have it turned on
                                             else if ((!checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && eventRequiresGeolocation) && (userHasGeolocationOn != null && userHasGeolocationOn))) {
 
-                                                Log.d("TESTING222", "got here 2.5");
                                                 HashMap<String, String> map = new HashMap<>();
                                                 map.put(userId, "1");
 
                                                 db.collection("events").document(eventId[0]).update("checkedInUsers", map);
-                                                getUserLocation(eventId[0]);
                                                 successfulCheckIn = true;
+                                                getUserLocation(eventId[0]);
+
 
                                             }
                                             // first time check in for the first time that doesn't require their location
                                             else if (!checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && !eventRequiresGeolocation)) {
 
-                                                Log.d("TESTING222", "got here 3");
                                                 HashMap<String, String> map = new HashMap<>();
                                                 map.put(userId, "1");
 
@@ -179,8 +169,6 @@ public class ScanFragment extends Fragment {
                                             }
                                             // if the user has already checked into and event and is checking in again and the event doesn't track location
                                             else if (checkedInUsersFromDB.containsKey(userId) && (eventRequiresGeolocation != null && !eventRequiresGeolocation)) {
-
-                                                Log.d("TESTING222", "got here 3.5");
 
                                                 for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
                                                     if (Objects.equals(entry.getKey(), userId)) {
@@ -205,18 +193,10 @@ public class ScanFragment extends Fragment {
                                                 }
 
                                             }
-
-                                            else{
-                                                Log.d("TESTING222", "no statements are true");
-                                            }
                                         }
                                     }
 
-                                    Log.d("TESTING222", "got here 5");
-
-
                                     if (successfulCheckIn) {
-                                        Log.d("TESTING222", "got here 10");
 
                                         Log.d("EVENT ID", eventId[0]);
                                         db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
@@ -229,15 +209,10 @@ public class ScanFragment extends Fragment {
 
                                                 sharedViewModel.setEventUpdated(true);
 
-
-                                                Log.d("TESTING222", "got here 6");
-
                                                 builder.setTitle("Success!");
                                                 builder.setMessage("You have successfully checked into the event!");
 //                                            builder.setMessage("You have successfully signed up for the event!");
                                             } else {
-
-                                                Log.d("TESTING222", "got here 7");
                                                 builder.setTitle("Failure!");
                                                 if (eventId[0] == null) {
                                                     builder.setMessage("Event Id is empty");
@@ -246,7 +221,6 @@ public class ScanFragment extends Fragment {
                                                 }
                                             }
                                             builder.setPositiveButton("OK", (dialog, which) -> {
-                                                Log.d("TESTING222", "got here 8");
                                                 dialog.dismiss();
                                                 barcodeView.resume();
                                             }).show();
@@ -256,8 +230,7 @@ public class ScanFragment extends Fragment {
                                 }
                             });
 
-                }
-                else if (Objects.equals(parts[1], "promo")) {
+                } else if (Objects.equals(parts[1], "promo")) {
                     db.collection("events").whereEqualTo("promoCode", checkInCodeFromQR)
                             .get()
                             .addOnCompleteListener(task -> {
@@ -347,8 +320,7 @@ public class ScanFragment extends Fragment {
                                     });
                                 }
                             });
-                }
-                else if (Objects.equals(parts[1], "admin")) {
+                } else if (Objects.equals(parts[1], "admin")) {
                     Intent intent = new Intent(getContext(), AdminActivity.class);
                     startActivity(intent);
                 }
@@ -369,30 +341,48 @@ public class ScanFragment extends Fragment {
 
         // Get the user's current location
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            Log.d("TESTING222", "got here 4");
-                            // Once you have the location, store it in Firestore
-                            FirebaseFirestore db = FirebaseFirestore.getInstance();
-                            String userId = auth.getCurrentUser().getUid();
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-                            // Create a GeoPoint object with latitude and longitude
-                            GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-                            // Create a map to store user data
-                            HashMap<String, GeoPoint> userData = new HashMap<>();
-                            userData.put(userId, geoPoint);
+            successfulCheckIn = false;
 
-                            // Update Firestore document with user's location
-                            db.collection("events").document(eventId).update("checkedInGeopoints", userData);
+            builder.setTitle("Check-in Failed");
+            builder.setMessage("Your location was not found. Please try again.");
+            builder.setPositiveButton("OK", (dialog, which) -> {
+                dialog.dismiss();
+                barcodeView.resume();
+            }).show();;
+        }
+        else {
 
-                            successfulCheckIn = true;
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                Log.d("TESTING222", "got here 4");
+                                // Once you have the location, store it in Firestore
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                String userId = auth.getCurrentUser().getUid();
+
+                                // Create a GeoPoint object with latitude and longitude
+                                GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+
+                                // Create a map to store user data
+                                HashMap<String, GeoPoint> userData = new HashMap<>();
+                                userData.put(userId, geoPoint);
+
+                                // Update Firestore document with user's location
+                                db.collection("events").document(eventId).update("checkedInGeopoints", userData);
+
+                                successfulCheckIn = true;
+                            }
                         }
-                    }
-                });
+                    });
+
+        }
+
     }
 
     @Override
