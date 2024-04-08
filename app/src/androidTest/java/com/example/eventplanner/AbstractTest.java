@@ -2,6 +2,7 @@ package com.example.eventplanner;
 import static androidx.test.InstrumentationRegistry.getTargetContext;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -30,6 +31,7 @@ import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,16 +45,24 @@ public abstract class AbstractTest {
     public void splashScreenContinue() {
         try {
             onView(withText("Continue")).perform(click());
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
 
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            //throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
-
+        clickAllow();
+    }
+    @After
+    public void after() {
         try {
-            // Simulate clicking on the permission dialog button to accept the permission
+            setNameToTest();
+        } catch (Exception ignored) {}
+    }
+
+    public void clickAllow() {
+        try {
             UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
             // Wait for the permission dialog to appear
             UiObject allowButton = uiDevice.findObject(new UiSelector().text("Allow"));
@@ -66,6 +76,17 @@ public abstract class AbstractTest {
         } catch (InterruptedException e) {
             //throw new RuntimeException(e);
         }
+    }
+
+    public void setNameToTest() {
+        goToProfile();
+        onView(withText("edit details")).perform(click());
+        onView(withId(R.id.saveBtn)).check(matches(isDisplayed()));
+
+        onView(withId(R.id.editName)).perform(replaceText("Testing"));
+        onView(withId(R.id.editContact)).perform(replaceText("Testing"));
+        onView(withId(R.id.editHomepage)).perform(replaceText("Testing"));
+        onView(withId(R.id.saveBtn)).perform(click());
     }
 
     public Activity getCurrentActivity() {
@@ -105,7 +126,7 @@ public abstract class AbstractTest {
         }
     }
 
-    public void goToOrganizeEvents() {
+    public void goToOrganize() {
         onView(withId(R.id.home)).perform(click());
         onView(withText("Organize")).check(matches(isDisplayed()));
         onView(withText("Organize")).perform(click());
@@ -135,9 +156,8 @@ public abstract class AbstractTest {
     }
 
     public void searchBarSearch(String name) {
-        // Simulate clicking on the permission dialog button to accept the permission
-        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         // Wait for the permission dialog to appear
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         UiObject textField = uiDevice.findObject(new UiSelector().text("Search Events"));
         assert textField.exists();
         if (textField.exists()) {
@@ -156,9 +176,8 @@ public abstract class AbstractTest {
     }
 
     public void clickOn(String name) {
-        // Simulate clicking on the permission dialog button to accept the permission
-        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         // Wait for the permission dialog to appear
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         UiObject textField = uiDevice.findObject(new UiSelector().text(name));
         assert textField.exists();
         if (textField.exists()) {
@@ -171,17 +190,15 @@ public abstract class AbstractTest {
     }
 
     public void textVisible(String text) {
-        // Simulate clicking on the permission dialog button to accept the permission
-        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         // Wait for the permission dialog to appear
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         UiObject textField = uiDevice.findObject(new UiSelector().text(text));
         assert textField.exists();
     }
 
     public void addPhotoSequence() {
-        // Simulate clicking on the permission dialog button to accept the permission
-        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         // Wait for the permission dialog to appear
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         UiObject textField = uiDevice.findObject(new UiSelector().text("Photos"));
         assert textField.exists();
         try {

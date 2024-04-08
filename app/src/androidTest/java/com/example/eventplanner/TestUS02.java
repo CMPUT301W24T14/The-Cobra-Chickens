@@ -46,6 +46,7 @@ public class TestUS02 extends AbstractTest {
     // As an attendee, I want to upload a profile picture for a more personalized experience.
     // Tests for US 02.02.02
     // As an attendee, I want to remove profile pictures if need be.
+    /*** Requires Photos on the phone for this to pass ***/
     @Test
     public void test02_02_01_and_02_02_02() {
         goToProfile();
