@@ -11,6 +11,7 @@ import static org.junit.Assert.fail;
 
 import android.content.Context;
 
+import androidx.test.espresso.Espresso;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -25,22 +26,22 @@ import org.junit.runner.RunWith;
 public class TestUS01 extends AbstractTest {
     @Rule
     public ActivityScenarioRule<SplashScreen> scenario = new ActivityScenarioRule<SplashScreen>(SplashScreen.class);
-    // Temporary test to make this class not give an error when running without other tests
-    @Test
-    public void useAppContext() {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.eventplanner", appContext.getPackageName());
-    }
 
     // Tests for US 01.01.01
     // As an organizer, I want to create a new event and generate a unique QR code for attendee check-ins.
-    /*
     @Test
     public void test01_01_01() {
-        splashScreenContinue();
+        goToOrganize();
+        createEvent("Testing US 01.01.01",
+                "As an organizer, I want to create a new event and generate a unique QR code for attendee check-ins.",
+                null,
+                "N/A",
+                false);
+        searchBarSearch("01.01.01");
+        clickOn("Testing US 01.01.01");
+        clickOn("Generate Check-in QR Code");
+        Espresso.pressBack();
     }
-     */
 
     // Tests for US 01.01.02
     // As an organizer, I want the option to reuse an existing QR code for attendee check-ins.

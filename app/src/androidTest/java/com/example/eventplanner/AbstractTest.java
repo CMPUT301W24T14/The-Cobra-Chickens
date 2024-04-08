@@ -229,4 +229,105 @@ public abstract class AbstractTest {
             throw new RuntimeException(e);
         }
     }
+
+    public void typeThisOnThat(String content, String toFind) {
+        // Wait for the permission dialog to appear
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        UiObject textField = uiDevice.findObject(new UiSelector().text(toFind));
+        assert textField.exists();
+        if (textField.exists()) {
+            try {
+                textField.click();
+            } catch (UiObjectNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                textField.setText(content);
+            } catch (UiObjectNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            uiDevice.pressEnter();
+        }
+    }
+
+    public void clickOnCheckInGeolocation() {
+        // Find the text "verification"
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        UiObject textField = uiDevice.findObject(new UiSelector().text("Track Check-in Geolocation"));
+        assert textField.exists();
+
+        // Get the bounds of the text "verification"
+        android.graphics.Rect bounds = null;
+        try {
+            bounds = textField.getBounds();
+        } catch (UiObjectNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Calculate the center position below the text
+        int centerX = bounds.right + 700;
+        int centerY = bounds.centerY();
+
+        // Click on the switch at the calculated position
+        uiDevice.click(centerX, centerY);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void selectDate() {
+        // Find the text "verification"
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        UiObject textField = uiDevice.findObject(new UiSelector().text("Please Select a Date"));
+        assert textField.exists();
+        try {
+            textField.click();
+        } catch (UiObjectNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        textField = uiDevice.findObject(new UiSelector().text("OK"));
+        assert textField.exists();
+        try {
+            textField.click();
+        } catch (UiObjectNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void selectTime() {
+        // Find the text "verification"
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        UiObject textField = uiDevice.findObject(new UiSelector().text("Please Select a Time"));
+        assert textField.exists();
+        try {
+            textField.click();
+        } catch (UiObjectNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        textField = uiDevice.findObject(new UiSelector().text("OK"));
+        assert textField.exists();
+        try {
+            textField.click();
+        } catch (UiObjectNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void createEvent(String eventName, String eventDescription, String numberAttendees, String eventLocation, Boolean trackGeolocation) {
+        clickOn("Create Event");
+        typeThisOnThat(eventName, "Enter Event Name");
+        typeThisOnThat(eventDescription, "Enter Event Description");
+        if (numberAttendees != null) typeThisOnThat(numberAttendees, "Max Number of Attendees (Optional)");
+        typeThisOnThat(eventLocation, "Enter Event Location");
+        if (trackGeolocation) clickOnCheckInGeolocation();
+        selectDate();
+        selectTime();
+        clickOn("Upload Image");
+        addPhotoSequence();
+        clickOn("Create Event");
+    }
 }
