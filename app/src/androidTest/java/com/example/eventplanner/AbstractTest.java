@@ -147,15 +147,6 @@ public abstract class AbstractTest {
         }
     }
 
-    public void goToNotifications() {
-        onView(withId(R.id.notifications)).perform(click());
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void goToProfile() {
         onView(withId(R.id.profile)).perform(click());
         try {
