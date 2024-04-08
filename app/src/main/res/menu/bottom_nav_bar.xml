@@ -11,11 +11,12 @@
         android:title="Scan"
         android:icon="@drawable/rounded_qr_code_scanner_24"/>
 
+    <!--
     <item
         android:id="@+id/notifications"
         android:title="Notifications"
         android:icon="@drawable/rounded_notifications_24"/>
-
+    -->
     <item
         android:id="@+id/profile"
         android:title="Profile"
