@@ -8,9 +8,9 @@
     <string name="enter_event_name_hint">Enter Event Name</string>
     <string name="max_number_of_attendees_hint">Max Number of Attendees (Optional)</string>
     <string name="select_date">Select Date</string>
-    <string name="example_date">2024/01/01</string>
+    <string name="example_date">Please Select a Date</string>
     <string name="select_time">Select Time</string>
-    <string name="example_time">12:00 pm</string>
+    <string name="example_time">Please Select a Time</string>
     <string name="select_a_poster">Select a Poster</string>
     <string name="upload_image">Upload Image</string>
     <string name="welcome_msg">Welcome to Cobra Event Management</string>
@@ -25,4 +25,6 @@
     <string name="previous">Previous</string>
     <string name="generate">Generate</string>
     <string name="qrcode">QRCode</string>
+    <string name="event_event_description">Event Event Description</string>
+    <string name="delete_event">Delete Event</string>
 </resources>

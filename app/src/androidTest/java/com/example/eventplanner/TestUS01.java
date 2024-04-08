@@ -11,10 +11,14 @@ import static org.junit.Assert.fail;
 
 import android.content.Context;
 
+import androidx.test.espresso.Espresso;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiSelector;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,22 +29,74 @@ import org.junit.runner.RunWith;
 public class TestUS01 extends AbstractTest {
     @Rule
     public ActivityScenarioRule<SplashScreen> scenario = new ActivityScenarioRule<SplashScreen>(SplashScreen.class);
-    // Temporary test to make this class not give an error when running without other tests
-    @Test
-    public void useAppContext() {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.eventplanner", appContext.getPackageName());
-    }
 
     // Tests for US 01.01.01
     // As an organizer, I want to create a new event and generate a unique QR code for attendee check-ins.
-    /*
+    // Tests for US 01.02.01
+    // As an organizer, I want to view the list of attendees who have checked in to my event.
+    // Tests for US 01.04.01
+    // As an organizer, I want to upload an event poster to provide visual information to attendees.
+    // Tests for US 01.07.01
+    // As an organizer, I want to create a new event and generate a unique promotion QR code that links to the event description and event poster in the app.
+    // Tests for US 01.08.01
+    // As an organizer, I want to see on a map where users are checking in from.
+    // Tests for US 01.10.01
+    // As an organizer, I want to see who is signed up to attend my event.
     @Test
-    public void test01_01_01() {
-        splashScreenContinue();
+    public void test01_01_01_and_01_02_01_and_01_04_01_and_01_07_01_and_01_08_01_and_01_10_01() {
+        goToOrganize();
+        createEvent("Testing US 01.01.01",
+                "As an organizer, I want to create a new event and generate a unique QR code for attendee check-ins.",
+                null,
+                "N/A",
+                true);
+
+        searchBarSearch("01.01.01");
+        clickOn("Testing US 01.01.01");
+        swipe();
+        clickOn("Generate Check-in QR Code");
+        clickOn("GENERATE NEW QR");
+        swipe();
+        clickOn("Generate Promo QR Code");
+        swipe();
+        swipe();
+        swipe();
+        textVisible("Number of checked-in attendees: 0");
+        clickOn("Attendee Check-in Map");
+        clickAllow();
+
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        UiObject text = uiDevice.findObject(new UiSelector().text("Back"));
+        while (text.exists()) {
+            try {
+                clickOn("Back");
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                //throw new RuntimeException(e);
+            }
+        }
+
+        Espresso.pressBack();
+        goToAllEvents();
+        searchBarSearch("01.01.01");
+        clickOn("Testing US 01.01.01");
+        swipe();
+        swipe();
+        clickOn("Sign up");
+        clickOn("Confirm");
+        Espresso.pressBack();
+
+        setNameToTest();
+
+        goToOrganize();
+        searchBarSearch("01.01.01");
+        clickOn("Testing US 01.01.01");
+        swipe();
+
+        textVisible("Testing");
+        Espresso.pressBack();
+
     }
-     */
 
     // Tests for US 01.01.02
     // As an organizer, I want the option to reuse an existing QR code for attendee check-ins.
@@ -51,29 +107,12 @@ public class TestUS01 extends AbstractTest {
     }
      */
 
-    // Tests for US 01.02.01
-    // As an organizer, I want to view the list of attendees who have checked in to my event.
-    /*
-    @Test
-    public void test01_02_01() {
-        splashScreenContinue();
-    }
-     */
 
     // Tests for US 01.03.01
     // As an organizer, I want to send notifications to all attendees through the app.
     /*
     @Test
     public void test01_03_01() {
-        splashScreenContinue();
-    }
-     */
-
-    // Tests for US 01.04.01
-    // As an organizer, I want to upload an event poster to provide visual information to attendees.
-    /*
-    @Test
-    public void test01_04_01() {
         splashScreenContinue();
     }
      */
@@ -96,26 +135,9 @@ public class TestUS01 extends AbstractTest {
     }
      */
 
-    // Tests for US 01.07.01
-    // As an organizer, I want to create a new event and generate a unique promotion QR code that links to the event description and event poster in the app.
-    /*
-    @Test
-    public void test01_07_01() {
-        splashScreenContinue();
-    }
-     */
-
-    // Tests for US 01.08.01
-    // As an organizer, I want to see on a map where users are checking in from.
-    /*
-    @Test
-    public void test01_08_01() {
-        splashScreenContinue();
-    }
-     */
-
     // Tests for US 01.09.01
     // As an organizer, I want to see how many times an attendee has checked into an event.
+    // N/A --> requires someone to scan QR code to check-in (which requires to test use of camera).
     /*
     @Test
     public void test01_09_01() {
@@ -123,21 +145,33 @@ public class TestUS01 extends AbstractTest {
     }
      */
 
-    // Tests for US 01.10.01
-    // As an organizer, I want to see who is signed up to attend my event.
-    /*
-    @Test
-    public void test01_10_01() {
-        splashScreenContinue();
-    }
-     */
 
     // Tests for US 01.11.01
     // As an organizer, I want to OPTIONALLY limit the number of attendees that can sign up for an event.
-    /*
     @Test
     public void test01_11_01() {
-        splashScreenContinue();
+        goToOrganize();
+        createEvent("Testing US 01.11.01",
+                "As an organizer, I want to OPTIONALLY limit the number of attendees that can sign up for an event.",
+                "0",
+                "N/A",
+                false);
+
+        goToAllEvents();
+        searchBarSearch("01.11.01");
+        clickOn("Testing US 01.11.01");
+        swipe();
+        swipe();
+        clickOn("Sign up");
+        clickOn("Confirm");
+        Espresso.pressBack();
+
+        goToMyEvents();
+        searchBarSearch("01.11.01");
+
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        UiObject text = uiDevice.findObject(new UiSelector().text("Testing US 01.11.01"));
+        assert !text.exists();
+
     }
-     */
 }

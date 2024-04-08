@@ -27,7 +27,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
-
+/**
+ * SplashScreen Activity serves as the initial screen when the app is launched.
+ * It handles user authentication and initialization of user data.
+ */
 public class SplashScreen extends AppCompatActivity {
 
     private Button buttonContinue;
@@ -121,6 +124,7 @@ public class SplashScreen extends AppCompatActivity {
                             userMap.put("myEvents", new ArrayList<>());
                             userMap.put("Organizing", new ArrayList<>());
                             userMap.put("checkedInto", new ArrayList<>());
+                            userMap.put("reusableCodes", new ArrayList<>());
 
                             db.collection("users")
                                     .document(mAuth.getCurrentUser().getUid())

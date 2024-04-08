@@ -2,16 +2,15 @@ package com.example.eventplanner;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,18 +18,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * MyEventsFragment is a Fragment that handles showing a user all events that they have signed up
@@ -46,6 +38,9 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
     private EventRecyclerAdapterUpdated myEventsRecyclerAdapter; // EventRecyclerAdapter for myEventsRecyclerView
     private CollectionReference userRef;
     private SharedViewModel sharedViewModel;
+    private SearchView myEventsSearchBar;
+    private Boolean isListFiltered = false;
+    private ArrayList<Event> filteredEvents;
 
     /**
      * Creates the view for MyEventsFragment, which is contained within HomeFragmentUpdated
@@ -56,7 +51,6 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
      * but this can be used to generate the LayoutParams of the view.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
-     *
      * @return The view specific to MyEventsFragment
      */
     @Nullable
@@ -82,12 +76,21 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
         myEventsRecyclerAdapter = new EventRecyclerAdapterUpdated(getContext(), myEventsList, this);
         myEventsRecyclerView.setAdapter(myEventsRecyclerAdapter);
 
-        getMyEvents();
+        // initialize search bar
+        myEventsSearchBar = view.findViewById(R.id.my_events_search_view);
+        myEventsSearchBar.clearFocus(); // do this so cursor doesn't start in the search bar in lower APIs
 
-        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-        sharedViewModel.isEventUpdated().observe(getViewLifecycleOwner(), isUpdated -> {
-            if (isUpdated) {
-                getMyEvents();
+        // listen for when the user enters something in the search bar and filter
+        myEventsSearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String searchInput) {
+
+                filterRecyclerView(searchInput);
+                return true;
             }
         });
 
@@ -95,10 +98,54 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
     }
 
     /**
+     * Displays the events a user has signed up for.
+     * This method is invoked once when this fragment is created, and every time the user returns
+     * to it after leaving it (either to another fragment or a different activity).
+     * Ensures that the UI is refreshed whenever the fragment becomes visible again.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        getMyEvents();
+    }
+
+    /**
+     * Sets the event RecyclerAdapter to display events from a filtered list based on if an event's
+     * name or location contains the string in searchInput.
+     * @param searchInput The String the user inputs into the search bar and queries
+     */
+    private void filterRecyclerView(String searchInput) {
+
+        filteredEvents = new ArrayList<>();
+
+        String lowerCaseSearchInput = searchInput.toLowerCase();
+
+        for (Event event : myEventsList) {
+            // if the event name or location contains the string the user input
+            if (event.getEventName().toLowerCase().contains(lowerCaseSearchInput)
+                    || event.getEventLocation().toLowerCase().contains(lowerCaseSearchInput)) {
+                filteredEvents.add(event);
+            }
+        }
+
+        if (filteredEvents.isEmpty()) {
+            Toast.makeText(getContext(), "No matches found", Toast.LENGTH_SHORT).show();
+        }
+
+        myEventsRecyclerAdapter.setFilteredList(filteredEvents);
+        myEventsRecyclerAdapter.notifyDataSetChanged();
+
+        isListFiltered = true;
+    }
+
+    /**
      * Retrieves all events from user's myEvents list in the database and populates myEventsList
      * with them.
      */
     private void getMyEvents() {
+
+        // clear list first to ensure no event duplication in the RecyclerView
+        myEventsList.clear();
 
         // read specific document for userId given
         db.collection("users")
@@ -136,17 +183,28 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
                             // retrieve all event information associated with the event
                             String eventId = documentSnapshot.getId();
                             String eventName = documentSnapshot.getString("eventName");
+                            String eventDescription = documentSnapshot.getString("eventDescription");
                             String eventMaxAttendees = documentSnapshot.getString("eventMaxAttendees");
                             String eventDate = documentSnapshot.getString("eventDate");
                             String eventTime = documentSnapshot.getString("eventTime");
                             String eventLocation = documentSnapshot.getString("eventLocation");
                             String eventPoster = documentSnapshot.getString("eventPoster");
-                            ArrayList<String> eventAnnouncements = (ArrayList<String>) documentSnapshot.get("eventAnnouncements");
-                            ArrayList<String> checkedInUsers = (ArrayList<String>) documentSnapshot.get("checkedInUsers");
-                            ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
 
-                            // create Event object with retrieved event information and add it to myEventsList
-                            myEventsList.add(new Event(eventId, eventName, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, eventAnnouncements, checkedInUsers, signedUpUsers));
+                            String checkInCode = documentSnapshot.getString("checkInCode");
+                            String promoCode = documentSnapshot.getString("promoCode");
+
+                            ArrayList<String> eventAnnouncements = (ArrayList<String>) documentSnapshot.get("eventAnnouncements");
+
+                            HashMap<String, String> checkedInUsersFromDB = (HashMap<String, String>) documentSnapshot.get("checkedInUsers");
+
+                            if (checkedInUsersFromDB != null) {
+                                ArrayList<CheckedInUser> checkedInUsers = convertCheckedInUsersMapToArrayList(checkedInUsersFromDB);
+
+                                ArrayList<String> signedUpUsers = (ArrayList<String>) documentSnapshot.get("signedUpUsers");
+
+                                // create Event object with retrieved event information and add it to myEventsList
+                                myEventsList.add(new Event(eventId, eventName, eventDescription, eventMaxAttendees, eventDate, eventTime, eventLocation, eventPoster, checkInCode, promoCode, eventAnnouncements, checkedInUsers, signedUpUsers));
+                            }
 
                             // tell myEventsRecyclerView that the dataset that myEventsRecyclerAdapter is responsible for has changed
                             myEventsRecyclerAdapter.notifyDataSetChanged();
@@ -154,6 +212,26 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
                     });
 
         }
+    }
+
+    /**
+     * Converts a HashMap of checked-in users from the database into an ArrayList of CheckedInUser objects.
+     * An each entry in the HashMap has key: userId, value: number of time's that user has checked in.
+     * @param checkedInUsersFromDB The HashMap with user IDs that are mapped to the respective number of check-ins.
+     * @return An ArrayList of CheckedInUser objects representing the checked-in users.
+     */
+    private ArrayList<CheckedInUser> convertCheckedInUsersMapToArrayList(HashMap<String, String> checkedInUsersFromDB) {
+
+        ArrayList<CheckedInUser> checkedInUsers = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : checkedInUsersFromDB.entrySet()) {
+
+            String userId = entry.getKey();
+            String numberOfCheckins = entry.getValue();
+            checkedInUsers.add(new CheckedInUser(userId, numberOfCheckins));
+        }
+
+        return checkedInUsers;
     }
 
     /**
@@ -169,8 +247,16 @@ public class MyEventsFragment extends Fragment implements RecyclerViewInterface 
         // set up a new intent to jump from the current activity to EventDetailsActivity
         Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
 
-        // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
-        intent.putExtra("event", myEventsList.get(position));
+        if (!isListFiltered) { // if user clicks on an event normally
+            // pass parcelable Event object (from whatever was clicked) to EventDetailsActivity
+            intent.putExtra("event", myEventsList.get(position));
+        }
+        else { // if user clicks on an event in a filtered list
+            intent.putExtra("event", filteredEvents.get(position));
+        }
+
+        // pass fragment name to EventDetailsActivity so the sign up / deregister button can be set accordingly
+        intent.putExtra("fragment name", getClass().getSimpleName());
 
         // start the EventDetailsActivity
         startActivity(intent);

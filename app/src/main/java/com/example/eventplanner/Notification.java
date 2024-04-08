@@ -1,7 +1,7 @@
 package com.example.eventplanner;
 
 import java.util.Date;
-
+//NOT IN USE CURRENTLY
 public class Notification {
     private String title;
     private String message;
