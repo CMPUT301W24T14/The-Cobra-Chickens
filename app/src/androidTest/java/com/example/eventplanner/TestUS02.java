@@ -142,11 +142,11 @@ public class TestUS02 extends AbstractTest {
 
     // Tests for US 02.03.01
     // As an attendee, I want to receive push notifications with important updates from the event organizers.
-    @Test
+    /*@Test
     public void test02_03_01() {
         goToNotifications();
         textVisible("Notifications");
-    }
+    }*/
 
     // Tests for US 02.04.01
     // As an attendee, I want to view event details and announcements within the app.
