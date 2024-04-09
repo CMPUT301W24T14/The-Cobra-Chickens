@@ -66,14 +66,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // This method is called when a new token is generated for the device
         // Subscribe to the event name topic
         String eventName = SharedPreferencesHelper.getCurrentTopic(getApplicationContext());
-        String formattedeventname = eventName.replaceAll("\\s+" ,"_");
-        FirebaseMessaging.getInstance().subscribeToTopic(eventName)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "Subscribed to topic: " + formattedeventname);
-                    } else {
-                        Log.e(TAG, "Failed to subscribe to topic: " + formattedeventname, task.getException());
-                    }
-                });
+        if (eventName != null) {
+            String formattedeventname = eventName.replaceAll("\\s+" ,"_");
+            FirebaseMessaging.getInstance().subscribeToTopic(eventName)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Subscribed to topic: " + formattedeventname);
+                        } else {
+                            Log.e(TAG, "Failed to subscribe to topic: " + formattedeventname, task.getException());
+                        }
+                    });
+        }
+
     }
 }

@@ -103,7 +103,10 @@ public class ScanFragment extends Fragment {
 
 
                 final String[] eventId = new String[1];
-
+                parts[1] = parts[1].replaceAll("\\s", "");
+                Log.d("AHHHHH2", "Made it this far");
+                Log.d("RESULT", result.getResult().toString());
+                Log.d("PART[1]", parts[1]);
                 if (Objects.equals(parts[1], "check")) {
 
                     db.collection("events").whereEqualTo("checkInCode", checkInCodeFromQR)
@@ -265,7 +268,8 @@ public class ScanFragment extends Fragment {
                                 }
                             });
 
-                } else if (Objects.equals(parts[1], "promo")) {
+                }
+                else if (Objects.equals(parts[1], "promo")) {
                     db.collection("events").whereEqualTo("promoCode", checkInCodeFromQR)
                             .get()
                             .addOnCompleteListener(task -> {
@@ -378,7 +382,9 @@ public class ScanFragment extends Fragment {
                                     });
                                 }
                             });
-                } else if (Objects.equals(parts[1], "admin")) {
+                }
+                else if (Objects.equals(parts[1], "admin")) {
+                    Log.d("AHHHHHH", "admin was scan good");
                     Intent intent = new Intent(getContext(), AdminActivity.class);
                     startActivity(intent);
                 }
